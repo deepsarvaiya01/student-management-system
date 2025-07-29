@@ -1,0 +1,46 @@
+package com.sms.service;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import com.sms.dao.StudentDao;
+import com.sms.model.Course;
+import com.sms.model.Student;
+
+public class StudentService {
+	private StudentDao studentDao;
+
+	public StudentService() throws SQLException {
+		super();
+		this.studentDao = new StudentDao();
+	}
+
+	public List<Student> readAllStudent() {
+		return studentDao.readAllStudents();
+	}
+
+	public List<Course> readAllCourses(int studentId) {
+		return studentDao.readAllCourses(studentId);
+	}
+
+	public List<Course> getAllCourses() {
+		return studentDao.getAllCourses();
+	}
+
+	public boolean assignCourseToStudent(int studentId, int courseId) {
+		return studentDao.assignCourseToStudent(studentId, courseId);
+	}
+
+	public Student searchStudentById(int studentId) {
+		return studentDao.searchStudentById(studentId);
+	}
+
+	public boolean deleteStudentById(int studentId) {
+		return studentDao.deleteStudentById(studentId);
+	}
+
+	public boolean addStudentWithProfileAndCourse(Student student, int courseId) {
+		return studentDao.addStudentWithProfileAndCourse(student, courseId);
+	}
+
+}

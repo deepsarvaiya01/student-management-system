@@ -1,0 +1,18 @@
+package com.sms.test;
+
+import java.sql.SQLException;
+
+import com.sms.main.StudentMain;
+import com.sms.main.TeacherMain;
+
+public class Main {
+
+	public static void main(String[] args) throws SQLException {
+
+//		TeacherMain t = new TeacherMain();
+//		t.show();
+		
+		StudentMain s = new StudentMain();
+		s.show();
+	}
+}
