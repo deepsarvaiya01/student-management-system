@@ -63,7 +63,7 @@ public class FeeService {
     }
 
     // Update fee payment
-    public boolean updateFeePayment(int studentId, BigDecimal paymentAmount) {
-        return feeDao.updateFeePayment(studentId, paymentAmount);
+    public boolean updateFeePayment(int feeId, BigDecimal paymentAmount) {
+        return feeDao.updateFeePayment(feeId, paymentAmount);
     }
 } 
