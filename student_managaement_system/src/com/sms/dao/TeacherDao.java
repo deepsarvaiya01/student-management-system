@@ -36,7 +36,7 @@ public class TeacherDao {
 				try (ResultSet rs = stmt.getGeneratedKeys()) {
 					if (rs.next()) {
 						int generatedId = rs.getInt(1);
-						t.setTeacherId(generatedId); 
+						t.setTeacherId(generatedId);
 					}
 				}
 				return true;
@@ -98,9 +98,12 @@ public class TeacherDao {
 
 	public Map<Integer, String> getAssignedSubjects(int teacherId) {
 		Map<Integer, String> subjects = new HashMap<>();
-		String sql = "SELECT s.subject_id, s.subject_name FROM subjects s "
-				+ "JOIN subject_teachers st ON s.subject_id = st.subject_id " + "WHERE st.teacher_id = ?";
-		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+		String sql = "SELECT s.subject_id, s.subject_name " + "FROM subjects s "
+				+ "JOIN subject_teachers st ON s.subject_id = st.subject_id "
+				+ "JOIN teachers t ON t.teacher_id = st.teacher_id " + "WHERE st.teacher_id = ? AND t.is_active = 1";
+
+		try {
+			PreparedStatement ps = connection.prepareStatement(sql);
 			ps.setInt(1, teacherId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {

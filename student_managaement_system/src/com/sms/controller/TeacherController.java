@@ -153,7 +153,7 @@ public class TeacherController {
 
 		Map<Integer, String> subjects = service.viewAssignedSubjects(id);
 		if (subjects.isEmpty()) {
-			System.out.println("\nNo subjects assigned.");
+			System.out.println("\nNo subjects assigned or No teacher found.");
 		} else {
 			System.out.println("\nAssigned Subjects for Teacher ID " + id + ":");
 			System.out.printf("%-15s %-30s%n", "Subject ID", "Subject Name");

@@ -40,7 +40,6 @@ public class TeacherService {
 		return dao.getAssignedSubjects(teacherId);
 	}
 
-
 	public Map<Integer, String> getAssignedSubjectsForTeacher(int teacherId) {
 		return dao.getAssignedSubjects(teacherId);
 	}
