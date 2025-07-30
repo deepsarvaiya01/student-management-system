@@ -147,10 +147,11 @@ public class StudentController {
 
 	// Helper: Print courses in tabular format
 	private void printCourses(List<Course> courses) {
-		System.out.printf("\n%-10s %-25s %-20s\n", "Course ID", "Course Name", "No. of Semesters");
+		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
 		System.out.println("-------------------------------------------------------------");
 		for (Course c : courses) {
-			System.out.printf("%-10d %-25s %-20d\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester());
+			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
+			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(), totalFee);
 		}
 	}
 }

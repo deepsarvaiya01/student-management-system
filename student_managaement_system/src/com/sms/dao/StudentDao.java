@@ -73,6 +73,7 @@ public class StudentDao {
 				course.setCourse_id(result.getInt("course_id"));
 				course.setCourse_name(result.getString("course_name"));
 				course.setNo_of_semester(result.getInt("no_of_semester"));
+				course.setTotal_fee(result.getBigDecimal("total_fee"));
 				courses.add(course);
 			}
 		} catch (SQLException e) {
