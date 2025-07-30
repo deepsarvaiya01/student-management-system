@@ -88,19 +88,14 @@ public class payFeesUtils {
 		try {
 			PaymentProcessor processor = new PaymentProcessor();
 			boolean paymentSuccess = processor.process(studentId, paymentAmount);
-			
-			
-			
+
 			if (paymentSuccess) {
-				
 				System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
 				System.out.println("Updated fee status:");
 
 				List<Fee> updatedFees = feeService.getFeesByStudent(studentId);
 				Fee.printHeader();
 				updatedFees.forEach(System.out::println);
-				
-				
 			} else {
 				System.out.println("❌ Payment failed. Please try again.");
 			}

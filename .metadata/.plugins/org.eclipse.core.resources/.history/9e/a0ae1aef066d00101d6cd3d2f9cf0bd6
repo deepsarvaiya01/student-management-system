@@ -173,7 +173,7 @@ public class StudentController {
 		BigDecimal paymentAmount = payFeesUtil.inputPaymentAmount(fees);
 		if (paymentAmount == null)
 			return;
-		
+
 		payFeesUtil.processAndDisplayPayment(studentId, paymentAmount);
 	}
 
