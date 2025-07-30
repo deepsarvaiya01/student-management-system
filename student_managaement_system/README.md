@@ -1,7 +1,7 @@
 # Student Management System - Fees Management Module
 
 ## Overview
-The Student Management System now includes a comprehensive **Fees Management Module** that allows administrators to track and manage student fees efficiently.
+The Student Management System now includes a comprehensive **Fees Management Module** that allows administrators to track and manage student fees efficiently, including a **Payment Processing System** with multiple payment methods.
 
 ## Features
 
@@ -13,6 +13,13 @@ The Student Management System now includes a comprehensive **Fees Management Mod
 4. **View Fees By Course** - Displays fee information for all students enrolled in a specific course
 5. **Update Fees Of A Course** - Allows updating the total fee amount for a course (affects all enrolled students)
 6. **Total Earning** - Shows the total earning potential from all enrolled students
+
+### 💳 Payment Processing Features
+
+7. **Pay Fees** - Process fee payments with multiple payment methods:
+   - **Cash Payment** - Handle cash transactions with change calculation
+   - **Card Payment** - Process card payments with validation (card number, expiry, CVV, cardholder name)
+   - **UPI Payment** - Process UPI payments with UPI ID and mobile number validation
 
 ## Database Schema
 
@@ -38,7 +45,7 @@ The fees management system uses the following key tables:
 1. Ensure your database is set up with the provided schema
 2. Configure your `.env` file with database credentials
 3. Run the `Main.java` file
-4. Select option **3. Fees Management** from the main menu
+4. Select option **1. Student Management** for payment processing or **3. Fees Management** for fee tracking
 
 ### Menu Options
 
@@ -70,6 +77,18 @@ The fees management system uses the following key tables:
 - Shows the total earning potential from all enrolled students
 - Represents the sum of all total fees across all enrollments
 
+#### 7. Pay Fees (Student Management)
+- **Select Student**: Choose from available students
+- **View Current Status**: See current fee status with paid/pending amounts
+- **Enter Payment Amount**: Specify the amount to pay (cannot exceed pending amount)
+- **Choose Payment Method**:
+  - **Cash**: Enter received amount, system calculates change
+  - **Card**: Enter card details (16-digit number, MM/YY expiry, 3-digit CVV, cardholder name)
+  - **UPI**: Enter UPI ID (format: name@bank) and mobile number
+- **Validation**: All inputs are validated for format and business rules
+- **Processing**: Simulated payment processing with realistic delays
+- **Update**: Automatically updates fee records and shows updated status
+
 ## Technical Implementation
 
 ### Architecture
@@ -81,10 +100,12 @@ The fees management system uses the following key tables:
 
 ### Key Features
 - **BigDecimal** for precise financial calculations
-- **Input validation** for all user inputs
+- **Input validation** for all user inputs with comprehensive format checking
 - **Error handling** with user-friendly messages
 - **Tabular display** for better data visualization
 - **Transaction management** for data consistency
+- **Payment processing** with multiple payment methods
+- **Real-time fee updates** with automatic pending amount calculations
 
 ## Sample Data
 The system comes with sample data including:
@@ -95,13 +116,18 @@ The system comes with sample data including:
 
 ## Security Features
 - Prepared statements to prevent SQL injection
-- Input validation for all user inputs
+- Input validation for all user inputs with format checking
 - Environment variable configuration for database credentials
 - Transaction management for data integrity
+- Payment method validation (card number, CVV, expiry date, UPI ID)
+- Secure fee amount validation and processing
 
 ## Future Enhancements
-- Payment processing integration
+- Real payment gateway integration
 - Fee installment management
 - Late fee calculations
-- Payment reminders
-- Financial reporting and analytics 
+- Payment reminders and notifications
+- Financial reporting and analytics
+- Receipt generation
+- Payment history tracking
+- Multiple currency support 

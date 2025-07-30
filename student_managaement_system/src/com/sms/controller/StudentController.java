@@ -1,20 +1,26 @@
 package com.sms.controller;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
 import com.sms.model.Course;
+import com.sms.model.Fee;
 import com.sms.model.Student;
+import com.sms.service.FeeService;
 import com.sms.service.StudentService;
+import com.sms.utils.payFeesUtils;
 
 public class StudentController {
 
 	private StudentService studentService;
+	private FeeService feeService;
 	private Scanner scanner = new Scanner(System.in);
 
 	public StudentController() throws SQLException {
 		this.studentService = new StudentService();
+		this.feeService = new FeeService();
 	}
 
 	// View All Students
@@ -36,7 +42,7 @@ public class StudentController {
 		scanner.nextLine(); // Consume leftover newline
 		System.out.print("Enter Student Name: ");
 		String name = scanner.nextLine();
-
+		scanner.nextLine();
 		System.out.print("Enter GR Number: ");
 		int grNumber = scanner.nextInt();
 
@@ -145,13 +151,50 @@ public class StudentController {
 				: "Failed to delete. Check ID and try again.");
 	}
 
+	public void payFees() throws SQLException {
+		payFeesUtils payFeesUtil = new payFeesUtils();
+		System.out.println("\n💰 === FEES PAYMENT ===");
+
+		List<Student> students = payFeesUtil.showAndGetAllStudents();
+		if (students.isEmpty())
+			return;
+
+		int studentId = payFeesUtil.inputStudentId();
+		if (studentId == -1)
+			return;
+
+		List<Fee> fees = payFeesUtil.showStudentFees(studentId);
+		if (fees == null || fees.isEmpty())
+			return;
+
+		if (!payFeesUtil.hasPendingFees(fees))
+			return;
+
+		BigDecimal paymentAmount = payFeesUtil.inputPaymentAmount(fees);
+		if (paymentAmount == null)
+			return;
+
+		payFeesUtil.processAndDisplayPayment(studentId, paymentAmount);
+	}
+
+	// Helper: Print students in tabular format
+	private void printStudents(List<Student> students) {
+		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name", "Email", "GR Number");
+		System.out.println("-------------------------------------------------------------");
+		for (Student s : students) {
+			System.out.printf("%-10d %-20s %-25s %-10d\n", s.getStudent_id(), s.getName(), s.getEmail(),
+					s.getGr_number());
+		}
+	}
+
 	// Helper: Print courses in tabular format
 	private void printCourses(List<Course> courses) {
 		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
 		System.out.println("-------------------------------------------------------------");
 		for (Course c : courses) {
 			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
-			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(), totalFee);
+			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(),
+					totalFee);
 		}
 	}
 }

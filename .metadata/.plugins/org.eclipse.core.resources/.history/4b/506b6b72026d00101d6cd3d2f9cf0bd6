@@ -1,0 +1,5 @@
+package com.sms.payment.strategy;
+
+public interface PaymentStrategy {
+
+}

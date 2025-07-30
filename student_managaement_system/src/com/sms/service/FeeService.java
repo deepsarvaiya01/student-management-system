@@ -61,4 +61,9 @@ public class FeeService {
     public List<com.sms.model.Student> getAllStudents() {
         return feeDao.getAllStudents();
     }
+
+    // Update fee payment
+    public boolean updateFeePayment(int feeId, BigDecimal paymentAmount) {
+        return feeDao.updateFeePayment(feeId, paymentAmount);
+    }
 } 
