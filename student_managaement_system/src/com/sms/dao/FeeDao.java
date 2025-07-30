@@ -271,4 +271,25 @@ public class FeeDao {
         }
         return students;
     }
+
+    // Update fee payment
+    public boolean updateFeePayment(int feeId, BigDecimal paymentAmount) {
+        String sql = "UPDATE fees SET paid_amount = paid_amount + ?, " +
+                    "pending_amount = pending_amount - ?, " +
+                    "last_payment_date = CURRENT_DATE " +
+                    "WHERE fee_id = ? AND pending_amount >= ?";
+        
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setBigDecimal(1, paymentAmount);
+            pstmt.setBigDecimal(2, paymentAmount);
+            pstmt.setInt(3, feeId);
+            pstmt.setBigDecimal(4, paymentAmount);
+            
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 } 

@@ -1,0 +1,475 @@
+package com.sms.controller;
+
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Scanner;
+
+import com.sms.model.Course;
+import com.sms.model.Fee;
+import com.sms.model.Student;
+import com.sms.service.StudentService;
+import com.sms.service.FeeService;
+
+public class StudentController {
+
+	private StudentService studentService;
+	private FeeService feeService;
+	private Scanner scanner = new Scanner(System.in);
+
+	public StudentController() throws SQLException {
+		this.studentService = new StudentService();
+		this.feeService = new FeeService();
+	}
+
+	// View All Students
+	public void viewAllStudents() {
+		List<Student> students = studentService.readAllStudent();
+		if (students.isEmpty()) {
+			System.out.println("No students found.");
+			return;
+		}
+
+		Student.printHeader();
+		for (Student student : students) {
+			System.out.println(student);
+		}
+	}
+
+	// Add New Student with Profile and Course Assignment
+	public void addNewStudent() {
+		scanner.nextLine(); // Consume leftover newline
+		System.out.print("Enter Student Name: ");
+		String name = scanner.nextLine();
+
+		System.out.print("Enter GR Number: ");
+		int grNumber = scanner.nextInt();
+
+		System.out.print("Enter Email: ");
+		String email = scanner.next();
+
+		System.out.print("Enter City: ");
+		String city = scanner.next();
+
+		System.out.print("Enter Mobile No: ");
+		String mobileNo = scanner.next();
+
+		System.out.print("Enter Age: ");
+		int age = scanner.nextInt();
+
+		System.out.println("\nAvailable Courses:");
+		List<Course> courses = studentService.getAllCourses();
+		if (courses.isEmpty()) {
+			System.out.println("No courses available. Please add a course first.");
+			return;
+		}
+
+		printCourses(courses);
+
+		System.out.print("Enter Course ID to assign: ");
+		int courseId = scanner.nextInt();
+
+		Student student = new Student();
+		student.setName(name);
+		student.setGr_number(grNumber);
+		student.setEmail(email);
+		student.setCity(city);
+		student.setMobile_no(mobileNo);
+		student.setAge(age);
+
+		boolean success = studentService.addStudentWithProfileAndCourse(student, courseId);
+		System.out.println(success ? "Student added and course assigned successfully."
+				: "Failed to add student. Please try again.");
+	}
+
+	// Assign Course to Student
+	public void assignCourse() {
+		System.out.print("Enter Student ID to assign a course: ");
+		int studentId = scanner.nextInt();
+
+		Student student = studentService.searchStudentById(studentId);
+		if (student == null) {
+			System.out.println("Student not found with ID: " + studentId);
+			return;
+		}
+
+		List<Course> courses = studentService.getAllCourses();
+		if (courses.isEmpty()) {
+			System.out.println("No courses available.");
+			return;
+		}
+
+		System.out.println("\nAvailable Courses:");
+		printCourses(courses);
+
+		System.out.print("Enter Course ID to assign: ");
+		int courseId = scanner.nextInt();
+
+		boolean success = studentService.assignCourseToStudent(studentId, courseId);
+		System.out.println(success ? "Course assigned successfully."
+				: "Failed to assign course. It may already be assigned or invalid.");
+	}
+
+	// View All Courses by Student ID
+	public void viewAllCourses() {
+		System.out.print("Enter Student ID: ");
+		int studentId = scanner.nextInt();
+
+		List<Course> courses = studentService.readAllCourses(studentId);
+		if (courses.isEmpty()) {
+			System.out.println("No courses found for student ID: " + studentId);
+			return;
+		}
+
+		System.out.println("\nCourses Assigned:");
+		printCourses(courses);
+	}
+
+	// Search Student by ID
+	public void searchStudent() {
+		System.out.print("Enter Student ID to search: ");
+		int studentId = scanner.nextInt();
+
+		Student student = studentService.searchStudentById(studentId);
+		if (student != null) {
+			System.out.println("\nStudent Details:");
+			Student.printHeader();
+			System.out.println(student);
+		} else {
+			System.out.println("Student not found with ID: " + studentId);
+		}
+	}
+
+	// Delete Student by ID
+	public void deleteStudent() {
+		System.out.print("Enter Student ID to delete: ");
+		int studentId = scanner.nextInt();
+
+		boolean deleted = studentService.deleteStudentById(studentId);
+		System.out.println(deleted ? "Student and related data deleted successfully."
+				: "Failed to delete. Check ID and try again.");
+	}
+
+	// Pay Fees
+	public void payFees() {
+		System.out.println("\n💰 === FEES PAYMENT ===");
+		
+		// Show available students
+		System.out.println("\n📚 Available Students:");
+		List<Student> students = feeService.getAllStudents();
+		if (students.isEmpty()) {
+			System.out.println("No students found.");
+			return;
+		}
+
+		printStudents(students);
+
+		// Get student ID
+		System.out.print("\nEnter Student ID to pay fees: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("❗ Please enter a valid Student ID.");
+			scanner.next(); // clear invalid input
+			return;
+		}
+
+		int studentId = scanner.nextInt();
+		
+		// Get student's fee details
+		List<Fee> fees = feeService.getFeesByStudent(studentId);
+		if (fees.isEmpty()) {
+			System.out.println("No fees found for Student ID: " + studentId);
+			return;
+		}
+
+		// Display current fee status
+		System.out.println("\n📊 Current Fee Status for Student ID " + studentId + ":");
+		Fee.printHeader();
+		for (Fee fee : fees) {
+			System.out.println(fee);
+		}
+
+		// Check if there are pending fees
+		boolean hasPendingFees = fees.stream()
+			.anyMatch(fee -> fee.getPendingAmount().compareTo(BigDecimal.ZERO) > 0);
+
+		if (!hasPendingFees) {
+			System.out.println("\n✅ All fees are already paid for this student!");
+			return;
+		}
+
+		// Get payment amount
+		System.out.print("\nEnter payment amount: ₹");
+		if (!scanner.hasNextBigDecimal()) {
+			System.out.println("❗ Please enter a valid amount.");
+			scanner.next(); // clear invalid input
+			return;
+		}
+
+		BigDecimal paymentAmount = scanner.nextBigDecimal();
+		
+		if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+			System.out.println("❌ Payment amount must be greater than zero.");
+			return;
+		}
+
+		// Calculate total pending amount
+		BigDecimal totalPending = fees.stream()
+			.map(Fee::getPendingAmount)
+			.reduce(BigDecimal.ZERO, BigDecimal::add);
+
+		if (paymentAmount.compareTo(totalPending) > 0) {
+			System.out.println("❌ Payment amount (₹" + paymentAmount + ") cannot exceed pending amount (₹" + totalPending + ").");
+			return;
+		}
+
+		// Process payment
+		boolean paymentSuccess = processPayment(studentId, paymentAmount);
+		
+		if (paymentSuccess) {
+			System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
+			System.out.println("Updated fee status:");
+			
+			// Show updated fee status
+			List<Fee> updatedFees = feeService.getFeesByStudent(studentId);
+			Fee.printHeader();
+			for (Fee fee : updatedFees) {
+				System.out.println(fee);
+			}
+		} else {
+			System.out.println("❌ Payment failed. Please try again.");
+		}
+	}
+
+	// Process payment using payment strategy
+	private boolean processPayment(int studentId, BigDecimal amount) {
+		System.out.println("\n💳 Select Payment Method:");
+		System.out.println("1. Cash Payment");
+		System.out.println("2. Card Payment");
+		System.out.println("3. UPI Payment");
+		System.out.print("Enter your choice (1-3): ");
+
+		if (!scanner.hasNextInt()) {
+			System.out.println("❗ Please enter a valid choice.");
+			scanner.next(); // clear invalid input
+			return false;
+		}
+
+		int paymentChoice = scanner.nextInt();
+		
+		try {
+			switch (paymentChoice) {
+			case 1 -> {
+				return processCashPayment(studentId, amount);
+			}
+			case 2 -> {
+				return processCardPayment(studentId, amount);
+			}
+			case 3 -> {
+				return processUPIPayment(studentId, amount);
+			}
+			default -> {
+				System.out.println("❌ Invalid payment method selected.");
+				return false;
+			}
+			}
+		} catch (Exception e) {
+			System.out.println("❌ Payment processing error: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// Cash Payment Processing
+	private boolean processCashPayment(int studentId, BigDecimal amount) {
+		System.out.println("\n💵 === CASH PAYMENT ===");
+		System.out.println("Amount to pay: ₹" + amount);
+		
+		System.out.print("Enter amount received: ₹");
+		if (!scanner.hasNextBigDecimal()) {
+			System.out.println("❗ Please enter a valid amount.");
+			scanner.next();
+			return false;
+		}
+		
+		BigDecimal receivedAmount = scanner.nextBigDecimal();
+		
+		if (receivedAmount.compareTo(amount) < 0) {
+			System.out.println("❌ Insufficient amount received. Required: ₹" + amount + ", Received: ₹" + receivedAmount);
+			return false;
+		}
+		
+		BigDecimal change = receivedAmount.subtract(amount);
+		if (change.compareTo(BigDecimal.ZERO) > 0) {
+			System.out.println("💰 Change to return: ₹" + change);
+		}
+		
+		// Update fee records
+		return updateFeeRecords(studentId, amount);
+	}
+
+	// Card Payment Processing
+	private boolean processCardPayment(int studentId, BigDecimal amount) {
+		System.out.println("\n💳 === CARD PAYMENT ===");
+		System.out.println("Amount to pay: ₹" + amount);
+		
+		scanner.nextLine(); // Consume leftover newline
+		System.out.print("Enter card number (16 digits): ");
+		String cardNumber = scanner.nextLine();
+		
+		if (!validateCardNumber(cardNumber)) {
+			System.out.println("❌ Invalid card number format.");
+			return false;
+		}
+		
+		System.out.print("Enter expiry date (MM/YY): ");
+		String expiryDate = scanner.nextLine();
+		
+		if (!validateExpiryDate(expiryDate)) {
+			System.out.println("❌ Invalid expiry date format.");
+			return false;
+		}
+		
+		System.out.print("Enter CVV (3 digits): ");
+		String cvv = scanner.nextLine();
+		
+		if (!validateCVV(cvv)) {
+			System.out.println("❌ Invalid CVV format.");
+			return false;
+		}
+		
+		System.out.print("Enter cardholder name: ");
+		String cardholderName = scanner.nextLine();
+		
+		if (cardholderName.trim().isEmpty()) {
+			System.out.println("❌ Cardholder name cannot be empty.");
+			return false;
+		}
+		
+		System.out.println("✅ Card details validated successfully!");
+		System.out.println("Processing payment...");
+		
+		// Simulate payment processing
+		try {
+			Thread.sleep(2000); // Simulate processing time
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
+		System.out.println("✅ Payment processed successfully!");
+		
+		// Update fee records
+		return updateFeeRecords(studentId, amount);
+	}
+
+	// UPI Payment Processing
+	private boolean processUPIPayment(int studentId, BigDecimal amount) {
+		System.out.println("\n📱 === UPI PAYMENT ===");
+		System.out.println("Amount to pay: ₹" + amount);
+		
+		scanner.nextLine(); // Consume leftover newline
+		System.out.print("Enter UPI ID (e.g., name@bank): ");
+		String upiId = scanner.nextLine();
+		
+		if (!validateUPIId(upiId)) {
+			System.out.println("❌ Invalid UPI ID format.");
+			return false;
+		}
+		
+		System.out.print("Enter mobile number: ");
+		String mobileNumber = scanner.nextLine();
+		
+		if (!validateMobileNumber(mobileNumber)) {
+			System.out.println("❌ Invalid mobile number format.");
+			return false;
+		}
+		
+		System.out.println("✅ UPI details validated successfully!");
+		System.out.println("Sending payment request...");
+		
+		// Simulate UPI payment processing
+		try {
+			Thread.sleep(3000); // Simulate processing time
+		} catch (InterruptedException e) {
+			Thread.currentThread().interrupt();
+		}
+		
+		System.out.println("✅ UPI payment processed successfully!");
+		
+		// Update fee records
+		return updateFeeRecords(studentId, amount);
+	}
+
+	// Update fee records in database
+	private boolean updateFeeRecords(int studentId, BigDecimal paymentAmount) {
+		try {
+			// Get current fees
+			List<Fee> fees = feeService.getFeesByStudent(studentId);
+			
+			// Update each fee record
+			for (Fee fee : fees) {
+				if (paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+					break; // No more payment to distribute
+				}
+				
+				BigDecimal pendingAmount = fee.getPendingAmount();
+				if (pendingAmount.compareTo(BigDecimal.ZERO) > 0) {
+					BigDecimal amountToPay = paymentAmount.min(pendingAmount);
+					
+					// Update the fee record
+					boolean updated = feeService.updateFeePayment(fee.getFeeId(), amountToPay);
+					if (!updated) {
+						System.out.println("❌ Failed to update fee record for Fee ID: " + fee.getFeeId());
+						return false;
+					}
+					
+					paymentAmount = paymentAmount.subtract(amountToPay);
+				}
+			}
+			
+			return true;
+		} catch (Exception e) {
+			System.out.println("❌ Error updating fee records: " + e.getMessage());
+			return false;
+		}
+	}
+
+	// Validation methods
+	private boolean validateCardNumber(String cardNumber) {
+		return cardNumber != null && cardNumber.replaceAll("\\s", "").matches("\\d{16}");
+	}
+
+	private boolean validateExpiryDate(String expiryDate) {
+		return expiryDate != null && expiryDate.matches("\\d{2}/\\d{2}");
+	}
+
+	private boolean validateCVV(String cvv) {
+		return cvv != null && cvv.matches("\\d{3,4}");
+	}
+
+	private boolean validateUPIId(String upiId) {
+		return upiId != null && upiId.matches("[a-zA-Z0-9._-]+@[a-zA-Z]+");
+	}
+
+	private boolean validateMobileNumber(String mobileNumber) {
+		return mobileNumber != null && mobileNumber.matches("\\d{10}");
+	}
+
+	// Helper: Print students in tabular format
+	private void printStudents(List<Student> students) {
+		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name", "Email", "GR Number");
+		System.out.println("-------------------------------------------------------------");
+		for (Student s : students) {
+			System.out.printf("%-10d %-20s %-25s %-10d\n", 
+				s.getStudent_id(), s.getName(), s.getEmail(), s.getGr_number());
+		}
+	}
+
+	// Helper: Print courses in tabular format
+	private void printCourses(List<Course> courses) {
+		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
+		System.out.println("-------------------------------------------------------------");
+		for (Course c : courses) {
+			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
+			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(), totalFee);
+		}
+	}
+}

@@ -1,0 +1,5 @@
+package com.sms.payment.processor;
+
+public class PaymentProcessor {
+
+}

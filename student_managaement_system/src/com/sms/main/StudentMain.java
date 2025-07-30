@@ -19,9 +19,10 @@ public class StudentMain {
 			System.out.println("4. View All Courses by Student ID");
 			System.out.println("5. Search a Student by Student ID");
 			System.out.println("6. Delete a Student by Student ID");
+			System.out.println("7. Pay Fees");
 			System.out.println("0. Exit");
 			System.out.println("=============================================");
-			System.out.print("Enter your choice (0-6): ");
+			System.out.print("Enter your choice (0-7): ");
 
 			if (!scanner.hasNextInt()) {
 				System.out.println("❗ Please enter a valid number.");
@@ -38,12 +39,13 @@ public class StudentMain {
 			case 4 -> controller.viewAllCourses();
 			case 5 -> controller.searchStudent();
 			case 6 -> controller.deleteStudent();
+			case 7 -> controller.payFees();
 			case 0 -> {
 				System.out.println("Exiting... Thank you!");
 				scanner.close();
 				System.exit(0);
 			}
-			default -> System.out.println("Invalid choice! Please enter a number between 0 and 6.");
+			default -> System.out.println("Invalid choice! Please enter a number between 0 and 7.");
 			}
 		}
 	}

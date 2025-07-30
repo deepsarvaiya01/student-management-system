@@ -3,9 +3,10 @@ package com.sms.test;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.sms.main.CourseMain;
+import com.sms.main.FeeMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
-import com.sms.main.FeeMain;
 
 public class Main {
 
@@ -39,9 +40,14 @@ public class Main {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
+			
 			case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
+			}
+			case 4 -> {
+				CourseMain c = new CourseMain();
+				c.show();
 			}
 			case 0 -> {
 				System.out.println("Exiting Student Management System... Thank you!");
