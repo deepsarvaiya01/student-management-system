@@ -8,6 +8,7 @@ public class Student {
 	private String email;
 	private String city;
 	private String mobile_no;
+	private boolean is_active;
 
 	public Student() {
 	}
@@ -77,6 +78,14 @@ public class Student {
 
 	public void setMobile_no(String mobile_no) {
 		this.mobile_no = mobile_no;
+	}
+
+	public boolean isIs_active() {
+		return is_active;
+	}
+
+	public void setIs_active(boolean is_active) {
+		this.is_active = is_active;
 	}
 
 	// Tabular Display Header

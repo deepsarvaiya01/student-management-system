@@ -40,7 +40,7 @@ public class Main {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
-			
+
 			case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
