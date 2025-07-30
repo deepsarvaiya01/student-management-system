@@ -3,37 +3,48 @@ package com.sms.service;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.sms.dto.TeacherDto;
+import com.sms.dao.TeacherDao;
 import com.sms.model.Teacher;
 
 public class TeacherService {
-	private final TeacherDto dto;
+	private final TeacherDao dao;
 
 	public TeacherService() throws SQLException {
-		this.dto = new TeacherDto();
+		this.dao = new TeacherDao();
 	}
 
 	public boolean addTeacher(Teacher teacher) {
-		return dto.add(teacher);
+		if (teacher.getName().isEmpty() || teacher.getQualification().isEmpty() || teacher.getExperience() < 0)
+			return false;
+		return dao.addTeacher(teacher);
 	}
 
 	public List<Teacher> fetchAllTeachers() {
-		return dto.getAll();
+		return dao.getAllTeachers();
 	}
 
 	public boolean deleteTeacher(int id) {
-		return dto.delete(id);
+		return dao.softDeleteTeacher(id);
 	}
 
 	public boolean assignSubject(int teacherId, int subjectId) {
-		return dto.assign(teacherId, subjectId);
+		return dao.assignSubject(teacherId, subjectId);
 	}
 
 	public boolean removeSubject(int teacherId, int subjectId) {
-		return dto.remove(teacherId, subjectId);
+		return dao.removeSubject(teacherId, subjectId);
 	}
 
 	public List<String> viewAssignedSubjects(int teacherId) {
-		return dto.getSubjects(teacherId);
+		return dao.getAssignedSubjects(teacherId);
 	}
+
+	public List<String> getAssignedSubjectsForTeacher(int teacherId) {
+		return dao.getAssignedSubjects(teacherId);
+	}
+
+	public Teacher getTeacherById(int id) {
+		return dao.getTeacherById(id);
+	}
+
 }

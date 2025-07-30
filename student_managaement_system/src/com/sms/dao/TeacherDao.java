@@ -95,4 +95,22 @@ public class TeacherDao {
 		}
 		return subjects;
 	}
+
+	public Teacher getTeacherById(int id) {
+		String sql = "SELECT * FROM teachers WHERE teacher_id = ? AND is_active = 1";
+		try {
+			Connection con = DBConnection.connect();
+			PreparedStatement ps = con.prepareStatement(sql);
+			ps.setInt(1, id);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
+						rs.getDouble("experience"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

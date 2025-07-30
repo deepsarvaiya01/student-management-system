@@ -40,9 +40,17 @@ public class TeacherController {
 		if (list.isEmpty()) {
 			System.out.println("No teachers found.");
 		} else {
-			System.out.printf("%-10s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
-			System.out.println("---------------------------------------------------------------");
-			list.forEach(System.out::println);
+			System.out.printf("%-5s %-20s %-20s %-10s %-80s%n", "ID", "Name", "Qualification", "Experience",
+					"Subjects");
+			System.out.println(
+					"-------------------------------------------------------------------------------------------");
+
+			for (Teacher t : list) {
+				List<String> subjects = service.getAssignedSubjectsForTeacher(t.getTeacherId());
+				String subjectList = String.join(", ", subjects);
+				System.out.printf("%-5d %-20s %-20s %-10.1f %-30s%n", t.getTeacherId(), t.getName(),
+						t.getQualification(), t.getExperience(), subjectList);
+			}
 		}
 	}
 
@@ -74,8 +82,23 @@ public class TeacherController {
 		Scanner scanner = new Scanner(System.in);
 		System.out.print("Enter Teacher ID: ");
 		int teacherId = scanner.nextInt();
-		System.out.print("Enter Subject ID: ");
+
+		// Display teacher and assigned subjects
+		List<String> subjects = service.viewAssignedSubjects(teacherId);
+		if (subjects.isEmpty()) {
+			System.out.println("No subjects assigned to this teacher.");
+			return;
+		}
+
+		System.out.println("\nSubjects currently assigned to Teacher ID " + teacherId + ":");
+		System.out.println("---------------------------------------------------");
+		for (String subject : subjects) {
+			System.out.println(subject);
+		}
+		System.out.print("\nEnter Subject ID to remove from above list: ");
 		int subjectId = scanner.nextInt();
+
+		// Proceed to remove
 		if (service.removeSubject(teacherId, subjectId)) {
 			System.out.println("Subject removed.");
 		} else {
@@ -89,9 +112,38 @@ public class TeacherController {
 		int id = scanner.nextInt();
 		List<String> subjects = service.viewAssignedSubjects(id);
 		if (subjects.isEmpty()) {
-			System.out.println("No subjects assigned.");
+			System.out.println("\nNo subjects assigned.");
 		} else {
-			subjects.forEach(System.out::println);
+			System.out.println("\nSubjects currently assigned to Teacher ID " + id + ":");
+			System.out.println("---------------------------------------------------");
+			for (String subject : subjects) {
+				System.out.println(subject);
+			}
 		}
 	}
+
+	public void searchTeacherById() {
+		Scanner scanner = new Scanner(System.in);
+		System.out.print("Enter Teacher ID to search: ");
+		int id = scanner.nextInt();
+
+		Teacher teacher = service.getTeacherById(id);
+
+		if (teacher != null) {
+			// Fetch assigned subjects
+			List<String> subjects = service.viewAssignedSubjects(id);
+			String subjectList = subjects.isEmpty() ? "None" : String.join(", ", subjects);
+
+			// Display in tabular format
+			System.out.println("\n================== Teacher Details ==================\n");
+			System.out.printf("%-10s %-20s %-20s %-15s %-30s%n", "ID", "Name", "Qualification", "Experience",
+					"Subjects Assigned");
+			System.out.println("--------------------------------------------------------------------------------------");
+			System.out.printf("%-10d %-20s %-20s %-15.1f %-30s%n", teacher.getTeacherId(), teacher.getName(),
+					teacher.getQualification(), teacher.getExperience(), subjectList);
+		} else {
+			System.out.println("No teacher found with ID: " + id);
+		}
+	}
+
 }
