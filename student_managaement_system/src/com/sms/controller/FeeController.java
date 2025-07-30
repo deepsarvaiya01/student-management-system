@@ -57,7 +57,7 @@ public class FeeController {
         if (fees.isEmpty()) {
             System.out.println("No fees found for Student ID: " + studentId);
         } else {
-            System.out.println("\n📊 Fees for Student ID " + studentId + ":");
+            System.out.println("\nFees for Student ID " + studentId + ":");
             Fee.printHeader();
             for (Fee fee : fees) {
                 System.out.println(fee);
@@ -67,7 +67,7 @@ public class FeeController {
 
     // View Fees By Course
     public void viewFeesByCourse() {
-        System.out.println("\n📚 Available Courses:");
+        System.out.println("\nAvailable Courses:");
         List<Course> courses = feeService.getAllCourses();
         if (courses.isEmpty()) {
             System.out.println("No courses found.");
@@ -89,7 +89,7 @@ public class FeeController {
         if (fees.isEmpty()) {
             System.out.println("No fees found for Course ID: " + courseId);
         } else {
-            System.out.println("\n📊 Fees for Course ID " + courseId + ":");
+            System.out.println("\nFees for Course ID " + courseId + ":");
             Fee.printHeader();
             for (Fee fee : fees) {
                 System.out.println(fee);
@@ -99,7 +99,7 @@ public class FeeController {
 
     // Update Fees Of A Course
     public void updateFeesOfCourse() {
-        System.out.println("\n📚 Available Courses:");
+        System.out.println("\nAvailable Courses:");
         List<Course> courses = feeService.getAllCourses();
         if (courses.isEmpty()) {
             System.out.println("No courses found.");
@@ -119,7 +119,7 @@ public class FeeController {
 
         System.out.print("Enter new total fee amount: ₹");
         if (!scanner.hasNextBigDecimal()) {
-            System.out.println("❗ Please enter a valid fee amount.");
+            System.out.println("Please enter a valid fee amount.");
             scanner.next(); // clear invalid input
             return;
         }
@@ -127,22 +127,22 @@ public class FeeController {
         BigDecimal newTotalFee = scanner.nextBigDecimal();
 
         if (newTotalFee.compareTo(BigDecimal.ZERO) < 0) {
-            System.out.println("❌ Fee amount cannot be negative.");
+            System.out.println("Fee amount cannot be negative.");
             return;
         }
 
         boolean success = feeService.updateCourseFees(courseId, newTotalFee);
         if (success) {
-            System.out.println("✅ Course fees updated successfully to ₹" + newTotalFee);
+            System.out.println("Course fees updated successfully to ₹" + newTotalFee);
         } else {
-            System.out.println("❌ Failed to update course fees. Please check the Course ID.");
+            System.out.println("Failed to update course fees. Please check the Course ID.");
         }
     }
 
     // View Total Earning
     public void viewTotalEarning() {
         BigDecimal totalEarning = feeService.getTotalEarning();
-        System.out.println("\n💵 Total Earning: ₹" + totalEarning);
+        System.out.println("\nTotal Earning: ₹" + totalEarning);
         System.out.println("=====================================");
     }
 

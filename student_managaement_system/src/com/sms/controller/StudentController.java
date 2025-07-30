@@ -155,20 +155,21 @@ public class StudentController {
 
 	// Assign Course to Student
 	public void assignCourse() {
-		int attempts = 0;
-		System.out.print("Enter Student ID to assign a course: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid student ID (positive integer). Try again: ");
-			scanner.next();
-		}
-		int studentId = scanner.nextInt();
-		if (studentId <= 0) {
-			System.out.println("Invalid student ID. Aborting.");
+		List<Student> students = studentService.readAllStudent();
+		if (students.isEmpty()) {
+			System.out.println("No students available.");
 			return;
 		}
-		Student student = studentService.searchStudentById(studentId);
-		if (student == null) {
-			System.out.println("Student not found with ID: " + studentId);
+
+		System.out.print("Enter Student ID to assign a course: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid student ID.");
+			scanner.next();
+			return;
+		}
+		int studentId = scanner.nextInt();
+		if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return;
 		}
 
@@ -180,43 +181,41 @@ public class StudentController {
 		System.out.println("\nAvailable Courses:");
 		printCourses(courses);
 
-		attempts = 0;
 		System.out.print("Enter Course ID to assign: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid course ID (positive integer). Try again: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid course ID.");
 			scanner.next();
-		}
-		if (attempts >= 3) {
-			System.out.println("Too many invalid attempts. Aborting.");
 			return;
 		}
 		int courseId = scanner.nextInt();
 		boolean validCourse = courses.stream().anyMatch(c -> c.getCourse_id() == courseId);
 		if (!validCourse) {
-			System.out.println("Invalid course ID. Aborting.");
+			System.out.println("No such course exists.");
 			return;
 		}
 
 		boolean success = studentService.assignCourseToStudent(studentId, courseId);
 		System.out.println(success ? "Course ID " + courseId + " assigned to student ID " + studentId + " successfully."
-				: "Failed to assign course. Check if already assigned or try again.");
+				: "Failed to assign course. It may already be assigned.");
 	}
 
 	// View All Courses by Student ID
 	public void viewAllCourses() {
-		int attempts = 0;
-		System.out.print("Enter Student ID: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid student ID (positive integer). Try again: ");
-			scanner.next();
+		List<Student> students = studentService.readAllStudent();
+		if (students.isEmpty()) {
+			System.out.println("No students available.");
+			return;
 		}
-		if (attempts >= 3) {
-			System.out.println("Too many invalid attempts. Aborting.");
+
+		System.out.print("Enter Student ID: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid student ID.");
+			scanner.next();
 			return;
 		}
 		int studentId = scanner.nextInt();
 		if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+			System.out.println("No such student exists.");
 			return;
 		}
 
@@ -232,28 +231,25 @@ public class StudentController {
 
 	// Search Student by ID
 	public void searchStudent() {
-		int attempts = 0;
-		System.out.print("Enter Student ID to search: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid student ID (positive integer). Try again: ");
-			scanner.next();
+		List<Student> students = studentService.readAllStudent();
+		if (students.isEmpty()) {
+			System.out.println("No students available.");
+			return;
 		}
-		if (attempts >= 3) {
-			System.out.println("Too many invalid attempts. Aborting.");
+
+		System.out.print("Enter Student ID to search: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid student ID.");
+			scanner.next();
 			return;
 		}
 		int studentId = scanner.nextInt();
-		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
+		if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return;
 		}
 
 		Student student = studentService.searchStudentById(studentId);
-		if (student == null) {
-			System.out.println("Student ID " + studentId + " does not exist or is already deleted.");
-			return;
-		}
-
 		System.out.println("\nStudent Details:");
 		Student.printHeader();
 		System.out.println(student);
@@ -261,29 +257,25 @@ public class StudentController {
 
 	// Delete Student by ID
 	public void deleteStudent() {
-		int attempts = 0;
-		System.out.print("Enter Student ID to delete: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid student ID (positive integer). Try again: ");
-			scanner.next();
+		List<Student> students = studentService.readAllStudent();
+		if (students.isEmpty()) {
+			System.out.println("No students available.");
+			return;
 		}
-		if (attempts >= 3) {
-			System.out.println("Too many invalid attempts. Aborting.");
+
+		System.out.print("Enter Student ID to delete: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid student ID.");
+			scanner.next();
 			return;
 		}
 		int studentId = scanner.nextInt();
-		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
+		if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return;
 		}
 
 		Student student = studentService.searchStudentById(studentId);
-		if (student == null) {
-			System.out.println("Student ID " + studentId + " does not exist or is already deleted.");
-			return;
-		}
-
-		// Display student details for confirmation
 		System.out.println("\nStudent Details:");
 		Student.printHeader();
 		System.out.println(student);
@@ -298,63 +290,65 @@ public class StudentController {
 
 		boolean deleted = studentService.deleteStudentById(studentId);
 		System.out.println(deleted ? "Student ID " + studentId + " marked as inactive successfully."
-				: "Failed to mark student ID " + studentId + " as inactive. Check database or try again.");
+				: "Failed to mark student ID " + studentId + " as inactive. Check database.");
 	}
 
 	public void payFees() throws SQLException {
-		payFeesUtils payFeesUtil = new payFeesUtils();
-		System.out.println("\n💰 === FEES PAYMENT ===");
+	    List<Student> students = studentService.readAllStudent();
+	    if (students.isEmpty()) {
+	        System.out.println("\n💰 === FEES PAYMENT ===\nNo students available.");
+	        return;
+	    }
 
-		List<Student> students = payFeesUtil.showAndGetAllStudents();
-		if (students.isEmpty()) {
-			System.out.println("No students available.");
-			return;
-		}
-		int attempts = 0;
-		int studentId = payFeesUtil.inputStudentId();
-		while (studentId == -1 && attempts++ < 3) {
-			System.out.println("Invalid student ID. Try again.");
-			studentId = payFeesUtil.inputStudentId();
-		}
-		if (studentId == -1 || studentService.searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID.");
-			return;
-		}
+	    payFeesUtils payFeesUtil = new payFeesUtils();
+	    System.out.println("\n💰 === FEES PAYMENT ===");
+	    payFeesUtil.showAndGetAllStudents();
 
-		List<Fee> fees = payFeesUtil.showStudentFees(studentId);
-		if (fees == null || fees.isEmpty())
-			return;
+	    System.out.print("\nEnter Student ID to pay fees: ");
+	    if (!scanner.hasNextInt()) {
+	        System.out.println("Invalid student ID.");
+	        scanner.next();
+	        return;
+	    }
+	    int studentId = scanner.nextInt();
+	    if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
+	        System.out.println("No such student exists.");
+	        return;
+	    }
 
-		if (!payFeesUtil.hasPendingFees(fees))
-			return;
+	    List<Fee> fees = payFeesUtil.showStudentFees(studentId);
+	    if (fees == null || fees.isEmpty()) {
+	        return;
+	    }
 
-		BigDecimal paymentAmount = payFeesUtil.inputPaymentAmount(fees);
-		if (paymentAmount == null)
-			return;
+	    if (!payFeesUtil.hasPendingFees(fees)) {
+	        return;
+	    }
 
-		payFeesUtil.processAndDisplayPayment(studentId, paymentAmount);
+	    BigDecimal paymentAmount = payFeesUtil.inputPaymentAmount(fees);
+	    if (paymentAmount == null) {
+	        return;
+	    }
+
+	    payFeesUtil.processAndDisplayPayment(studentId, paymentAmount);
 	}
 
 	public void restoreStudent() {
-		int attempts = 0;
 		System.out.print("Enter Student ID to restore: ");
-		while (!scanner.hasNextInt() && attempts++ < 3) {
-			System.out.println("Invalid student ID (positive integer). Try again: ");
+		if (!scanner.hasNextInt()) {
+			System.out.println("Invalid student ID.");
 			scanner.next();
-		}
-		if (attempts >= 3) {
-			System.out.println("Too many invalid attempts. Aborting.");
 			return;
 		}
 		int studentId = scanner.nextInt();
 		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
+			System.out.println("No such student exists.");
 			return;
 		}
 
 		boolean success = studentService.restoreStudentById(studentId);
 		System.out.println(success ? "Student ID " + studentId + " restored successfully."
-				: "Failed to restore student ID " + studentId + ". Check if it exists or is already active.");
+				: "No such student exists or is already active.");
 	}
 
 	// Helper: Print courses in tabular format

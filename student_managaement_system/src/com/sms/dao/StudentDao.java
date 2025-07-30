@@ -45,13 +45,13 @@ public class StudentDao {
 
 	public List<Course> readAllCourses(int studentId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+			System.out.println("No such student exists.");
 			return new ArrayList<>();
 		}
 
 		List<Course> courses = new ArrayList<>();
-		String sql = "SELECT c.course_id, c.course_name, c.no_of_semester " + "FROM courses c "
-				+ "JOIN student_courses sc ON c.course_id = sc.course_id " + "WHERE sc.student_id = ?";
+		String sql = "SELECT c.course_id, c.course_name, c.no_of_semester, c.total_fee "
+				+ "FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id " + "WHERE sc.student_id = ?";
 
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
@@ -62,9 +62,11 @@ public class StudentDao {
 				course.setCourse_id(result.getInt("course_id"));
 				course.setCourse_name(result.getString("course_name"));
 				course.setNo_of_semester(result.getInt("no_of_semester"));
+				course.setTotal_fee(result.getBigDecimal("total_fee"));
 				courses.add(course);
 			}
 		} catch (SQLException e) {
+			System.out.println("Error retrieving courses: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -91,11 +93,10 @@ public class StudentDao {
 
 	public boolean assignCourseToStudent(int studentId, int courseId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
-			return false;
+			return false; // Message handled in searchStudentById
 		}
 		if (courseId <= 0 || getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			System.out.println("Invalid or non-existent course ID: " + courseId);
+			System.out.println("No such course exists.");
 			return false;
 		}
 		if (readAllCourses(studentId).stream().anyMatch(c -> c.getCourse_id() == courseId)) {
@@ -110,6 +111,7 @@ public class StudentDao {
 			int affectedRows = pstmt.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {
+			System.out.println("Error assigning course: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
@@ -117,7 +119,7 @@ public class StudentDao {
 
 	public Student searchStudentById(int studentId) {
 		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
+			System.out.println("No such student exists.");
 			return null;
 		}
 
@@ -129,7 +131,6 @@ public class StudentDao {
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
 			ResultSet result = pstmt.executeQuery();
-
 			if (result.next()) {
 				student = new Student();
 				student.setStudent_id(result.getInt("student_id"));
@@ -140,8 +141,11 @@ public class StudentDao {
 				student.setMobile_no(result.getString("mobile_no"));
 				student.setAge(result.getInt("age"));
 				student.setIs_active(result.getBoolean("is_active"));
+			} else {
+				System.out.println("No such student exists.");
 			}
 		} catch (SQLException e) {
+			System.out.println("Error retrieving student: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -150,8 +154,7 @@ public class StudentDao {
 
 	public boolean deleteStudentById(int studentId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
-			return false;
+			return false; // Message handled in searchStudentById
 		}
 		boolean success = false;
 		String updateStudent = "UPDATE students SET is_active = false WHERE student_id = ?";
@@ -167,28 +170,24 @@ public class StudentDao {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			}
-			// Attempt to update profiles, ignore if is_active column doesn't exist
 			try (PreparedStatement pstmt = connection.prepareStatement(updateProfile)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println("Skipping profile update (is_active may not exist): " + e.getMessage());
 			}
-			// Attempt to update student_courses
 			try (PreparedStatement pstmt = connection.prepareStatement(updateStudentCourses)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println("Skipping student_courses update (is_active may not exist): " + e.getMessage());
 			}
-			// Attempt to update fees
 			try (PreparedStatement pstmt = connection.prepareStatement(updateFees)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
 				System.out.println("Skipping fees update (is_active may not exist): " + e.getMessage());
 			}
-			// Attempt to update student_subjects
 			try (PreparedStatement pstmt = connection.prepareStatement(updateStudentSubjects)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
@@ -196,8 +195,7 @@ public class StudentDao {
 				System.out.println("Skipping student_subjects update (is_active may not exist): " + e.getMessage());
 			}
 			connection.commit();
-			System.out.println("Student ID " + studentId + " and related data marked as inactive.");
-			success = true;
+			return true;
 		} catch (SQLException e) {
 			System.out.println("Failed to mark student ID " + studentId + " as inactive: " + e.getMessage());
 			try {
@@ -206,6 +204,7 @@ public class StudentDao {
 				ex.printStackTrace();
 			}
 			e.printStackTrace();
+			return false;
 		} finally {
 			try {
 				connection.setAutoCommit(true);
@@ -213,26 +212,24 @@ public class StudentDao {
 				ex.printStackTrace();
 			}
 		}
-		return success;
 	}
 
 	public boolean restoreStudentById(int studentId) {
 		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
+			System.out.println("No such student exists.");
 			return false;
 		}
 
-		// Check if student exists and is inactive
 		String checkSql = "SELECT is_active FROM students WHERE student_id = ?";
 		try (PreparedStatement pstmt = connection.prepareStatement(checkSql)) {
 			pstmt.setInt(1, studentId);
 			ResultSet rs = pstmt.executeQuery();
 			if (!rs.next()) {
-				System.out.println("Student ID " + studentId + " does not exist.");
+				System.out.println("No such student exists.");
 				return false;
 			}
 			if (rs.getBoolean("is_active")) {
-				System.out.println("Student ID " + studentId + " is already active.");
+				System.out.println("No such student exists or is already active.");
 				return false;
 			}
 		} catch (SQLException e) {
@@ -245,15 +242,9 @@ public class StudentDao {
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
 			int affectedRows = pstmt.executeUpdate();
-			if (affectedRows > 0) {
-				System.out.println("Student ID " + studentId + " restored successfully.");
-				return true;
-			} else {
-				System.out.println("Failed to restore student ID " + studentId + ".");
-				return false;
-			}
+			return affectedRows > 0;
 		} catch (SQLException e) {
-			System.out.println("Failed to restore student ID " + studentId + ": " + e.getMessage());
+			System.out.println("Error restoring student: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}

@@ -19,18 +19,18 @@ public class Main {
 			System.out.println("1. Student Management");
 			System.out.println("2. Teacher Management");
 			System.out.println("3. Fees Management");
+			System.out.println("4. Course Management"); // Added missing label
 			System.out.println("0. Exit");
 			System.out.println("=============================================");
-			System.out.print("Enter your choice (0-3): ");
+			System.out.print("Enter your choice (0-4): ");
 
 			if (!scanner.hasNextInt()) {
 				System.out.println("❗ Please enter a valid number.");
-				scanner.next(); // clear invalid input
+				scanner.next(); // flush invalid input
 				continue;
 			}
-
 			choice = scanner.nextInt();
-
+			
 			switch (choice) {
 			case 1 -> {
 				StudentMain s = new StudentMain();
@@ -40,7 +40,6 @@ public class Main {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
-
 			case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
@@ -51,10 +50,9 @@ public class Main {
 			}
 			case 0 -> {
 				System.out.println("Exiting Student Management System... Thank you!");
-				scanner.close();
 				System.exit(0);
 			}
-			default -> System.out.println("Invalid choice! Please enter a number between 0 and 3.");
+			default -> System.out.println("Invalid choice! Please enter a number between 0 and 4.");
 			}
 		}
 	}

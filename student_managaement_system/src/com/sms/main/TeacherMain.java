@@ -26,6 +26,7 @@ public class TeacherMain {
 			choice = scanner.nextInt();
 
 			switch (choice) {
+
 			case 1 -> controller.addTeacher();
 			case 2 -> controller.viewTeachers();
 			case 3 -> controller.deleteTeacher();
@@ -38,6 +39,5 @@ public class TeacherMain {
 			default -> System.out.println("Invalid choice!");
 			}
 		} while (choice != 0);
-
 	}
 }

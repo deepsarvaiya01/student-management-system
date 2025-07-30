@@ -60,20 +60,6 @@ public class FeeDao {
 
 	// View Fees By Student
 	public List<Fee> getFeesByStudent(int studentId) {
-
-		String checkStudentSql = "SELECT COUNT(*) FROM students WHERE student_id = ?";
-		try (PreparedStatement pstmt = connection.prepareStatement(checkStudentSql)) {
-			pstmt.setInt(1, studentId);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next() && rs.getInt(1) == 0) {
-				System.out.println("Invalid or non-existent student ID: " + studentId);
-				return new ArrayList<>();
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return new ArrayList<>();
-		}
-
 		List<Fee> fees = new ArrayList<>();
 		String sql = "SELECT f.fee_id, f.student_course_id, f.paid_amount, f.pending_amount, "
 				+ "f.total_fee, f.last_payment_date, s.name as student_name, c.course_name, "
@@ -102,6 +88,7 @@ public class FeeDao {
 				fees.add(fee);
 			}
 		} catch (SQLException e) {
+			System.out.println("Error retrieving fees: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return fees;
@@ -326,17 +313,15 @@ public class FeeDao {
 			pstmt.setInt(1, feeId);
 			ResultSet rs = pstmt.executeQuery();
 			if (!rs.next()) {
-				System.out.println("Invalid or non-existent fee ID: " + feeId);
 				return false;
 			}
 			BigDecimal pendingAmount = rs.getBigDecimal("pending_amount");
 			if (paymentAmount == null || paymentAmount.compareTo(BigDecimal.ZERO) <= 0
 					|| paymentAmount.compareTo(pendingAmount) > 0) {
-				System.out.println(
-						"Invalid payment amount (must be positive and not exceed pending: " + pendingAmount + ").");
 				return false;
 			}
 		} catch (SQLException e) {
+			System.out.println("Error checking fee: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
@@ -349,12 +334,70 @@ public class FeeDao {
 			pstmt.setBigDecimal(2, paymentAmount);
 			pstmt.setInt(3, feeId);
 			pstmt.setBigDecimal(4, paymentAmount);
-
 			int affectedRows = pstmt.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {
+			System.out.println("Error updating fee: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public boolean updateFeePaymentByStudent(int studentId, BigDecimal paymentAmount) {
+		List<Fee> fees = getFeesByStudent(studentId);
+		if (fees.isEmpty()) {
+			return false;
+		}
+
+		BigDecimal remainingPayment = paymentAmount;
+		boolean success = false;
+		try {
+			connection.setAutoCommit(false);
+			String sql = "UPDATE fees SET paid_amount = paid_amount + ?, " + "pending_amount = pending_amount - ?, "
+					+ "last_payment_date = CURRENT_DATE " + "WHERE fee_id = ? AND pending_amount >= ?";
+
+			for (Fee fee : fees) {
+				if (remainingPayment.compareTo(BigDecimal.ZERO) <= 0) {
+					break;
+				}
+				BigDecimal pending = fee.getPendingAmount();
+				if (pending.compareTo(BigDecimal.ZERO) <= 0) {
+					continue;
+				}
+				BigDecimal amountToApply = remainingPayment.min(pending);
+				try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+					pstmt.setBigDecimal(1, amountToApply);
+					pstmt.setBigDecimal(2, amountToApply);
+					pstmt.setInt(3, fee.getFeeId());
+					pstmt.setBigDecimal(4, amountToApply);
+					int affectedRows = pstmt.executeUpdate();
+					if (affectedRows > 0) {
+						success = true;
+						remainingPayment = remainingPayment.subtract(amountToApply);
+					}
+				}
+			}
+			if (success) {
+				connection.commit();
+			} else {
+				connection.rollback();
+			}
+		} catch (SQLException e) {
+			System.out.println("Error updating fees for student ID " + studentId + ": " + e.getMessage());
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				connection.setAutoCommit(true);
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
+		}
+		return success;
 	}
 }

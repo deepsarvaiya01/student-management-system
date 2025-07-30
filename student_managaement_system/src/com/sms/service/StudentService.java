@@ -21,8 +21,8 @@ public class StudentService {
 	}
 
 	public List<Course> readAllCourses(int studentId) {
-		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+		if (studentDao.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return new ArrayList<>();
 		}
 		return studentDao.readAllCourses(studentId);
@@ -33,12 +33,12 @@ public class StudentService {
 	}
 
 	public boolean assignCourseToStudent(int studentId, int courseId) {
-		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+		if (studentDao.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return false;
 		}
 		if (courseId <= 0 || getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			System.out.println("Invalid or non-existent course ID: " + courseId);
+			System.out.println("No such course exists.");
 			return false;
 		}
 		if (readAllCourses(studentId).stream().anyMatch(c -> c.getCourse_id() == courseId)) {
@@ -49,16 +49,12 @@ public class StudentService {
 	}
 
 	public Student searchStudentById(int studentId) {
-		if (studentId <= 0) {
-			System.out.println("Invalid student ID: " + studentId);
-			return null;
-		}
 		return studentDao.searchStudentById(studentId);
 	}
 
 	public boolean deleteStudentById(int studentId) {
-		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+		if (studentDao.searchStudentById(studentId) == null) {
+			System.out.println("No such student exists.");
 			return false;
 		}
 		return studentDao.deleteStudentById(studentId);

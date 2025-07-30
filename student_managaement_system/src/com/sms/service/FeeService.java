@@ -27,8 +27,14 @@ public class FeeService {
 
 	// View Fees By Student
 	public List<Fee> getFeesByStudent(int studentId) {
-		if (studentId <= 0 || getAllStudents().stream().noneMatch(s -> s.getStudent_id() == studentId)) {
-			System.out.println("Invalid or non-existent student ID: " + studentId);
+		StudentService studentService;
+		try {
+			studentService = new StudentService();
+		} catch (SQLException e) {
+			System.out.println("Error accessing student service: " + e.getMessage());
+			return new ArrayList<>();
+		}
+		if (studentId <= 0 || studentService.searchStudentById(studentId) == null) {
 			return new ArrayList<>();
 		}
 		return feeDao.getFeesByStudent(studentId);
@@ -77,20 +83,10 @@ public class FeeService {
 	}
 
 	// Update fee payment
-	public boolean updateFeePayment(int feeId, BigDecimal paymentAmount) {
-		if (feeId <= 0 || getAllFees().stream().noneMatch(f -> f.getFeeId() == feeId)) {
-			System.out.println("Invalid or non-existent fee ID: " + feeId);
-			return false;
-		}
-		if (paymentAmount == null || paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
-			System.out.println("Invalid payment amount (must be positive).");
-			return false;
-		}
-		Fee fee = getAllFees().stream().filter(f -> f.getFeeId() == feeId).findFirst().orElse(null);
-		if (fee != null && paymentAmount.compareTo(fee.getPendingAmount()) > 0) {
-			System.out.println("Payment amount exceeds pending amount: " + fee.getPendingAmount());
-			return false;
-		}
-		return feeDao.updateFeePayment(feeId, paymentAmount);
+	public boolean updateFeePayment(int studentId, BigDecimal paymentAmount) {
+	    if (paymentAmount == null || paymentAmount.compareTo(BigDecimal.ZERO) <= 0) {
+	        return false;
+	    }
+	    return feeDao.updateFeePaymentByStudent(studentId, paymentAmount);
 	}
 }
