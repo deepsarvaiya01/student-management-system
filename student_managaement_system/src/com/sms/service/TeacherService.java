@@ -2,6 +2,7 @@ package com.sms.service;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.sms.dao.TeacherDao;
 import com.sms.model.Teacher;
@@ -35,16 +36,20 @@ public class TeacherService {
 		return dao.removeSubject(teacherId, subjectId);
 	}
 
-	public List<String> viewAssignedSubjects(int teacherId) {
+	public Map<Integer, String> viewAssignedSubjects(int teacherId) {
 		return dao.getAssignedSubjects(teacherId);
 	}
 
-	public List<String> getAssignedSubjectsForTeacher(int teacherId) {
+
+	public Map<Integer, String> getAssignedSubjectsForTeacher(int teacherId) {
 		return dao.getAssignedSubjects(teacherId);
 	}
 
 	public Teacher getTeacherById(int id) {
 		return dao.getTeacherById(id);
+	}
+	public Map<Integer, String> getAvailableSubjects(int teacherId) {
+		return dao.fetchAvailableSubjectsForTeacher(teacherId);
 	}
 
 }

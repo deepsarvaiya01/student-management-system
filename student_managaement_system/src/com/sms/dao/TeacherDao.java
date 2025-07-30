@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.sms.database.DBConnection;
 import com.sms.model.Teacher;
@@ -19,17 +21,30 @@ public class TeacherDao {
 		this.connection = DBConnection.connect();
 	}
 
-	public boolean addTeacher(Teacher teacher) {
+	public boolean addTeacher(Teacher t) {
 		String sql = "INSERT INTO teachers (name, qualification, experience) VALUES (?, ?, ?)";
-		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-			ps.setString(1, teacher.getName());
-			ps.setString(2, teacher.getQualification());
-			ps.setDouble(3, teacher.getExperience());
-			return ps.executeUpdate() > 0;
+		try {
+			Connection conn = DBConnection.connect();
+			PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+			stmt.setString(1, t.getName());
+			stmt.setString(2, t.getQualification());
+			stmt.setDouble(3, t.getExperience());
+
+			int rows = stmt.executeUpdate();
+			if (rows > 0) {
+				try (ResultSet rs = stmt.getGeneratedKeys()) {
+					if (rs.next()) {
+						int generatedId = rs.getInt(1);
+						t.setTeacherId(generatedId); 
+					}
+				}
+				return true;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			return false;
 		}
+		return false;
 	}
 
 	public List<Teacher> getAllTeachers() {
@@ -64,7 +79,7 @@ public class TeacherDao {
 			ps.setInt(2, teacherId);
 			return ps.executeUpdate() > 0;
 		} catch (SQLException e) {
-			System.out.println("⚠ Subject might already be assigned.");
+			System.out.println("Subject Assigment Failed..");
 			return false;
 		}
 	}
@@ -81,14 +96,15 @@ public class TeacherDao {
 		}
 	}
 
-	public List<String> getAssignedSubjects(int teacherId) {
-		List<String> subjects = new ArrayList<>();
-		String sql = "SELECT s.subject_name FROM subjects s JOIN subject_teachers st ON s.subject_id = st.subject_id WHERE st.teacher_id = ?";
+	public Map<Integer, String> getAssignedSubjects(int teacherId) {
+		Map<Integer, String> subjects = new HashMap<>();
+		String sql = "SELECT s.subject_id, s.subject_name FROM subjects s "
+				+ "JOIN subject_teachers st ON s.subject_id = st.subject_id " + "WHERE st.teacher_id = ?";
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 			ps.setInt(1, teacherId);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				subjects.add(rs.getString("subject_name"));
+				subjects.put(rs.getInt("subject_id"), rs.getString("subject_name"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -111,6 +127,27 @@ public class TeacherDao {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	public Map<Integer, String> fetchAvailableSubjectsForTeacher(int teacherId) {
+		Map<Integer, String> map = new HashMap<>();
+
+		try {
+			Connection con = DBConnection.connect();
+			PreparedStatement ps = con
+					.prepareStatement("SELECT subject_id, subject_name FROM subjects WHERE subject_id NOT IN "
+							+ "(SELECT subject_id FROM subject_teachers WHERE teacher_id = ?)");
+
+			ps.setInt(1, teacherId);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				map.put(rs.getInt("subject_id"), rs.getString("subject_name"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return map;
 	}
 
 }

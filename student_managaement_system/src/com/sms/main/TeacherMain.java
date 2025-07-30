@@ -38,6 +38,6 @@ public class TeacherMain {
 			default -> System.out.println("Invalid choice!");
 			}
 		} while (choice != 0);
-
+		scanner.close();
 	}
 }
