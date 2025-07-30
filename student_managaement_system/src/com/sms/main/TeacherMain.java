@@ -24,8 +24,10 @@ public class TeacherMain {
 			System.out.println("0. Back");
 			System.out.print("Enter choice: ");
 			choice = scanner.nextInt();
+			scanner.nextLine();
 
 			switch (choice) {
+
 			case 1 -> controller.addTeacher();
 			case 2 -> controller.viewTeachers();
 			case 3 -> controller.deleteTeacher();
