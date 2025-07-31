@@ -13,7 +13,7 @@ public class Main {
 		Scanner scanner = new Scanner(System.in);
 		int choice;
 
-		while (true) {
+		do {
 			System.out.println("\n╔══════════════════════════════════════════╗");
 			System.out.println("║       STUDENT MANAGEMENT SYSTEM          ║");
 			System.out.println("╠══════════════════════════════════════════╣");
@@ -25,40 +25,39 @@ public class Main {
 			System.out.println("╚══════════════════════════════════════════╝");
 			System.out.print("👉 Enter your choice (0-4): ");
 
-			if (!scanner.hasNextInt()) {
-				System.out.println("❗ Invalid input. Please enter a number between 0 and 5.");
-				scanner.next(); // flush the invalid input
-				continue;
+			while (!scanner.hasNextInt()) {
+				System.out.println("❗ Invalid input. Please enter a number between 0 and 4.");
+				scanner.next(); // discard invalid input
+				System.out.print("👉 Enter your choice (0-4): ");
 			}
 
 			choice = scanner.nextInt();
 
 			switch (choice) {
-			case 1 -> {
-				StudentMain s = new StudentMain();
-				s.show();
+				case 1 -> {
+					StudentMain s = new StudentMain();
+					s.show(); // Don't close scanner inside this method
+				}
+				case 2 -> {
+					TeacherMain t = new TeacherMain();
+					t.show();
+				}
+				case 3 -> {
+					FeeMain f = new FeeMain();
+					f.show();
+				}
+				case 4 -> {
+					CourseMain c = new CourseMain();
+					c.show();
+				}
+				case 0 -> {
+					System.out.println("✅ Exiting Student Management System... Thank you!");
+					break;
+				}
+				default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 4.");
 			}
-			case 2 -> {
-				TeacherMain t = new TeacherMain();
-				t.show();
-			}
-			case 3 -> {
-				FeeMain f = new FeeMain();
-				f.show();
-			}
-			case 4 -> {
-				CourseMain c = new CourseMain();
-				c.show();
+		} while (choice != 0);
 
-			}
-			case 0 -> {
-				System.out.println("✅ Exiting Student Management System... Thank you!");
-				System.out.println("Exiting Student Management System... Thank you!");
-				scanner.close();
-				System.exit(0);
-			}
-			default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 5.");
-			}
-		}
+		scanner.close(); // Only close at the very end
 	}
 }

@@ -38,7 +38,6 @@ public class SubjectMain {
 //                    break;
                 case "0":
                     System.out.println("Exiting Subject Management. Goodbye!");
-                    scanner.close();
                     System.exit(0);
                 default:
                     System.out.println("❗ Invalid choice. Please try again.");
