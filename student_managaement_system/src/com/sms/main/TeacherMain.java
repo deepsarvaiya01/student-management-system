@@ -25,6 +25,10 @@ public class TeacherMain {
 			System.out.println("║ 0. Back                                                ║");
 			System.out.println("╚════════════════════════════════════════════════════════╝");
 			System.out.print("👉 Enter your choice: ");
+<<<<<<< HEAD
+=======
+
+>>>>>>> f912da889b573caaba854d215dfb1f51ec6cdb61
 
 			try {
 				choice = scanner.nextInt();
