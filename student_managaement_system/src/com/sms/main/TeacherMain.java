@@ -43,6 +43,7 @@ public class TeacherMain {
 			case 5 -> controller.removeSubject();
 			case 6 -> controller.viewAssignedSubjects();
 			case 7 -> controller.searchTeacherById();
+			case 8 -> controller.restoreTeacher();
 
 			case 0 -> System.out.println("Returning to main menu.");
 			default -> System.out.println("Invalid input!");

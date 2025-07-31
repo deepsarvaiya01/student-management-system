@@ -29,6 +29,7 @@ public class Main {
 				System.out.println("❗ Invalid input. Please enter a number between 0 and 4.");
 				scanner.next(); // discard invalid input
 				System.out.print("👉 Enter your choice (0-4): ");
+
 			}
 
 			choice = scanner.nextInt();

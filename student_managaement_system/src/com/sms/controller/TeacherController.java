@@ -297,4 +297,46 @@ public class TeacherController {
 		System.out.printf("%-15s %-30s%n", "----------", "------------------------------");
 		subjectMap.forEach((id, name) -> System.out.printf("%-15d %-30s%n", id, name));
 	}
+
+	public void restoreTeacher() {
+		List<Teacher> list = service.fetchInactiveTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No inactive teachers found.");
+			return;
+		}
+
+		System.out.println("\n--- Inactive Teachers ---");
+		System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
+		System.out.println("---------------------------------------------------------------");
+		for (Teacher t : list) {
+			System.out.printf("%-5d %-20s %-20s %-10.1f%n", t.getTeacherId(), t.getName(), t.getQualification(),
+					t.getExperience());
+		}
+
+		System.out.print("\nEnter Teacher ID to restore: ");
+		try {
+			int id = scanner.nextInt();
+			scanner.nextLine();
+
+			boolean exists = list.stream().anyMatch(t -> t.getTeacherId() == id);
+			if (!exists) {
+				System.out.println("ID not found in inactive list.");
+				return;
+			}
+
+			if (id < 1) {
+				System.out.println("Invalid Input. returning.!");
+				return;
+			}
+
+			if (service.restoreTeacher(id)) {
+				System.out.println("Teacher restored successfully.");
+			} else {
+				System.out.println("Failed to restore. Invalid ID?");
+			}
+		} catch (Exception e) {
+			System.out.println("Invalid input. returning.!");
+		}
+	}
+
 }
