@@ -16,7 +16,7 @@ public class SubjectMain {
         	System.out.println("║ 1. Add Subject                            ║");
         	System.out.println("║ 2. View All Subjects                      ║");
         	System.out.println("║ 3. Update Subject                         ║");
-        	System.out.println("║ 4. Delete Subject                         ║");
+//        	System.out.println("║ 4. Delete Subject                         ║");
         	System.out.println("║ 0. Exit                                   ║");
         	System.out.println("╚═══════════════════════════════════════════╝");
         	System.out.print("👉 Enter your choice (0-4): ");
@@ -33,9 +33,9 @@ public class SubjectMain {
                 case "3":
                     subjectController.updateSubject();
                     break;
-                case "4":
-                    subjectController.deleteSubject();
-                    break;
+//                case "4":
+//                    subjectController.deleteSubject();
+//                    break;
                 case "0":
                     System.out.println("Exiting Subject Management. Goodbye!");
                     scanner.close();

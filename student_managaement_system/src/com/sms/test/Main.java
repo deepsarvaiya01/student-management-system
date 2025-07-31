@@ -14,7 +14,7 @@ public class Main {
 		int choice;
 
 		while (true) {
-			System.out.println("\n╔═════════════════════════════════════════╗");
+			System.out.println("\n╔══════════════════════════════════════════╗");
 			System.out.println("║       STUDENT MANAGEMENT SYSTEM          ║");
 			System.out.println("╠══════════════════════════════════════════╣");
 			System.out.println("║ 1. Student Management                    ║");

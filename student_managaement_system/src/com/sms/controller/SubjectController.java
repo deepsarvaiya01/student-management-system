@@ -11,12 +11,20 @@ public class SubjectController {
     private final SubjectService subjectService = new SubjectService();
     private final Scanner scanner = new Scanner(System.in);
 
-
     public void addSubject() {
         System.out.print("Enter subject name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter subject type (Mandatory/Elective): ");
-        String type = scanner.nextLine();
+        String name = scanner.nextLine().trim();
+
+        if (name.isEmpty()) {
+            System.out.println("❗ Subject name cannot be empty.");
+            return;
+        }
+
+        String type = getSubjectTypeFromUser();
+        if (type == null) {
+            System.out.println("❗ Invalid choice. Subject not added.");
+            return;
+        }
 
         int id = subjectService.addSubject(name, type);
         if (id != -1) {
@@ -46,7 +54,13 @@ public class SubjectController {
 
     public void updateSubject() {
         System.out.print("Enter subject ID to update: ");
-        int id = Integer.parseInt(scanner.nextLine());
+        int id;
+        try {
+            id = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("❗ Invalid subject ID.");
+            return;
+        }
 
         if (!subjectService.subjectExists(id)) {
             System.out.println("❗ Subject not found.");
@@ -54,9 +68,18 @@ public class SubjectController {
         }
 
         System.out.print("Enter new subject name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter new subject type (Mandatory/Elective): ");
-        String type = scanner.nextLine();
+        String name = scanner.nextLine().trim();
+
+        if (name.isEmpty()) {
+            System.out.println("❗ Subject name cannot be empty.");
+            return;
+        }
+
+        String type = getSubjectTypeFromUser();
+        if (type == null) {
+            System.out.println("❗ Invalid choice. Update cancelled.");
+            return;
+        }
 
         if (subjectService.updateSubject(id, name, type)) {
             System.out.println("✅ Subject updated.");
@@ -65,14 +88,44 @@ public class SubjectController {
         }
     }
 
-    public void deleteSubject() {
-        System.out.print("Enter subject ID to delete: ");
-        int id = Integer.parseInt(scanner.nextLine());
+//    public void deleteSubject() {
+//        System.out.print("Enter subject ID to delete: ");
+//        int id = null;
+//        try {
+//            id = Integer.parseInt(scanner.nextLine());
+//        } catch (NumberFormatException e) {
+//            System.out.println("❗ Invalid subject ID.");
+//            return;
+//        }
+//
+////        if (subjectService.deleteSubject(id)) {
+////            System.out.println("✅ Subject deleted (soft).");
+////        } else {
+////            System.out.println("❗ Failed to delete subject.");
+////        }
+//    }
 
-        if (subjectService.deleteSubject(id)) {
-            System.out.println("✅ Subject deleted (soft).");
-        } else {
-            System.out.println("❗ Failed to delete subject.");
+    // Reusable menu-driven method to get subject type
+    private String getSubjectTypeFromUser() {
+        while (true) {
+        	System.out.println("\n╔═══════════════════════════════╗");
+            System.out.println("║      SELECT SUBJECT TYPE      ║");
+            System.out.println("╠═══════════════════════════════╣");
+            System.out.println("║ 1. Mandatory                  ║");
+            System.out.println("║ 2. Elective                   ║");
+            System.out.println("╚═══════════════════════════════╝");
+            System.out.print("👉 Enter your choice (1-2): ");
+
+            String choice = scanner.nextLine().trim();
+            switch (choice) {
+                case "1":
+                    return "Mandatory";
+                case "2":
+                    return "Elective";
+                default:
+                    System.out.println("❗ Invalid choice. Please select 1 or 2.");
+            }
         }
     }
+
 }
