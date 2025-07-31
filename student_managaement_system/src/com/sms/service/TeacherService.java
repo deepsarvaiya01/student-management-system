@@ -25,7 +25,7 @@ public class TeacherService {
 
 	public boolean deleteTeacher(int id) {
 		if (!dao.isTeacherActive(id)) {
-			System.out.println("Teacher not found or already deleted.");
+//			System.out.println("Teacher not found or already deleted.");
 			return false;
 		}
 		return dao.softDeleteTeacher(id);

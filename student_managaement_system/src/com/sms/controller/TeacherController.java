@@ -25,15 +25,15 @@ public class TeacherController {
 		scanner.nextLine();
 		System.out.print("Enter Name: ");
 		String name = scanner.nextLine();
-		while (name.isBlank() || name.matches("\\d+")) {
-			System.out.print("Invalid name. It cannot be blank or only digits. Re-enter: ");
+		while (name.isBlank() || name.matches("\\d+") || name.matches("-\\d+")) {
+			System.out.print("Invalid name. Re-enter: ");
 			name = scanner.nextLine();
 		}
 
 		System.out.print("Enter Qualification: ");
 		String qualification = scanner.nextLine();
-		while (qualification.isBlank() || qualification.matches("\\d+")) {
-			System.out.print("Invalid qualification. It cannot be blank or only digits. Re-enter: ");
+		while (qualification.isBlank() || qualification.matches("\\d+") || name.matches("-\\d+")) {
+			System.out.print("Invalid qualification. Re-enter: ");
 			qualification = scanner.nextLine();
 		}
 
@@ -55,13 +55,16 @@ public class TeacherController {
 		}
 
 		printSubjectsTable("Available Subjects:", availableSubjects);
-		System.out.print("Enter Subject ID to assign: ");
+		System.out.print("Enter Subject ID to assign or 0 assign later: ");
 		int subjectId = scanner.nextInt();
-
-		if (service.assignSubject(teacherId, subjectId)) {
-			System.out.println("Subject assigned to the teacher.");
+		if (subjectId > 0) {
+			if (service.assignSubject(teacherId, subjectId)) {
+				System.out.println("Subject assigned to the teacher.");
+			} else {
+				System.out.println("Assignment failed. Invalid ID or already assigned.");
+			}
 		} else {
-			System.out.println("Assignment failed. Invalid ID or already assigned.");
+			System.out.println("subject not assigned now.");
 		}
 	}
 
@@ -85,112 +88,189 @@ public class TeacherController {
 	}
 
 	public void deleteTeacher() {
+		List<Teacher> list = service.fetchAllTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No teachers found.");
+			return;
+		}
 		System.out.print("Enter Teacher ID to delete: ");
-		int id = scanner.nextInt();
-		if (service.deleteTeacher(id)) {
-			System.out.println("Teacher deleted.");
-		} else {
-			System.out.println("Invalid Teacher ID or already deleted.");
+		try {
+			int id = scanner.nextInt();
+			if (id < 1) {
+				System.out.println("Invalid ID. ID must be a positive number.");
+				return;
+			}
+
+			if (service.deleteTeacher(id)) {
+				System.out.println("Teacher deleted.");
+			} else {
+				System.out.println("Invalid Teacher ID or already deleted.");
+			}
+		} catch (Exception e) {
+			System.out.println("Invalid input. returning.!");
+			scanner.nextLine();
+			return;
 		}
 	}
 
 	public void assignSubject() {
-		System.out.print("Enter Teacher ID: ");
-		int teacherId = scanner.nextInt(); // custom safe int reader
-		if (!service.isTeacherActive(teacherId)) {
-			System.out.println("This teacher is inactive or does not exist.");
+
+		List<Teacher> list = service.fetchAllTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No teachers found.");
 			return;
 		}
-		if (service.viewAssignedSubjects(teacherId).size() >= 3) {
-			System.out.println("This teacher already has 3 subjects assigned.");
-			return;
-		}
+		try {
+			System.out.print("Enter Teacher ID: ");
+			int teacherId = scanner.nextInt();
 
-		Map<Integer, String> availableSubjects = service.getAvailableSubjects(teacherId);
-		if (availableSubjects.isEmpty()) {
-			System.out.println("No available subjects left to assign.");
-			return;
-		}
-
-		printSubjectsTable("Available Subjects:", availableSubjects);
-
-		int subjectId;
-		while (true) {
-			System.out.print("Enter Subject ID to assign: ");
-			if (scanner.hasNextInt()) {
-				subjectId = scanner.nextInt();
-				if (availableSubjects.containsKey(subjectId)) {
-					break; // valid input
-				} else {
-					System.out.println("Invalid Subject ID. Choose from the list above.");
-				}
-			} else {
-				System.out.println("Invalid input. Please enter a number.");
-				scanner.next(); // discard invalid token
+			if (teacherId < 0) {
+				System.out.println("Invalid Id. returning.");
+				return;
 			}
-		}
+			if (!service.isTeacherActive(teacherId)) {
+				System.out.println("This teacher is inactive or does not exist.");
+				return;
+			}
+			if (service.viewAssignedSubjects(teacherId).size() >= 3) {
+				System.out.println("This teacher already has 3 subjects assigned.");
+				return;
+			}
 
-		if (service.assignSubject(teacherId, subjectId)) {
-			System.out.println("Subject assigned.");
-		} else {
-			System.out.println("Assignment failed. Already assigned or invalid ID.");
+			Map<Integer, String> availableSubjects = service.getAvailableSubjects(teacherId);
+			if (availableSubjects.isEmpty()) {
+				System.out.println("No available subjects left to assign.");
+				return;
+			}
+
+			printSubjectsTable("Available Subjects:", availableSubjects);
+
+			int subjectId;
+			while (true) {
+				System.out.print("Enter Subject ID to assign: ");
+				if (scanner.hasNextInt()) {
+					subjectId = scanner.nextInt();
+					if (availableSubjects.containsKey(subjectId)) {
+						break; // valid input
+					} else {
+						System.out.println("Invalid Subject ID. Choose from the list above.");
+					}
+				} else {
+					System.out.println("Invalid input. Please enter a number.");
+					scanner.next(); // discard invalid token
+				}
+			}
+
+			if (service.assignSubject(teacherId, subjectId)) {
+				System.out.println("Subject assigned.");
+			} else {
+				System.out.println("Assignment failed. Already assigned or invalid ID.");
+			}
+		} catch (Exception e) {
+			System.out.println("Something went wrong. returning.!");
+			scanner.nextLine();
 		}
 	}
 
 	public void removeSubject() {
-		System.out.print("Enter Teacher ID: ");
-		int teacherId = scanner.nextInt();
-		if (!service.isTeacherActive(teacherId)) {
-			System.out.println("This teacher is inactive or does not exist.");
+
+		List<Teacher> list = service.fetchAllTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No teachers found.");
 			return;
 		}
+		try {
+			System.out.print("Enter Teacher ID: ");
+			int teacherId = scanner.nextInt();
+			if (teacherId < 1) {
+				System.out.println("Invalid Id . returning.!");
+				return;
+			}
+			if (!service.isTeacherActive(teacherId)) {
+				System.out.println("This teacher is inactive or does not exist.");
+				return;
+			}
 
-		Map<Integer, String> subjects = service.viewAssignedSubjects(teacherId);
-		if (subjects.isEmpty()) {
-			System.out.println("No subjects assigned to this teacher.");
-			return;
-		}
+			Map<Integer, String> subjects = service.viewAssignedSubjects(teacherId);
+			if (subjects.isEmpty()) {
+				System.out.println("No subjects assigned to this teacher.");
+				return;
+			}
 
-		printSubjectsTable("Assigned Subjects:", subjects);
-		System.out.print("Enter Subject ID to remove: ");
-		int subjectId = scanner.nextInt();
+			printSubjectsTable("Assigned Subjects:", subjects);
+			System.out.print("Enter Subject ID to remove: ");
+			int subjectId = scanner.nextInt();
 
-		if (service.removeSubject(teacherId, subjectId)) {
-			System.out.println("Subject removed.");
-		} else {
-			System.out.println("Failed to remove subject.");
+			if (service.removeSubject(teacherId, subjectId)) {
+				System.out.println("Subject removed.");
+			} else {
+				System.out.println("Failed to remove subject.");
+			}
+		} catch (Exception e) {
+			System.out.println("Invalid input. returning.!");
+			scanner.nextLine();
+
 		}
 	}
 
 	public void viewAssignedSubjects() {
-		System.out.print("Enter Teacher ID: ");
-		int id = scanner.nextInt();
-		if (!service.isTeacherActive(id)) {
-			System.out.println("This teacher is inactive or does not exist.");
+		List<Teacher> list = service.fetchAllTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No teachers found.");
 			return;
 		}
+		try {
+			System.out.print("Enter Teacher ID: ");
+			int id = scanner.nextInt();
+			if (id < 1) {
+				System.out.println("Invalid Input. returning.!");
+				return;
+			}
+			if (!service.isTeacherActive(id)) {
+				System.out.println("This teacher is inactive or does not exist.");
+				return;
+			}
 
-		Map<Integer, String> subjects = service.viewAssignedSubjects(id);
-		printSubjectsTable("Assigned Subjects:", subjects);
+			Map<Integer, String> subjects = service.viewAssignedSubjects(id);
+			printSubjectsTable("Assigned Subjects:", subjects);
+		} catch (Exception e) {
+			System.out.println("Invalid input. returning.!");
+			scanner.nextLine();
+		}
 	}
 
 	public void searchTeacherById() {
-		System.out.print("Enter Teacher ID to search: ");
-		int id = scanner.nextInt();
-
-		Teacher teacher = service.getTeacherById(id);
-		if (teacher == null || !service.isTeacherActive(id)) {
-			System.out.println("No active teacher found with ID: " + id);
+		List<Teacher> list = service.fetchAllTeachers();
+		if (list.isEmpty()) {
+			System.out.println("No teachers found.");
 			return;
 		}
+		try {
+			System.out.print("Enter Teacher ID to search: ");
+			int id = scanner.nextInt();
 
-		System.out.println("\nTeacher Details:");
-		System.out.printf("%-10s %-20s %-20s %-15s%n", "ID", "Name", "Qualification", "Experience");
-		System.out.printf("%-10d %-20s %-20s %-15.1f%n", teacher.getTeacherId(), teacher.getName(),
-				teacher.getQualification(), teacher.getExperience());
+			if (id < 1) {
+				System.out.println("Invalid Input. returning.!");
+				return;
+			}
 
-		Map<Integer, String> subjects = service.viewAssignedSubjects(id);
-		printSubjectsTable("Assigned Subjects:", subjects);
+			Teacher teacher = service.getTeacherById(id);
+			if (teacher == null || !service.isTeacherActive(id)) {
+				System.out.println("No active teacher found with ID: " + id);
+				return;
+			}
+
+			System.out.println("\nTeacher Details:");
+			System.out.printf("%-10s %-20s %-20s %-15s%n", "ID", "Name", "Qualification", "Experience");
+			System.out.printf("%-10d %-20s %-20s %-15.1f%n", teacher.getTeacherId(), teacher.getName(),
+					teacher.getQualification(), teacher.getExperience());
+
+			Map<Integer, String> subjects = service.viewAssignedSubjects(id);
+			printSubjectsTable("Assigned Subjects:", subjects);
+		} catch (Exception e) {
+			System.out.println("Invalid input. returning.!");
+			scanner.nextLine();
+		}
 	}
 
 	private double readDouble() {
@@ -198,7 +278,7 @@ public class TeacherController {
 		while (true) {
 			while (!scanner.hasNextDouble()) {
 				System.out.print("Invalid input. Enter a valid number: ");
-				scanner.next(); // consume invalid token
+				scanner.next();
 			}
 			value = scanner.nextDouble();
 			if (value >= 0)

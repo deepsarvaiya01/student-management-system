@@ -22,7 +22,12 @@ public class TeacherMain {
 			System.out.println("7. Search teacher by ID");
 			System.out.println("0. Back");
 			System.out.print("Enter choice: ");
-			choice = scanner.nextInt();
+
+			try {
+				choice = scanner.nextInt();
+			} catch (Exception e) {
+				choice = 10;
+			}
 			scanner.nextLine();
 
 			switch (choice) {
@@ -36,7 +41,7 @@ public class TeacherMain {
 			case 7 -> controller.searchTeacherById();
 
 			case 0 -> System.out.println("Returning to main menu.");
-			default -> System.out.println("Invalid choice!");
+			default -> System.out.println("Invalid input!");
 			}
 		} while (choice != 0);
 	}
