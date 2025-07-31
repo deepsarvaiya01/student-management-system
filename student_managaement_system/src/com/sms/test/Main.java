@@ -10,7 +10,6 @@ import com.sms.main.SubjectMain;
 import com.sms.main.TeacherMain;
 
 public class Main {
-
 	public static void main(String[] args) throws SQLException {
 		Scanner scanner = new Scanner(System.in);
 		int choice;
@@ -23,26 +22,27 @@ public class Main {
 			System.out.println("4. Course Management");
 			System.out.println("5. Subject Management");
 			System.out.println("0. Exit");
-			System.out.println("=============================================");
+			System.out.println("===============================================");
 			System.out.print("Enter your choice (0-5): ");
 
 			if (!scanner.hasNextInt()) {
-				System.out.println("❗ Please enter a valid number.");
-				scanner.next(); // flush invalid input
+				System.out.println("❗ Invalid input. Please enter a number between 0 and 5.");
+				scanner.next(); // flush the invalid input
 				continue;
 			}
+
 			choice = scanner.nextInt();
-			
+
 			switch (choice) {
 			case 1 -> {
 				StudentMain s = new StudentMain();
-				s.show();
+				s.show(scanner);
 			}
 			case 2 -> {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
-		case 3 -> {
+			case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
 			}
@@ -55,10 +55,11 @@ public class Main {
 				sm.show();
 			}
 			case 0 -> {
-				System.out.println("Exiting Student Management System... Thank you!");
+				System.out.println("✅ Exiting Student Management System... Thank you!");
+				scanner.close();
 				System.exit(0);
 			}
-			default -> System.out.println("Invalid choice! Please enter a number between 0 and 5.");
+			default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 5.");
 			}
 		}
 	}
