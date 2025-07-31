@@ -14,17 +14,6 @@ public class Main {
 		int choice;
 
 		while (true) {
-<<<<<<< HEAD
-			System.out.println("\n========== Student Management System ==========");
-			System.out.println("1. Student Management");
-			System.out.println("2. Teacher Management");
-			System.out.println("3. Fees Management");
-			System.out.println("4. Course Management");
-			System.out.println("5. Subject Management");
-			System.out.println("0. Exit");
-			System.out.println("===============================================");
-			System.out.print("Enter your choice (0-5): ");
-=======
 			System.out.println("\n╔═════════════════════════════════════════╗");
 			System.out.println("║       STUDENT MANAGEMENT SYSTEM          ║");
 			System.out.println("╠══════════════════════════════════════════╣");
@@ -35,8 +24,6 @@ public class Main {
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 			System.out.print("👉 Enter your choice (0-4): ");
-
->>>>>>> 5cfcef909d89289d9f8c1b70af3a589f425a91a2
 
 			if (!scanner.hasNextInt()) {
 				System.out.println("❗ Invalid input. Please enter a number between 0 and 5.");
@@ -49,7 +36,7 @@ public class Main {
 			switch (choice) {
 			case 1 -> {
 				StudentMain s = new StudentMain();
-				s.show(scanner);
+				s.show();
 			}
 			case 2 -> {
 				TeacherMain t = new TeacherMain();
@@ -62,14 +49,11 @@ public class Main {
 			case 4 -> {
 				CourseMain c = new CourseMain();
 				c.show();
-			
+
 			}
 			case 0 -> {
-<<<<<<< HEAD
 				System.out.println("✅ Exiting Student Management System... Thank you!");
-=======
 				System.out.println("Exiting Student Management System... Thank you!");
->>>>>>> 5cfcef909d89289d9f8c1b70af3a589f425a91a2
 				scanner.close();
 				System.exit(0);
 			}
