@@ -15,34 +15,35 @@ public class Main {
 		Scanner scanner = new Scanner(System.in);
 		int choice;
 
-		while (true) {
-			System.out.println("\n========== Student Management System ==========");
-			System.out.println("1. Student Management");
-			System.out.println("2. Teacher Management");
-			System.out.println("3. Fees Management");
-			System.out.println("4. Course Management");
-			System.out.println("5. Subject Management");
-			System.out.println("0. Exit");
-			System.out.println("=============================================");
-			System.out.print("Enter your choice (0-5): ");
+		do {
+			System.out.println("\n╔══════════════════════════════════════════╗");
+			System.out.println("║       STUDENT MANAGEMENT SYSTEM          ║");
+			System.out.println("╠══════════════════════════════════════════╣");
+			System.out.println("║ 1. Student Management                    ║");
+			System.out.println("║ 2. Teacher Management                    ║");
+			System.out.println("║ 3. Fees Management                       ║");
+			System.out.println("║ 4. Course Management                     ║");
+			System.out.println("║ 0. Exit                                  ║");
+			System.out.println("╚══════════════════════════════════════════╝");
+			System.out.print("👉 Enter your choice (0-4): ");
 
-			if (!scanner.hasNextInt()) {
-				System.out.println("Please enter a valid number.");
-				scanner.next(); // flush invalid input
-				continue;
+			while (!scanner.hasNextInt()) {
+				System.out.println("❗ Invalid input. Please enter a number between 0 and 4.");
+				scanner.next(); // discard invalid input
+				System.out.print("👉 Enter your choice (0-4): ");
 			}
 			choice = scanner.nextInt();
-			
+
 			switch (choice) {
 			case 1 -> {
 				StudentMain s = new StudentMain();
-				s.show();
+				s.show(); // Don't close scanner inside this method
 			}
 			case 2 -> {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
-		case 3 -> {
+			case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
 			}
@@ -50,16 +51,14 @@ public class Main {
 				CourseMain c = new CourseMain();
 				c.show();
 			}
-			case 5 -> {
-				SubjectMain sm = new SubjectMain();
-				sm.show();
-			}
 			case 0 -> {
-				System.out.println("Exiting Student Management System... Thank you!");
-				System.exit(0);
+				System.out.println("✅ Exiting Student Management System... Thank you!");
+				break;
 			}
-			default -> System.out.println("Invalid choice! Please enter a number between 0 and 5.");
+			default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 4.");
 			}
-		}
+		} while (choice != 0);
+
+		scanner.close(); // Only close at the very end
 	}
 }
