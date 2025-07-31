@@ -28,7 +28,7 @@ public class SubjectDAO {
     }
 
     public int addSubject(Subject subject) {
-        String sql = "INSERT INTO subjects (subject_name, subject_type, is_active) VALUES (?, ?, 1)";
+        String sql = "INSERT INTO subjects (subject_name, subject_type, is_active) VALUES (?, ?, ?)";
         try (Connection conn = DBConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
@@ -48,6 +48,7 @@ public class SubjectDAO {
         }
         return -1;
     }
+
 
     public Subject getSubjectById(int id) {
         String query = "SELECT * FROM subjects WHERE subject_id = ? AND is_active = 1";

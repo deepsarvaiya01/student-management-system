@@ -13,16 +13,19 @@ public class CourseMain {
         int choice;
 
         while (true) {
-            System.out.println("\n========== Course Management Menu ==========");
-            System.out.println("1. View All Courses");
-            System.out.println("2. Add New Course");
-            System.out.println("3. Add Subjects in A Course");
-            System.out.println("4. View Subjects of A Course");
-            System.out.println("5. Search A Course");
-            System.out.println("6. Delete A Course");
-            System.out.println("0. Exit");
-            System.out.println("=============================================");
-            System.out.print("Enter your choice (0-6): ");
+        	System.out.println("\n╔═══════════════════════════════════════════╗");
+        	System.out.println("║           COURSE MANAGEMENT MENU          ║");
+        	System.out.println("╠═══════════════════════════════════════════╣");
+        	System.out.println("║ 1. View All Courses                       ║");
+        	System.out.println("║ 2. Add New Course                         ║");
+        	System.out.println("║ 3. Add Subjects to a Course               ║");
+        	System.out.println("║ 4. View Subjects of a Course              ║");
+        	System.out.println("║ 5. Search a Course                        ║");
+        	System.out.println("║ 6. Delete a Course                        ║");
+        	System.out.println("║ 7. Manage Subjects                        ║");
+        	System.out.println("║ 0. Exit                                   ║");
+        	System.out.println("╚═══════════════════════════════════════════╝");
+        	System.out.print("👉 Enter your choice (0-7): ");
 
             if (!scanner.hasNextInt()) {
                 System.out.println("❗ Please enter a valid number.");
@@ -39,6 +42,8 @@ public class CourseMain {
                 case 4 -> controller.viewSubjectsOfCourse();
                 case 5 -> controller.searchCourse();
                 case 6 -> controller.deleteCourse();
+                case 7 -> {SubjectMain subjectMain = new SubjectMain();
+                		  subjectMain.show();}
                 case 0 -> {
                     System.out.println("Exiting Course Management... Thank you!");
                     return;
