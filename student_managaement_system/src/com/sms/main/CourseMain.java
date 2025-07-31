@@ -26,7 +26,7 @@ public class CourseMain {
 
             if (!scanner.hasNextInt()) {
                 System.out.println("❗ Please enter a valid number.");
-                scanner.next(); // Clear invalid input
+                scanner.next(); 
                 continue;
             }
 
