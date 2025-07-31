@@ -20,7 +20,6 @@ public class TeacherMain {
 			System.out.println("5. Remove Subject from Teacher");
 			System.out.println("6. View Assigned Subjects");
 			System.out.println("7. Search teacher by ID");
-
 			System.out.println("0. Back");
 			System.out.print("Enter choice: ");
 			choice = scanner.nextInt();
