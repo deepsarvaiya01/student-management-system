@@ -42,11 +42,7 @@ public class Main {
 				TeacherMain t = new TeacherMain();
 				t.show();
 			}
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/dhyey
-			case 3 -> {
+		case 3 -> {
 				FeeMain f = new FeeMain();
 				f.show();
 			}
