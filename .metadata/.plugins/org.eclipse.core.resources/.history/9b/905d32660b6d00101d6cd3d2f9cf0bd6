@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.sms.dao.FeeDao;
 import com.sms.model.Fee;
 import com.sms.model.Student;
 import com.sms.payment.processor.PaymentProcessor;
@@ -13,19 +12,10 @@ import com.sms.service.FeeService;
 
 public class payFeesUtils {
 	private FeeService feeService;
-	private FeeDao feeDao;
 	Scanner scanner = new Scanner(System.in);
-	
-	
 	public payFeesUtils() throws SQLException {
 		feeService = new FeeService();
-		feeDao = new FeeDao();
 	}
-	
-	
-	
-	
-	
 	public List<Student> showAndGetAllStudents() {
 		System.out.println("\n📚 Available Students:");
 		List<Student> students = feeService.getAllStudents();
@@ -103,7 +93,6 @@ public class payFeesUtils {
 			
 			if (paymentSuccess) {
 				
-				feeDao.updateFeePayment(studentId, paymentAmount);
 				System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
 				System.out.println("Updated fee status:");
 
