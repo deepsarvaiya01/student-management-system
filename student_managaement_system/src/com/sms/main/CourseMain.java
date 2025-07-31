@@ -46,7 +46,6 @@ public class CourseMain {
                 		  subjectMain.show();}
                 case 0 -> {
                     System.out.println("Exiting Course Management... Thank you!");
-                    scanner.close();
                     return;
                 }
                 default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 6.");

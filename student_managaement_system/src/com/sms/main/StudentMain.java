@@ -62,6 +62,6 @@ public class StudentMain {
 				System.out.println("Invalid choice. Try again.");
 			}
 		} while (choice != 0);
-		scanner.close();
+		
 	}
 }
