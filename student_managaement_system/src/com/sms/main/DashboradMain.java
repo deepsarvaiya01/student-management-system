@@ -4,11 +4,9 @@ import com.sms.controller.DashboardController;
 
 public class DashboradMain {
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
+	public void show() {
 		DashboardController controller = new DashboardController();
-        controller.showDashboard();
+		controller.showDashboard();
 	}
 
 }

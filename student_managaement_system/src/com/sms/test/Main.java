@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.sms.main.CourseMain;
+import com.sms.main.DashboradMain;
 import com.sms.main.FeeMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
@@ -21,13 +22,14 @@ public class Main {
 			System.out.println("║ 2. Teacher Management                    ║");
 			System.out.println("║ 3. Fees Management                       ║");
 			System.out.println("║ 4. Course Management                     ║");
+			System.out.println("║ 5. Dashboard                             ║");
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 			System.out.print("👉 Enter your choice (0-4): ");
 
 			while (!scanner.hasNextInt()) {
 				System.out.println("❗ Invalid input. Please enter a number between 0 and 4.");
-				scanner.next(); // discard invalid input
+				scanner.next(); 
 				System.out.print("👉 Enter your choice (0-4): ");
 			}
 
@@ -36,7 +38,7 @@ public class Main {
 			switch (choice) {
 				case 1 -> {
 					StudentMain s = new StudentMain();
-					s.show(); // Don't close scanner inside this method
+					s.show(); 
 				}
 				case 2 -> {
 					TeacherMain t = new TeacherMain();
@@ -50,6 +52,10 @@ public class Main {
 					CourseMain c = new CourseMain();
 					c.show();
 				}
+				case 5 -> {
+					DashboradMain d = new DashboradMain();
+					d.show();
+				}
 				case 0 -> {
 					System.out.println("✅ Exiting Student Management System... Thank you!");
 					break;
@@ -58,6 +64,6 @@ public class Main {
 			}
 		} while (choice != 0);
 
-		scanner.close(); // Only close at the very end
+		scanner.close(); 
 	}
 }
