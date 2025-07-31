@@ -45,7 +45,6 @@ public class StudentDao {
 
 	public List<Course> readAllCourses(int studentId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			System.out.println("No such student exists.");
 			return new ArrayList<>();
 		}
 
@@ -66,7 +65,6 @@ public class StudentDao {
 				courses.add(course);
 			}
 		} catch (SQLException e) {
-			System.out.println("Error retrieving courses: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -93,14 +91,12 @@ public class StudentDao {
 
 	public boolean assignCourseToStudent(int studentId, int courseId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			return false; // Message handled in searchStudentById
+			return false;
 		}
 		if (courseId <= 0 || getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			System.out.println("No such course exists.");
 			return false;
 		}
 		if (readAllCourses(studentId).stream().anyMatch(c -> c.getCourse_id() == courseId)) {
-			System.out.println("Course already assigned to student.");
 			return false;
 		}
 
@@ -111,7 +107,6 @@ public class StudentDao {
 			int affectedRows = pstmt.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {
-			System.out.println("Error assigning course: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
@@ -119,7 +114,6 @@ public class StudentDao {
 
 	public Student searchStudentById(int studentId) {
 		if (studentId <= 0) {
-			System.out.println("No such student exists.");
 			return null;
 		}
 
@@ -142,10 +136,9 @@ public class StudentDao {
 				student.setAge(result.getInt("age"));
 				student.setIs_active(result.getBoolean("is_active"));
 			} else {
-				System.out.println("No such student exists.");
+				return null;
 			}
 		} catch (SQLException e) {
-			System.out.println("Error retrieving student: " + e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -154,7 +147,7 @@ public class StudentDao {
 
 	public boolean deleteStudentById(int studentId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
-			return false; // Message handled in searchStudentById
+			return false;
 		}
 		boolean success = false;
 		String updateStudent = "UPDATE students SET is_active = false WHERE student_id = ?";
@@ -174,30 +167,29 @@ public class StudentDao {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Skipping profile update (is_active may not exist): " + e.getMessage());
+				// Skip profile update if is_active column doesn't exist
 			}
 			try (PreparedStatement pstmt = connection.prepareStatement(updateStudentCourses)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Skipping student_courses update (is_active may not exist): " + e.getMessage());
+				// Skip student_courses update if is_active column doesn't exist
 			}
 			try (PreparedStatement pstmt = connection.prepareStatement(updateFees)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Skipping fees update (is_active may not exist): " + e.getMessage());
+				// Skip fees update if is_active column doesn't exist
 			}
 			try (PreparedStatement pstmt = connection.prepareStatement(updateStudentSubjects)) {
 				pstmt.setInt(1, studentId);
 				pstmt.executeUpdate();
 			} catch (SQLException e) {
-				System.out.println("Skipping student_subjects update (is_active may not exist): " + e.getMessage());
+				// Skip student_subjects update if is_active column doesn't exist
 			}
 			connection.commit();
 			return true;
 		} catch (SQLException e) {
-			System.out.println("Failed to mark student ID " + studentId + " as inactive: " + e.getMessage());
 			try {
 				connection.rollback();
 			} catch (SQLException ex) {
@@ -216,7 +208,6 @@ public class StudentDao {
 
 	public boolean restoreStudentById(int studentId) {
 		if (studentId <= 0) {
-			System.out.println("No such student exists.");
 			return false;
 		}
 
@@ -225,15 +216,12 @@ public class StudentDao {
 			pstmt.setInt(1, studentId);
 			ResultSet rs = pstmt.executeQuery();
 			if (!rs.next()) {
-				System.out.println("No such student exists.");
 				return false;
 			}
 			if (rs.getBoolean("is_active")) {
-				System.out.println("No such student exists or is already active.");
 				return false;
 			}
 		} catch (SQLException e) {
-			System.out.println("Error checking student status: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
@@ -244,132 +232,90 @@ public class StudentDao {
 			int affectedRows = pstmt.executeUpdate();
 			return affectedRows > 0;
 		} catch (SQLException e) {
-			System.out.println("Error restoring student: " + e.getMessage());
 			e.printStackTrace();
 			return false;
 		}
 	}
 
 	public boolean addStudentWithProfileAndCourse(Student student, int courseId) {
-		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {
-			System.out.println("Invalid name (letters/spaces, max 50 chars).");
-			return false;
-		}
-		String checkGrSql = "SELECT COUNT(*) FROM students WHERE gr_number = ?";
-		try (PreparedStatement pstmt = connection.prepareStatement(checkGrSql)) {
-			pstmt.setInt(1, student.getGr_number());
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next() && rs.getInt(1) > 0) {
-				System.out.println("Duplicate GR number: " + student.getGr_number());
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (student.getGr_number() <= 0 || String.valueOf(student.getGr_number()).length() < 4
-				|| String.valueOf(student.getGr_number()).length() > 10) {
-			System.out.println("Invalid GR number (4-10 digits).");
-			return false;
-		}
-		String checkEmailSql = "SELECT COUNT(*) FROM students WHERE email = ?";
-		try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSql)) {
-			pstmt.setString(1, student.getEmail());
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next() && rs.getInt(1) > 0) {
-				System.out.println("Duplicate email: " + student.getEmail());
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-		if (student.getEmail() == null || !student.getEmail().matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-				|| student.getEmail().length() > 100) {
-			System.out.println("Invalid email.");
-			return false;
-		}
-		if (student.getCity() == null || !student.getCity().matches("[a-zA-Z ]{1,50}")) {
-			System.out.println("Invalid city (letters/spaces, max 50 chars).");
-			return false;
-		}
-		if (student.getMobile_no() == null || !student.getMobile_no().matches("\\d{10}")
-				|| student.getMobile_no().length() > 15) {
-			System.out.println("Invalid mobile number (10 digits).");
-			return false;
-		}
-		if (student.getAge() < 15 || student.getAge() > 100) {
-			System.out.println("Invalid age (15-100).");
-			return false;
-		}
-		String checkCourseSql = "SELECT COUNT(*) FROM courses WHERE course_id = ?";
-		try (PreparedStatement pstmt = connection.prepareStatement(checkCourseSql)) {
-			pstmt.setInt(1, courseId);
-			ResultSet rs = pstmt.executeQuery();
-			if (rs.next() && rs.getInt(1) == 0) {
-				System.out.println("Invalid course ID: " + courseId);
-				return false;
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-			return false;
-		}
-
-		boolean success = false;
-		String insertStudent = "INSERT INTO students (name, gr_number, email) VALUES (?, ?, ?)";
-		String insertProfile = "INSERT INTO profiles (student_id, city, mobile_no, age) VALUES (?, ?, ?, ?)";
-		String insertStudentCourse = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
 		try {
-			connection.setAutoCommit(false);
-			// Insert student
-			int studentId = -1;
-			try (PreparedStatement psStudent = connection.prepareStatement(insertStudent,
-					Statement.RETURN_GENERATED_KEYS)) {
-				psStudent.setString(1, student.getName());
-				psStudent.setInt(2, student.getGr_number());
-				psStudent.setString(3, student.getEmail());
-				int affectedRows = psStudent.executeUpdate();
-				if (affectedRows == 0)
-					throw new SQLException("Creating student failed, no rows affected.");
-				try (ResultSet generatedKeys = psStudent.getGeneratedKeys()) {
-					if (generatedKeys.next()) {
-						studentId = generatedKeys.getInt(1);
-					} else {
-						throw new SQLException("Creating student failed, no ID obtained.");
-					}
+			// Check for duplicate GR number
+			String checkGrSql = "SELECT COUNT(*) FROM students WHERE gr_number = ?";
+			try (PreparedStatement pstmt = connection.prepareStatement(checkGrSql)) {
+				pstmt.setInt(1, student.getGr_number());
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.next() && rs.getInt(1) > 0) {
+					return false; // Duplicate GR number
 				}
 			}
-			// Insert profile
-			try (PreparedStatement psProfile = connection.prepareStatement(insertProfile)) {
-				psProfile.setInt(1, studentId);
-				psProfile.setString(2, student.getCity());
-				psProfile.setString(3, student.getMobile_no());
-				psProfile.setInt(4, student.getAge());
-				psProfile.executeUpdate();
+			// Check for duplicate email
+			String checkEmailSql = "SELECT COUNT(*) FROM students WHERE email = ?";
+			try (PreparedStatement pstmt = connection.prepareStatement(checkEmailSql)) {
+				pstmt.setString(1, student.getEmail());
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.next() && rs.getInt(1) > 0) {
+					return false; // Duplicate email
+				}
 			}
-			// Assign course
-			try (PreparedStatement psCourse = connection.prepareStatement(insertStudentCourse)) {
-				psCourse.setInt(1, studentId);
-				psCourse.setInt(2, courseId);
-				psCourse.executeUpdate();
+			// Check if course exists
+			String checkCourseSql = "SELECT COUNT(*) FROM courses WHERE course_id = ?";
+			try (PreparedStatement pstmt = connection.prepareStatement(checkCourseSql)) {
+				pstmt.setInt(1, courseId);
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.next() && rs.getInt(1) == 0) {
+					return false; // Invalid course ID
+				}
 			}
-			connection.commit();
-			success = true;
-		} catch (SQLException e) {
+			boolean success = false;
+			String insertStudent = "INSERT INTO students (name, gr_number, email) VALUES (?, ?, ?)";
+			String insertProfile = "INSERT INTO profiles (student_id, city, mobile_no, age) VALUES (?, ?, ?, ?)";
+			String insertStudentCourse = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
 			try {
+				connection.setAutoCommit(false);
+				// Insert student
+				int studentId = -1;
+				try (PreparedStatement psStudent = connection.prepareStatement(insertStudent, Statement.RETURN_GENERATED_KEYS)) {
+					psStudent.setString(1, student.getName());
+					psStudent.setInt(2, student.getGr_number());
+					psStudent.setString(3, student.getEmail());
+					int affectedRows = psStudent.executeUpdate();
+					if (affectedRows == 0)
+						throw new SQLException("Creating student failed, no rows affected.");
+					try (ResultSet generatedKeys = psStudent.getGeneratedKeys()) {
+						if (generatedKeys.next()) {
+							studentId = generatedKeys.getInt(1);
+						} else {
+							throw new SQLException("Creating student failed, no ID obtained.");
+						}
+					}
+				}
+				// Insert profile
+				try (PreparedStatement psProfile = connection.prepareStatement(insertProfile)) {
+					psProfile.setInt(1, studentId);
+					psProfile.setString(2, student.getCity());
+					psProfile.setString(3, student.getMobile_no());
+					psProfile.setInt(4, student.getAge());
+					psProfile.executeUpdate();
+				}
+				// Assign course
+				try (PreparedStatement psCourse = connection.prepareStatement(insertStudentCourse)) {
+					psCourse.setInt(1, studentId);
+					psCourse.setInt(2, courseId);
+					psCourse.executeUpdate();
+				}
+				connection.commit();
+				success = true;
+			} catch (SQLException e) {
 				connection.rollback();
-			} catch (SQLException ex) {
-				ex.printStackTrace();
-			}
-			e.printStackTrace();
-		} finally {
-			try {
+				throw e;
+			} finally {
 				connection.setAutoCommit(true);
-			} catch (SQLException ex) {
-				ex.printStackTrace();
 			}
+			return success;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
 		}
-		return success;
 	}
 
 }
