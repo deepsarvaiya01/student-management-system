@@ -21,11 +21,22 @@ public class TeacherController {
 	}
 
 	public void addTeacher() {
+
 		scanner.nextLine();
-		System.out.print("\nEnter Name: ");
+		System.out.print("Enter Name: ");
 		String name = scanner.nextLine();
+		while (name.isBlank() || name.matches("\\d+")) {
+			System.out.print("Invalid name. It cannot be blank or only digits. Re-enter: ");
+			name = scanner.nextLine();
+		}
+
 		System.out.print("Enter Qualification: ");
 		String qualification = scanner.nextLine();
+		while (qualification.isBlank() || qualification.matches("\\d+")) {
+			System.out.print("Invalid qualification. It cannot be blank or only digits. Re-enter: ");
+			qualification = scanner.nextLine();
+		}
+
 		System.out.print("Enter Experience: ");
 		double exp = readDouble();
 
@@ -85,7 +96,7 @@ public class TeacherController {
 
 	public void assignSubject() {
 		System.out.print("Enter Teacher ID: ");
-		int teacherId = scanner.nextInt();
+		int teacherId = scanner.nextInt(); // custom safe int reader
 		if (!service.isTeacherActive(teacherId)) {
 			System.out.println("This teacher is inactive or does not exist.");
 			return;
@@ -102,8 +113,22 @@ public class TeacherController {
 		}
 
 		printSubjectsTable("Available Subjects:", availableSubjects);
-		System.out.print("Enter Subject ID to assign: ");
-		int subjectId = scanner.nextInt();
+
+		int subjectId;
+		while (true) {
+			System.out.print("Enter Subject ID to assign: ");
+			if (scanner.hasNextInt()) {
+				subjectId = scanner.nextInt();
+				if (availableSubjects.containsKey(subjectId)) {
+					break; // valid input
+				} else {
+					System.out.println("Invalid Subject ID. Choose from the list above.");
+				}
+			} else {
+				System.out.println("Invalid input. Please enter a number.");
+				scanner.next(); // discard invalid token
+			}
+		}
 
 		if (service.assignSubject(teacherId, subjectId)) {
 			System.out.println("Subject assigned.");
