@@ -38,19 +38,34 @@ public class SubjectController {
         try {
             List<Subject> subjects = subjectService.getAllSubjects();
             if (subjects.isEmpty()) {
-                System.out.println("No subjects found.");
+                System.out.println("⚠️ No subjects found.");
                 return;
             }
 
-            System.out.printf("\n%-10s %-25s %-15s\n", "ID", "Subject Name", "Type");
-            System.out.println("----------------------------------------------");
+            System.out.println("\n╔═════════════════════════════════════════════════════════════════════════════╗");
+            System.out.println("║                             SUBJECT LIST                                    ║");
+            System.out.println("╚═════════════════════════════════════════════════════════════════════════════╝");
+
+            String format = "| %-6s | %-6s | %-35s | %-20s |\n";
+            System.out.println("+--------+--------+-------------------------------------+----------------------+");
+            System.out.printf("| %-6s | %-6s | %-35s | %-20s |\n", "SrNo", "ID", "Subject Name", "Type");
+            System.out.println("+--------+--------+-------------------------------------+----------------------+");
+
+
+            int srNo = 1;
             for (Subject s : subjects) {
-                System.out.printf("%-10d %-25s %-15s\n", s.getSubject_id(), s.getSubject_name(), s.getSubject_type());
+                System.out.printf(format, srNo++, s.getSubject_id(), s.getSubject_name(), s.getSubject_type().toLowerCase());
             }
+
+            System.out.println("+--------+---------+-------------------------------------+---------------------+");
+            System.out.println("✅ Subjects listed successfully!");
+
         } catch (SQLException e) {
             System.out.println("❗ Error retrieving subjects: " + e.getMessage());
         }
     }
+
+
 
     public void updateSubject() {
         System.out.print("Enter subject ID to update: ");
