@@ -12,16 +12,20 @@ public class TeacherMain {
 		Scanner scanner = new Scanner(System.in);
 		int choice;
 		do {
-			System.out.println("\n--- Teacher Menu ---");
-			System.out.println("1. Add Teacher");
-			System.out.println("2. View All Teachers");
-			System.out.println("3. Delete Teacher");
-			System.out.println("4. Assign Subject to Teacher");
-			System.out.println("5. Remove Subject from Teacher");
-			System.out.println("6. View Assigned Subjects");
-			System.out.println("7. Search teacher by ID");
-			System.out.println("0. Back");
-			System.out.print("Enter choice: ");
+			System.out.println("\n╔════════════════════════════════════════════════════════╗");
+			System.out.println("║           TEACHER MANAGEMENT MENU                      ║");
+			System.out.println("╠════════════════════════════════════════════════════════╣");
+			System.out.println("║ 1. Add Teacher                                         ║");
+			System.out.println("║ 2. View All Teachers                                   ║");
+			System.out.println("║ 3. Delete Teacher                                      ║");
+			System.out.println("║ 4. Assign Subject to Teacher                           ║");
+			System.out.println("║ 5. Remove Subject from Teacher                         ║");
+			System.out.println("║ 6. View Assigned Subjects                              ║");
+			System.out.println("║ 7. Search Teacher by ID                                ║");
+			System.out.println("║ 0. Back                                                ║");
+			System.out.println("╚════════════════════════════════════════════════════════╝");
+			System.out.print("👉 Enter your choice: ");
+
 
 			try {
 				choice = scanner.nextInt();
