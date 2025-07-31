@@ -1,5 +1,0 @@
-package com.sms.payment.strategy;
-
-public class CardPayment {
-
-}
