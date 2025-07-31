@@ -39,15 +39,10 @@ public class TeacherDao {
 	public List<Teacher> getAllTeachers() {
 		List<Teacher> list = new ArrayList<>();
 		String sql = "SELECT * FROM teachers WHERE is_active = TRUE";
-		try (Statement stmt = connection.createStatement();
-			 ResultSet rs = stmt.executeQuery(sql)) {
+		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
-				list.add(new Teacher(
-						rs.getInt("teacher_id"),
-						rs.getString("name"),
-						rs.getString("qualification"),
-						rs.getDouble("experience")
-				));
+				list.add(new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
+						rs.getDouble("experience")));
 			}
 		} catch (SQLException e) {
 			System.out.println("Error fetching teachers: " + e.getMessage());
@@ -94,8 +89,7 @@ public class TeacherDao {
 		Map<Integer, String> subjects = new HashMap<>();
 		String sql = "SELECT s.subject_id, s.subject_name FROM subjects s "
 				+ "JOIN subject_teachers st ON s.subject_id = st.subject_id "
-				+ "JOIN teachers t ON t.teacher_id = st.teacher_id "
-				+ "WHERE st.teacher_id = ? AND t.is_active = 1";
+				+ "JOIN teachers t ON t.teacher_id = st.teacher_id " + "WHERE st.teacher_id = ? AND t.is_active = 1";
 
 		try (PreparedStatement ps = connection.prepareStatement(sql)) {
 			ps.setInt(1, teacherId);
@@ -132,12 +126,8 @@ public class TeacherDao {
 			ps.setInt(1, id);
 			ResultSet rs = ps.executeQuery();
 			if (rs.next()) {
-				return new Teacher(
-						rs.getInt("teacher_id"),
-						rs.getString("name"),
-						rs.getString("qualification"),
-						rs.getDouble("experience")
-				);
+				return new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
+						rs.getDouble("experience"));
 			}
 		} catch (SQLException e) {
 			System.out.println("Error fetching teacher by ID: " + e.getMessage());
@@ -158,4 +148,32 @@ public class TeacherDao {
 		}
 		return false;
 	}
+
+	// Fetch all inactive teachers
+	public List<Teacher> getInactiveTeachers() {
+		List<Teacher> list = new ArrayList<>();
+		String sql = "SELECT * FROM teachers WHERE is_active = FALSE";
+		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+			while (rs.next()) {
+				list.add(new Teacher(rs.getInt("teacher_id"), rs.getString("name"), rs.getString("qualification"),
+						rs.getDouble("experience")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	// Restore teacher
+	public boolean restoreTeacher(int id) {
+		String sql = "UPDATE teachers SET is_active = TRUE WHERE teacher_id = ?";
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, id);
+			return ps.executeUpdate() > 0;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
 }
