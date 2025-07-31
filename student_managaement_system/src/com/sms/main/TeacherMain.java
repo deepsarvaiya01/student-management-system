@@ -20,6 +20,7 @@ public class TeacherMain {
 			System.out.println("5. Remove Subject from Teacher");
 			System.out.println("6. View Assigned Subjects");
 			System.out.println("7. Search teacher by ID");
+			System.out.println("8. Restore deleted Teacher");
 			System.out.println("0. Back");
 			System.out.print("Enter choice: ");
 
@@ -39,6 +40,7 @@ public class TeacherMain {
 			case 5 -> controller.removeSubject();
 			case 6 -> controller.viewAssignedSubjects();
 			case 7 -> controller.searchTeacherById();
+			case 8 -> controller.restoreTeacher();
 
 			case 0 -> System.out.println("Returning to main menu.");
 			default -> System.out.println("Invalid input!");

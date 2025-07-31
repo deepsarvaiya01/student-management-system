@@ -80,6 +80,13 @@ public class TeacherService {
 	public boolean isTeacherActive(int teacherId) {
 		return dao.isTeacherActive(teacherId);
 	}
-	
-	
+
+	public List<Teacher> fetchInactiveTeachers() {
+		return dao.getInactiveTeachers();
+	}
+
+	public boolean restoreTeacher(int id) {
+		return dao.restoreTeacher(id);
+	}
+
 }

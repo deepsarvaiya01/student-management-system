@@ -27,7 +27,7 @@ public class Main {
 			System.out.print("Enter your choice (0-5): ");
 
 			if (!scanner.hasNextInt()) {
-				System.out.println("❗ Please enter a valid number.");
+				System.out.println("Please enter a valid number.");
 				scanner.next(); // flush invalid input
 				continue;
 			}
