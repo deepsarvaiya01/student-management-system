@@ -1,3 +1,22 @@
-/bin
+# Java compiled files
+*.class
 
+# Build directories
+/bin/
+/build/
+/target/
+
+# IDE files
+.settings/
+.project
+.classpath
+
+# Environment variables
 .env
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
