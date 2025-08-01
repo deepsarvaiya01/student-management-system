@@ -155,7 +155,7 @@ public class StudentDao {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
 			return false;
 		}
-		boolean success = false;
+		
 		String updateStudent = "UPDATE students SET is_active = false WHERE student_id = ?";
 		String updateProfile = "UPDATE profiles SET is_active = false WHERE student_id = ?";
 		String updateStudentCourses = "UPDATE student_courses SET is_active = false WHERE student_id = ?";

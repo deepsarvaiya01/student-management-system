@@ -11,7 +11,6 @@ import java.util.List;
 import com.sms.database.DBConnection;
 import com.sms.model.Course;
 import com.sms.model.Subject;
-import com.sms.service.*;
 
 public class CourseDAO {
 	

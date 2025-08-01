@@ -15,6 +15,7 @@ import com.sms.utils.payFeesUtils;
 
 public class StudentController {
 	private StudentService studentService;
+	@SuppressWarnings("unused")
 	private FeeService feeService;
 	private Scanner scanner = new Scanner(System.in);
 
