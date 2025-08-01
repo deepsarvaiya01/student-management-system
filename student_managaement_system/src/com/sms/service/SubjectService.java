@@ -7,7 +7,11 @@ import com.sms.dao.SubjectDAO;
 import com.sms.model.Subject;
 
 public class SubjectService {
-    private final SubjectDAO subjectDAO = new SubjectDAO();
+    private final SubjectDAO subjectDAO;
+
+    public SubjectService() throws SQLException {
+        this.subjectDAO = new SubjectDAO();
+    }
 
     public List<Subject> getAllSubjects() throws SQLException {
         return subjectDAO.getAllSubjects();

@@ -10,6 +10,9 @@ import com.sms.model.Subject;
 import com.sms.service.CourseService;
 import com.sms.service.StudentService;
 import com.sms.service.SubjectService;
+import com.sms.model.Teacher;
+import com.sms.service.TeacherService;
+
 
 public class CourseController {
 	private StudentService studentService;
@@ -150,6 +153,7 @@ public class CourseController {
 				    subjectType = scanner.nextLine().trim();
 				    if (subjectType.equalsIgnoreCase("Mandatory") || subjectType.equalsIgnoreCase("Elective")) {
 				        subjectType = subjectType.substring(0, 1).toUpperCase() + subjectType.substring(1).toLowerCase();
+				        
 				        break;
 				    } else {
 				        System.out.println("❗ Invalid input. Please enter 'Mandatory' or 'Elective'.");
@@ -158,6 +162,35 @@ public class CourseController {
 
 				int subjectId = subjectService.addSubject(subjectName, subjectType);
 				courseService.assignSubjectToCourse(courseId, subjectId);
+				
+
+				// Show list of teachers for assignment
+				List<Teacher> teachers = new TeacherService().fetchAllTeachers();
+				if (teachers.isEmpty()) {
+				    System.out.println("❗ No teachers found. Skipping assignment.");
+				} else {
+				    System.out.println("Available Teachers:");
+				    System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
+				    System.out.println("------------------------------------------------------------");
+				    for (Teacher t : teachers) {
+				        System.out.printf("%-5d %-20s %-20s %-10.1f%n",
+				                t.getTeacherId(), t.getName(), t.getQualification(), t.getExperience());
+				    }
+
+				    System.out.print("Enter Teacher ID to assign to subject '" + subjectName + "' or 0 to skip: ");
+				    int teacherId = Integer.parseInt(scanner.nextLine());
+
+				    if (teacherId > 0) {
+				        boolean assigned = new TeacherService().assignSubject(teacherId, subjectId);
+				        if (assigned) {
+				            System.out.println("✅ Teacher assigned to subject.");
+				        } else {
+				            System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
+				        }
+				    } else {
+				        System.out.println("Skipped teacher assignment for this subject.");
+				    }
+				}
 
 			}
 
@@ -245,10 +278,38 @@ public class CourseController {
 	                int newSubjectId = subjectService.addSubject(subjectName, subjectType);
 	                if (newSubjectId != -1) {
 	                    courseService.assignSubjectToCourse(courseId, newSubjectId);
+
+	                    // Assign teacher
+	                    List<Teacher> teachers = new TeacherService().fetchAllTeachers();
+	                    if (teachers.isEmpty()) {
+	                        System.out.println("❗ No teachers available to assign.");
+	                    } else {
+	                        System.out.println("Available Teachers:");
+	                        System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
+	                        System.out.println("------------------------------------------------------------");
+	                        for (Teacher t : teachers) {
+	                            System.out.printf("%-5d %-20s %-20s %-10.1f%n",
+	                                    t.getTeacherId(), t.getName(), t.getQualification(), t.getExperience());
+	                        }
+
+	                        System.out.print("Enter Teacher ID to assign to subject '" + subjectName + "' or 0 to skip: ");
+	                        int teacherId = Integer.parseInt(scanner.nextLine());
+
+	                        if (teacherId > 0) {
+	                            boolean assigned = new TeacherService().assignSubject(teacherId, newSubjectId);
+	                            if (assigned) {
+	                                System.out.println("✅ Teacher assigned to subject.");
+	                            } else {
+	                                System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
+	                            }
+	                        } else {
+	                            System.out.println("Skipped teacher assignment.");
+	                        }
+	                    }
+
 	                    System.out.println("✅ Subject created and assigned.");
-	                } else {
-	                    System.out.println("❌ Failed to add subject.");
 	                }
+
 	            }
 	        } else {
 	            System.out.println("❗ Invalid choice.");
@@ -258,8 +319,6 @@ public class CourseController {
 	    }
 	}
 	
-	
-
 	public void searchCourse() {
 	    try {
 	        System.out.println("Search course by:");
@@ -297,7 +356,6 @@ public class CourseController {
 	        System.out.println("Error while searching course: " + e.getMessage());
 	    }
 	}
-
 
 	public void deleteCourse() {
 	    try {
