@@ -110,9 +110,21 @@ public class payFeesUtils {
 
 	public void processAndDisplayPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
-			String method = InputValidator.getValidPaymentMethod(scanner, "Enter payment method (card/cash/upi): ");
+			System.out.println("\nChoose payment method:");
+			System.out.println("1. Cash");
+			System.out.println("2. Card");
+			System.out.println("3. UPI");
+			System.out.println("0. Cancel");
+			int choice = InputValidator.getValidIntegerInRange(scanner, "👉 Enter your choice (0-3): ",
+					"Payment Method", 0, 3);
+
+			if (choice == 0) {
+				System.out.println("Payment cancelled.");
+				return;
+			}
+
 			PaymentProcessor processor = new PaymentProcessor();
-			boolean paymentSuccess = processor.process(studentId, paymentAmount, method, scanner);
+			boolean paymentSuccess = processor.process(studentId, paymentAmount, choice, scanner);
 
 			if (paymentSuccess) {
 				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
@@ -135,6 +147,46 @@ public class payFeesUtils {
 			}
 		} catch (Exception e) {
 			System.out.println("❌ Error while processing payment: " + e.getMessage());
+		}
+	}
+
+	private void processPayment(int studentId, int courseId, BigDecimal paymentAmount) {
+		try {
+			System.out.println("\nChoose payment method:");
+			System.out.println("1. Cash");
+			System.out.println("2. Card");
+			System.out.println("3. UPI");
+			System.out.println("0. Cancel");
+			int choice = InputValidator.getValidIntegerInRange(scanner, "👉 Enter your choice (0-3): ",
+					"Payment Method", 0, 3);
+
+			if (choice == 0) {
+				System.out.println("Payment cancelled.");
+				return;
+			}
+
+			PaymentProcessor processor = new PaymentProcessor();
+			boolean paymentSuccess = processor.process(studentId, paymentAmount, choice, scanner);
+
+			if (paymentSuccess) {
+				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
+				if (result.contains("successfully")) {
+					System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
+					System.out.println("Updated fee status:");
+					Fee updatedFee = feeService.getFeesListByStudent(studentId).stream()
+							.filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
+					if (updatedFee != null) {
+						Fee.printHeader();
+						System.out.println(updatedFee);
+					}
+				} else {
+					System.out.println("❌ " + result);
+				}
+			} else {
+				System.out.println("❌ Payment failed. Please try again later.");
+			}
+		} catch (Exception e) {
+			System.out.println("❌ Error processing payment: " + e.getMessage());
 		}
 	}
 

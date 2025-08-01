@@ -2,9 +2,9 @@ package com.sms.controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.sms.model.Course;
@@ -41,7 +41,7 @@ public class StudentController {
 		}
 	}
 
-			// Add New Student with Profile and Course Assignment
+	// Add New Student with Profile and Course Assignment
 	public void addNewStudent() {
 		String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
 		int grNumber = InputValidator.getValidGRNumber(scanner, "Enter GR Number: ");
@@ -70,28 +70,26 @@ public class StudentController {
 
 		// Separate mandatory and elective subjects
 		List<Subject> mandatorySubjects = availableSubjects.stream()
-				.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type()))
-				.collect(Collectors.toList());
+				.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
 		List<Subject> electiveSubjects = availableSubjects.stream()
-				.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type()))
-				.collect(Collectors.toList());
+				.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
 
 		System.out.println("\n📚 Available Subjects for Course ID " + courseId + ":");
 		System.out.println("=".repeat(80));
-		
+
 		if (!mandatorySubjects.isEmpty()) {
 			System.out.println("🔴 MANDATORY SUBJECTS (Must select all):");
 			for (Subject subject : mandatorySubjects) {
-				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", 
-					subject.getSubject_id(), subject.getSubject_name(), subject.getSubject_type());
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
 			}
 		}
-		
+
 		if (!electiveSubjects.isEmpty()) {
 			System.out.println("\n🟢 ELECTIVE SUBJECTS (Optional):");
 			for (Subject subject : electiveSubjects) {
-				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", 
-					subject.getSubject_id(), subject.getSubject_name(), subject.getSubject_type());
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
 			}
 		}
 
@@ -110,7 +108,7 @@ public class StudentController {
 			System.out.println("\n🟢 Select Elective Subjects:");
 			System.out.print("Enter elective subject IDs (comma-separated, or press Enter to skip): ");
 			String electiveInput = scanner.nextLine().trim();
-			
+
 			if (!electiveInput.isEmpty()) {
 				try {
 					String[] electiveIds = electiveInput.split(",");
@@ -121,8 +119,7 @@ public class StudentController {
 						if (isValidElective) {
 							selectedSubjectIds.add(electiveId);
 							Subject selectedSubject = electiveSubjects.stream()
-									.filter(s -> s.getSubject_id() == electiveId)
-									.findFirst().orElse(null);
+									.filter(s -> s.getSubject_id() == electiveId).findFirst().orElse(null);
 							System.out.println("   ✓ Selected: " + selectedSubject.getSubject_name());
 						} else {
 							System.out.println("   ❌ Invalid elective subject ID: " + electiveId);
@@ -146,35 +143,33 @@ public class StudentController {
 
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
 		System.out.println(result);
-		
+
 		// Ask if the student wants to pay fees immediately
 		if (result.contains("successfully")) {
 			askForFeePayment(student.getName(), courseId);
 		}
 	}
-	
+
 	// Ask student if they want to pay fees immediately after registration
 	private void askForFeePayment(String studentName, int courseId) {
 		System.out.println("\n💰 === IMMEDIATE FEE PAYMENT OPTION ===");
 		System.out.println("Student: " + studentName);
 		System.out.println("Course ID: " + courseId);
-		
-		boolean wantsToPay = InputValidator.getValidConfirmation(scanner, 
-			"\nWould you like to pay fees now? (y/n): ");
-		
+
+		boolean wantsToPay = InputValidator.getValidConfirmation(scanner, "\nWould you like to pay fees now? (y/n): ");
+
 		if (wantsToPay) {
 			try {
 				// Get the newly created student ID
 				List<Student> students = studentService.readAllStudent();
-				Student newStudent = students.stream()
-					.filter(s -> s.getName().equals(studentName))
-					.findFirst()
-					.orElse(null);
-				
+				Student newStudent = students.stream().filter(s -> s.getName().equals(studentName)).findFirst()
+						.orElse(null);
+
 				if (newStudent != null) {
 					processImmediateFeePayment(newStudent.getStudent_id(), courseId);
 				} else {
-					System.out.println("❌ Could not find the newly created student. Please use the main fee payment option.");
+					System.out.println(
+							"❌ Could not find the newly created student. Please use the main fee payment option.");
 				}
 			} catch (Exception e) {
 				System.out.println("❌ Error processing immediate fee payment: " + e.getMessage());
@@ -184,37 +179,37 @@ public class StudentController {
 			System.out.println("✅ Fee payment skipped. You can pay fees later from the main menu.");
 		}
 	}
-	
+
 	// Process immediate fee payment for newly created student
 	private void processImmediateFeePayment(int studentId, int courseId) {
 		System.out.println("\n💰 === PROCESSING IMMEDIATE FEE PAYMENT ===");
-		
+
 		try {
 			// Show fee status
 			Fee fee = showFeeStatus(studentId, courseId);
 			if (fee == null) {
 				return;
 			}
-			
+
 			// Check if there are pending fees
 			if (!hasPendingFees(fee)) {
 				return;
 			}
-			
+
 			// Get payment amount
 			BigDecimal paymentAmount = getPaymentAmount(fee);
 			if (paymentAmount == null) {
 				return;
 			}
-			
+
 			// Process payment
 			processPayment(studentId, courseId, paymentAmount);
-			
+
 		} catch (Exception e) {
 			System.out.println("❌ Error during immediate fee payment: " + e.getMessage());
 		}
 	}
-	
+
 	// Show fee status for the student and course
 	private Fee showFeeStatus(int studentId, int courseId) {
 		try {
@@ -222,16 +217,13 @@ public class StudentController {
 			String result = feeService.getFeesByStudent(studentId);
 			if (result.equals("SUCCESS")) {
 				List<Fee> fees = feeService.getFeesListByStudent(studentId);
-				Fee selectedFee = fees.stream()
-					.filter(fee -> fee.getCourseId() == courseId)
-					.findFirst()
-					.orElse(null);
-				
+				Fee selectedFee = fees.stream().filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
+
 				if (selectedFee == null) {
 					System.out.println("❌ No fee record found for Course ID " + courseId);
 					return null;
 				}
-				
+
 				System.out.println("\n📊 Current Fee Status:");
 				Fee.printHeader();
 				System.out.println(selectedFee);
@@ -245,7 +237,7 @@ public class StudentController {
 			return null;
 		}
 	}
-	
+
 	// Check if there are pending fees
 	private boolean hasPendingFees(Fee fee) {
 		if (fee == null) {
@@ -257,51 +249,51 @@ public class StudentController {
 		}
 		return pending;
 	}
-	
+
 	// Get payment amount from user
 	private BigDecimal getPaymentAmount(Fee fee) {
 		if (fee == null) {
 			return null;
 		}
-		
-		BigDecimal amount = InputValidator.getValidDecimal(scanner, 
-			"\nEnter payment amount: ₹", "Payment Amount");
-		
+
+		BigDecimal amount = InputValidator.getValidDecimal(scanner, "\nEnter payment amount: ₹", "Payment Amount");
+
 		// Validate payment amount against pending fees
 		BigDecimal totalPending = fee.getPendingAmount();
 		if (amount.compareTo(totalPending) > 0) {
 			System.out.println("❌ Payment amount (₹" + amount + ") exceeds pending amount (₹" + totalPending + ").");
 			return null;
 		}
-		
+
 		return amount;
 	}
-	
+
 	// Process the payment
 	private void processPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
-			String method = InputValidator.getValidPaymentMethod(scanner, 
-				"Enter payment method (card/cash/upi): ");
-			
-			// Process payment using PaymentProcessor
+			System.out.println("\nChoose payment method:");
+			System.out.println("1. Cash");
+			System.out.println("2. Card");
+			System.out.println("3. UPI");
+			System.out.println("0. Cancel");
+			int choice = InputValidator.getValidIntegerInRange(scanner, "👉 Enter your choice (0-3): ",
+					"Payment Method", 0, 3);
+
+			if (choice == 0) {
+				System.out.println("Payment cancelled.");
+				return;
+			}
+
 			PaymentProcessor processor = new PaymentProcessor();
-			boolean paymentSuccess = processor.process(studentId, paymentAmount, method, scanner);
-			
+			boolean paymentSuccess = processor.process(studentId, paymentAmount, choice, scanner);
+
 			if (paymentSuccess) {
-				// Update fee record
-				FeeService feeService = new FeeService();
 				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
-				
 				if (result.contains("successfully")) {
 					System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
 					System.out.println("Updated fee status:");
-					
-					// Show updated fee status
 					Fee updatedFee = feeService.getFeesListByStudent(studentId).stream()
-						.filter(fee -> fee.getCourseId() == courseId)
-						.findFirst()
-						.orElse(null);
-					
+							.filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
 					if (updatedFee != null) {
 						Fee.printHeader();
 						System.out.println(updatedFee);
