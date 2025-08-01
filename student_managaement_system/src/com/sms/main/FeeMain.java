@@ -4,6 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.sms.controller.FeeController;
+import com.sms.utils.InputValidator;
 
 public class FeeMain {
 
@@ -24,16 +25,7 @@ public class FeeMain {
         	System.out.println("║ 6. Total Earning                         ║");
         	System.out.println("║ 0. Exit                                  ║");
         	System.out.println("╚══════════════════════════════════════════╝");
-        	System.out.print("👉 Enter your choice (0-6): ");
-
-
-            if (!scanner.hasNextInt()) {
-                System.out.println("❗ Please enter a valid number.");
-                scanner.next(); // clear invalid input
-                continue;
-            }
-
-            choice = scanner.nextInt();
+        	choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-6): ", 6);
 
             switch (choice) {
             case 1 -> controller.viewTotalPaidFees();

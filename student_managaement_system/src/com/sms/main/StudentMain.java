@@ -3,6 +3,7 @@ package com.sms.main;
 import java.sql.SQLException;
 import java.util.Scanner;
 import com.sms.controller.StudentController;
+import com.sms.utils.InputValidator;
 
 public class StudentMain {
 	public void show() throws SQLException {
@@ -23,13 +24,9 @@ public class StudentMain {
 			System.out.println("║ 8. Restore a Deleted Student                             ║");
 			System.out.println("║ 0. Exit                                                  ║");
 			System.out.println("╚══════════════════════════════════════════════════════════╝");
-			System.out.print("👉 Enter your choice (0-8): ");
-
-			while (!scanner.hasNextInt()) {
-				System.out.println("Invalid input. Enter a number (0-8): ");
-				scanner.next();
-			}
-			choice = scanner.nextInt();
+			
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-8): ", 8);
+			
 			switch (choice) {
 			case 1:
 				controller.viewAllStudents();

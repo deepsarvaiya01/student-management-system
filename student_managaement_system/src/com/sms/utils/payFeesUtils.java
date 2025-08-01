@@ -6,26 +6,25 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.sms.dao.FeeDao;
+import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Student;
 import com.sms.payment.processor.PaymentProcessor;
 import com.sms.service.FeeService;
+import com.sms.service.StudentService;
 
 public class payFeesUtils {
 	private FeeService feeService;
 	private FeeDao feeDao;
-	Scanner scanner = new Scanner(System.in);
-	
-	
+	private StudentService studentService;
+	private Scanner scanner = new Scanner(System.in);
+
 	public payFeesUtils() throws SQLException {
 		feeService = new FeeService();
 		feeDao = new FeeDao();
+		studentService = new StudentService();
 	}
-	
-	
-	
-	
-	
+
 	public List<Student> showAndGetAllStudents() {
 		System.out.println("\n📚 Available Students:");
 		List<Student> students = feeService.getAllStudents();
@@ -40,52 +39,70 @@ public class payFeesUtils {
 	}
 
 	public int inputStudentId() {
-		System.out.print("\nEnter Student ID to pay fees: ");
-		if (!scanner.hasNextInt()) {
-			System.out.println("❗ Please enter a valid Student ID.");
-			scanner.next(); // clear invalid input
+		return InputValidator.getValidInteger(scanner, "\nEnter Student ID to pay fees: ", "Student ID");
+	}
+
+	public List<Course> showAndGetStudentCourses(int studentId) {
+		System.out.println("\n📚 Courses for Student ID " + studentId + ":");
+		List<Course> courses = studentService.getCoursesByStudentId(studentId);
+		if (courses.isEmpty()) {
+			System.out.println("No courses assigned to this student.");
+			return List.of();
+		}
+		printCourses(courses);
+		return courses;
+	}
+
+	public int inputCourseId(List<Course> courses) {
+		int courseId = InputValidator.getValidInteger(scanner, "\nEnter Course ID to pay fees for: ", "Course ID");
+		boolean validCourse = courses.stream().anyMatch(c -> c.getCourse_id() == courseId);
+		if (!validCourse) {
+			System.out.println("❌ Invalid Course ID. Please select a course from the list.");
 			return -1;
 		}
-		return scanner.nextInt();
+		return courseId;
 	}
 
-	public List<Fee> showStudentFees(int studentId) {
-		List<Fee> fees = feeService.getFeesByStudent(studentId);
-		if (fees.isEmpty()) {
-			System.out.println("No fees found for Student ID: " + studentId);
+	public Fee showStudentFeeForCourse(int studentId, int courseId) {
+		String result = feeService.getFeesByStudent(studentId);
+		if (result.equals("SUCCESS")) {
+			List<Fee> fees = feeService.getFeesListByStudent(studentId);
+			Fee selectedFee = fees.stream().filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
+			if (selectedFee == null) {
+				System.out.println("❌ No fee record found for Course ID " + courseId
+						+ ". Please ensure the course is properly assigned.");
+				return null;
+			}
+			System.out.println(
+					"\n📊 Current Fee Status for Student ID " + studentId + " and Course ID " + courseId + ":");
+			Fee.printHeader();
+			System.out.println(selectedFee);
+			return selectedFee;
+		} else {
+			System.out.println(result);
 			return null;
 		}
-
-		System.out.println("\n📊 Current Fee Status for Student ID " + studentId + ":");
-		Fee.printHeader();
-		fees.forEach(System.out::println);
-		return fees;
 	}
 
-	public boolean hasPendingFees(List<Fee> fees) {
-		boolean pending = fees.stream().anyMatch(fee -> fee.getPendingAmount().compareTo(BigDecimal.ZERO) > 0);
+	public boolean hasPendingFees(Fee fee) {
+		if (fee == null) {
+			return false;
+		}
+		boolean pending = fee.getPendingAmount().compareTo(BigDecimal.ZERO) > 0;
 		if (!pending) {
-			System.out.println("\n✅ All fees are already paid for this student!");
+			System.out.println("\n✅ All fees are already paid for this course!");
 		}
 		return pending;
 	}
 
-	public BigDecimal inputPaymentAmount(List<Fee> fees) {
-		System.out.print("\nEnter payment amount: ₹");
-		if (!scanner.hasNextBigDecimal()) {
-			System.out.println("❗ Please enter a valid amount.");
-			scanner.next(); // clear invalid input
+	public BigDecimal inputPaymentAmount(Fee fee) {
+		if (fee == null) {
 			return null;
 		}
+		BigDecimal amount = InputValidator.getValidDecimal(scanner, "\nEnter payment amount: ₹", "Payment Amount");
 
-		BigDecimal amount = scanner.nextBigDecimal();
-		if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-			System.out.println("❌ Payment amount must be greater than zero.");
-			return null;
-		}
-
-		BigDecimal totalPending = fees.stream().map(Fee::getPendingAmount).reduce(BigDecimal.ZERO, BigDecimal::add);
-
+		// Validate payment amount against pending fees
+		BigDecimal totalPending = fee.getPendingAmount();
 		if (amount.compareTo(totalPending) > 0) {
 			System.out.println("❌ Payment amount (₹" + amount + ") exceeds pending amount (₹" + totalPending + ").");
 			return null;
@@ -94,24 +111,27 @@ public class payFeesUtils {
 		return amount;
 	}
 
-	public void processAndDisplayPayment(int studentId, BigDecimal paymentAmount) {
+	public void processAndDisplayPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
 			PaymentProcessor processor = new PaymentProcessor();
 			boolean paymentSuccess = processor.process(studentId, paymentAmount);
-			
-			
-			
-			if (paymentSuccess) {
-				
-				feeDao.updateFeePayment(studentId, paymentAmount);
-				System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
-				System.out.println("Updated fee status:");
 
-				List<Fee> updatedFees = feeService.getFeesByStudent(studentId);
-				Fee.printHeader();
-				updatedFees.forEach(System.out::println);
-				
-				
+			if (paymentSuccess) {
+				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
+				if (result.contains("successfully")) {
+					System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
+					System.out.println("Updated fee status:");
+					Fee selectedFee = feeService.getFeesListByStudent(studentId).stream()
+							.filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
+					if (selectedFee != null) {
+						Fee.printHeader();
+						System.out.println(selectedFee);
+					} else {
+						System.out.println("❌ Failed to retrieve updated fee record.");
+					}
+				} else {
+					System.out.println("❌ " + result);
+				}
 			} else {
 				System.out.println("❌ Payment failed. Please try again.");
 			}
@@ -121,14 +141,22 @@ public class payFeesUtils {
 		}
 	}
 
-	
-	// Helper: Print students in tabular format
 	private void printStudents(List<Student> students) {
 		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name", "Email", "GR Number");
 		System.out.println("-------------------------------------------------------------");
 		for (Student s : students) {
 			System.out.printf("%-10d %-20s %-25s %-10d\n", s.getStudent_id(), s.getName(), s.getEmail(),
 					s.getGr_number());
+		}
+	}
+
+	private void printCourses(List<Course> courses) {
+		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
+		System.out.println("-------------------------------------------------------------");
+		for (Course c : courses) {
+			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
+			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(),
+					totalFee);
 		}
 	}
 }

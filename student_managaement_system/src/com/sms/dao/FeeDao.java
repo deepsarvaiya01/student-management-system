@@ -26,7 +26,6 @@ public class FeeDao {
 		String sql = "SELECT SUM(paid_amount) as total_paid FROM fees";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			if (rs.next()) {
 				totalPaid = rs.getBigDecimal("total_paid");
 				if (totalPaid == null) {
@@ -45,7 +44,6 @@ public class FeeDao {
 		String sql = "SELECT SUM(pending_amount) as total_pending FROM fees";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			if (rs.next()) {
 				totalPending = rs.getBigDecimal("total_pending");
 				if (totalPending == null) {
@@ -136,42 +134,19 @@ public class FeeDao {
 			pstmt.setBigDecimal(1, newTotalFee);
 			pstmt.setInt(2, courseId);
 			int affectedRows = pstmt.executeUpdate();
-
-			if (affectedRows > 0) {
-				// Also update the fees table for all students enrolled in this course
-//                updateFeesForCourse(courseId, newTotalFee);
-				return true;
-			}
+			return affectedRows > 0;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
-		return false;
 	}
 
-//    // Helper method to update fees for all students in a course
-//    private void updateFeesForCourse(int courseId, BigDecimal newTotalFee) {
-//        String sql = "UPDATE fees f " +
-//                    "JOIN student_courses sc ON f.student_course_id = sc.student_course_id " +
-//                    "SET f.total_fee = ?, f.pending_amount = ? - f.paid_amount " +
-//                    "WHERE sc.course_id = ?";
-//        
-//        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-//            pstmt.setBigDecimal(1, newTotalFee);
-//            pstmt.setBigDecimal(2, newTotalFee);
-//            pstmt.setInt(3, courseId);
-//            pstmt.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-	// Get Total Earning (Total of all fees)
+	// Get Total Earning
 	public BigDecimal getTotalEarning() {
 		BigDecimal totalEarning = BigDecimal.ZERO;
 		String sql = "SELECT SUM(total_fee) as total_earning FROM fees";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			if (rs.next()) {
 				totalEarning = rs.getBigDecimal("total_earning");
 				if (totalEarning == null) {
@@ -184,7 +159,7 @@ public class FeeDao {
 		return totalEarning;
 	}
 
-	// Get all fees with student and course details
+	// Get all fees
 	public List<Fee> getAllFees() {
 		List<Fee> fees = new ArrayList<>();
 		String sql = "SELECT f.fee_id, f.student_course_id, f.paid_amount, f.pending_amount, "
@@ -195,7 +170,6 @@ public class FeeDao {
 				+ "ORDER BY f.fee_id";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			while (rs.next()) {
 				Fee fee = new Fee();
 				fee.setFeeId(rs.getInt("fee_id"));
@@ -223,7 +197,6 @@ public class FeeDao {
 		String sql = "SELECT course_id, course_name, no_of_semester, total_fee FROM courses WHERE is_active = TRUE";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			while (rs.next()) {
 				com.sms.model.Course course = new com.sms.model.Course();
 				course.setCourse_id(rs.getInt("course_id"));
@@ -244,7 +217,6 @@ public class FeeDao {
 		String sql = "SELECT student_id, name, email, gr_number FROM students WHERE is_active = TRUE";
 
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
-
 			while (rs.next()) {
 				com.sms.model.Student student = new com.sms.model.Student();
 				student.setStudent_id(rs.getInt("student_id"));
@@ -260,15 +232,17 @@ public class FeeDao {
 	}
 
 	// Update fee payment
-	public boolean updateFeePayment(int studentId, BigDecimal paymentAmount) {
-		String selectSql = "SELECT fee_id, paid_amount, pending_amount FROM fees f "
-				+ "JOIN student_courses sc ON f.student_course_id = sc.student_course_id " + "WHERE sc.student_id = ?";
+	public boolean updateFeePayment(int studentId, BigDecimal paymentAmount, int courseId) {
+		String selectSql = "SELECT f.fee_id, f.paid_amount, f.pending_amount " + "FROM fees f "
+				+ "JOIN student_courses sc ON f.student_course_id = sc.student_course_id "
+				+ "WHERE sc.student_id = ? AND sc.course_id = ?";
 		String updateSql = "UPDATE fees SET paid_amount = ?, pending_amount = ?, last_payment_date = CURRENT_DATE WHERE fee_id = ?";
 
 		try (PreparedStatement selectStmt = connection.prepareStatement(selectSql);
 				PreparedStatement updateStmt = connection.prepareStatement(updateSql)) {
-			// Step 1: Get fee details
+			// Step 1: Get fee details for the specific course
 			selectStmt.setInt(1, studentId);
+			selectStmt.setInt(2, courseId);
 			ResultSet rs = selectStmt.executeQuery();
 
 			if (rs.next()) {
@@ -280,7 +254,6 @@ public class FeeDao {
 				BigDecimal newPaid = currentPaid.add(paymentAmount);
 				BigDecimal newPending = currentPending.subtract(paymentAmount);
 				if (newPending.compareTo(BigDecimal.ZERO) < 0) {
-					System.out.println("Payment amount exceeds pending amount!");
 					return false;
 				}
 
@@ -292,7 +265,6 @@ public class FeeDao {
 				int rowsUpdated = updateStmt.executeUpdate();
 				return rowsUpdated > 0;
 			} else {
-				System.out.println("No fee record found for student_id: " + studentId);
 				return false;
 			}
 		} catch (SQLException e) {
@@ -300,5 +272,4 @@ public class FeeDao {
 			return false;
 		}
 	}
-
 }
