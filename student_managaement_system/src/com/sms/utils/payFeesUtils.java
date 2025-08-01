@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.sms.dao.FeeDao;
 import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Student;
@@ -15,13 +14,11 @@ import com.sms.service.StudentService;
 
 public class payFeesUtils {
 	private FeeService feeService;
-	private FeeDao feeDao;
 	private StudentService studentService;
 	private Scanner scanner = new Scanner(System.in);
 
 	public payFeesUtils() throws SQLException {
 		feeService = new FeeService();
-		feeDao = new FeeDao();
 		studentService = new StudentService();
 	}
 
@@ -64,22 +61,73 @@ public class payFeesUtils {
 	}
 
 	public Fee showStudentFeeForCourse(int studentId, int courseId) {
-		String result = feeService.getFeesByStudent(studentId);
-		if (result.equals("SUCCESS")) {
-			List<Fee> fees = feeService.getFeesListByStudent(studentId);
-			Fee selectedFee = fees.stream().filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
-			if (selectedFee == null) {
-				System.out.println("❌ No fee record found for Course ID " + courseId
-						+ ". Please ensure the course is properly assigned.");
+		try {
+			String result = feeService.getFeesByStudent(studentId);
+			if (!result.equals("SUCCESS")) {
+				System.out.println("❌ " + result);
 				return null;
 			}
+
+			List<Fee> fees = feeService.getFeesListByStudent(studentId);
+			Fee selectedFee = fees.stream().filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
+
+			if (selectedFee == null) {
+				// No fee record found; create a new one
+				List<Course> courses = studentService.getCoursesByStudentId(studentId);
+				Course selectedCourse = courses.stream().filter(c -> c.getCourse_id() == courseId).findFirst()
+						.orElse(null);
+
+				if (selectedCourse == null) {
+					System.out.println("❌ Course ID " + courseId + " not assigned to Student ID " + studentId + ".");
+					return null;
+				}
+
+				BigDecimal totalFee = selectedCourse.getTotal_fee();
+				if (totalFee == null) {
+					System.out.println("❌ Course ID " + courseId + " has no total fee defined.");
+					return null;
+				}
+
+				// Get student_course_id from student_courses table
+				int studentCourseId = feeService.getStudentCourseId(studentId, courseId);
+				if (studentCourseId == -1) {
+					System.out.println("❌ No student-course record found for Student ID " + studentId
+							+ " and Course ID " + courseId + ".");
+					return null;
+				}
+
+				// Get student name
+				List<Student> students = feeService.getAllStudents();
+				Student selectedStudent = students.stream().filter(s -> s.getStudent_id() == studentId).findFirst()
+						.orElse(null);
+				if (selectedStudent == null) {
+					System.out.println("❌ Student ID " + studentId + " not found.");
+					return null;
+				}
+
+				// Create new fee record
+				selectedFee = new Fee();
+				selectedFee.setStudentCourseId(studentCourseId);
+				selectedFee.setPaidAmount(BigDecimal.ZERO);
+				selectedFee.setPendingAmount(totalFee);
+				selectedFee.setTotalFee(totalFee);
+				selectedFee.setCourseId(courseId);
+				selectedFee.setStudentName(selectedStudent.getName());
+				selectedFee.setCourseName(selectedCourse.getCourse_name());
+				String createResult = feeService.createFeeRecord(studentCourseId, totalFee);
+				if (!createResult.equals("SUCCESS")) {
+					System.out.println("❌ Failed to create fee record: " + createResult);
+					return null;
+				}
+			}
+
 			System.out.println(
 					"\n📊 Current Fee Status for Student ID " + studentId + " and Course ID " + courseId + ":");
 			Fee.printHeader();
 			System.out.println(selectedFee);
 			return selectedFee;
-		} else {
-			System.out.println(result);
+		} catch (Exception e) {
+			System.out.println("❌ Error retrieving fee record: " + e.getMessage());
 			return null;
 		}
 	}
@@ -113,8 +161,21 @@ public class payFeesUtils {
 
 	public void processAndDisplayPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
+			System.out.println("\nChoose payment method:");
+			System.out.println("1. Cash");
+			System.out.println("2. Card");
+			System.out.println("3. UPI");
+			System.out.println("0. Cancel");
+			int choice = InputValidator.getValidIntegerInRange(scanner, "👉 Enter your choice (0-3): ",
+					"Payment Method", 0, 3);
+
+			if (choice == 0) {
+				System.out.println("Payment cancelled.");
+				return;
+			}
+
 			PaymentProcessor processor = new PaymentProcessor();
-			boolean paymentSuccess = processor.process(studentId, paymentAmount);
+			boolean paymentSuccess = processor.process(studentId, paymentAmount, choice, scanner);
 
 			if (paymentSuccess) {
 				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
@@ -137,7 +198,6 @@ public class payFeesUtils {
 			}
 		} catch (Exception e) {
 			System.out.println("❌ Error while processing payment: " + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 

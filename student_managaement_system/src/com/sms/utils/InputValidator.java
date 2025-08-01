@@ -27,6 +27,13 @@ public class InputValidator {
 			}
 		}
 	}
+	
+	// Get valid integer input and consume newline
+	public static int getValidIntegerWithNewline(Scanner scanner, String prompt, String fieldName) {
+		int value = getValidInteger(scanner, prompt, fieldName);
+		scanner.nextLine(); // Consume the newline character
+		return value;
+	}
 
 	// Get valid integer input, allowing zero for "go back"
 	public static int getValidIntegerAllowZero(Scanner scanner, String prompt, String fieldName) {
@@ -63,6 +70,13 @@ public class InputValidator {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+	
+	// Get valid integer with range validation and consume newline
+	public static int getValidIntegerInRangeWithNewline(Scanner scanner, String prompt, String fieldName, int min, int max) {
+		int value = getValidIntegerInRange(scanner, prompt, fieldName, min, max);
+		scanner.nextLine(); // Consume the newline character
+		return value;
 	}
 
 	// Get valid name input

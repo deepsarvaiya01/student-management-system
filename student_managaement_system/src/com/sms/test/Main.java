@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.sms.main.CourseMain;
-import com.sms.main.DashboradMain;
+import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
@@ -47,7 +47,7 @@ public class Main {
 					c.show();
 				}
 				case 5 -> {
-					DashboradMain d = new DashboradMain(); 
+					DashboardMain d = new DashboardMain(); 
 					d.show();
 				}
 				case 0 -> {
