@@ -328,6 +328,7 @@ public class CourseController {
 				return;
 			}
 
+			scanner.nextLine();
 			boolean confirm = InputValidator.getValidConfirmation(scanner,
 					"Are you sure you want to delete course '" + course.getCourse_name() + "'? (y/n): ");
 			if (confirm) {
