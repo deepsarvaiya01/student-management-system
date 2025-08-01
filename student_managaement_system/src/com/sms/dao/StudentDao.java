@@ -1,5 +1,6 @@
 package com.sms.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -250,7 +251,8 @@ public class StudentDao {
 				pstmt.setInt(1, student.getGr_number());
 				ResultSet rs = pstmt.executeQuery();
 				if (rs.next() && rs.getInt(1) > 0) {
-					return false; // Duplicate GR number
+					System.out.println("Error: Duplicate GR number " + student.getGr_number());
+					return false;
 				}
 			}
 			// Check for duplicate email
@@ -259,33 +261,44 @@ public class StudentDao {
 				pstmt.setString(1, student.getEmail());
 				ResultSet rs = pstmt.executeQuery();
 				if (rs.next() && rs.getInt(1) > 0) {
-					return false; // Duplicate email
+					System.out.println("Error: Duplicate email " + student.getEmail());
+					return false;
 				}
 			}
-			// Check if course exists
-			String checkCourseSql = "SELECT COUNT(*) FROM courses WHERE course_id = ?";
+			// Check if course exists and get total_fee
+			String checkCourseSql = "SELECT total_fee FROM courses WHERE course_id = ?";
+			BigDecimal courseFee = null;
 			try (PreparedStatement pstmt = connection.prepareStatement(checkCourseSql)) {
 				pstmt.setInt(1, courseId);
 				ResultSet rs = pstmt.executeQuery();
-				if (rs.next() && rs.getInt(1) == 0) {
-					return false; // Invalid course ID
+				if (rs.next()) {
+					courseFee = rs.getBigDecimal("total_fee");
+					if (courseFee == null) {
+						System.out.println("Error: Course ID " + courseId + " has no total fee set.");
+						return false;
+					}
+				} else {
+					System.out.println("Error: Invalid course ID " + courseId);
+					return false;
 				}
 			}
-			boolean success = false;
 			String insertStudent = "INSERT INTO students (name, gr_number, email) VALUES (?, ?, ?)";
 			String insertProfile = "INSERT INTO profiles (student_id, city, mobile_no, age) VALUES (?, ?, ?, ?)";
 			String insertStudentCourse = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
+			String insertFee = "INSERT INTO fees (student_course_id, paid_amount, pending_amount, total_fee) VALUES (?, 0.0, ?, ?)";
 			try {
 				connection.setAutoCommit(false);
-				// Insert student
 				int studentId = -1;
-				try (PreparedStatement psStudent = connection.prepareStatement(insertStudent, Statement.RETURN_GENERATED_KEYS)) {
+				// Insert student
+				try (PreparedStatement psStudent = connection.prepareStatement(insertStudent,
+						Statement.RETURN_GENERATED_KEYS)) {
 					psStudent.setString(1, student.getName());
 					psStudent.setInt(2, student.getGr_number());
 					psStudent.setString(3, student.getEmail());
 					int affectedRows = psStudent.executeUpdate();
-					if (affectedRows == 0)
+					if (affectedRows == 0) {
 						throw new SQLException("Creating student failed, no rows affected.");
+					}
 					try (ResultSet generatedKeys = psStudent.getGeneratedKeys()) {
 						if (generatedKeys.next()) {
 							studentId = generatedKeys.getInt(1);
@@ -302,23 +315,42 @@ public class StudentDao {
 					psProfile.setInt(4, student.getAge());
 					psProfile.executeUpdate();
 				}
-				// Assign course
-				try (PreparedStatement psCourse = connection.prepareStatement(insertStudentCourse)) {
+				// Insert student course
+				int studentCourseId = -1;
+				try (PreparedStatement psCourse = connection.prepareStatement(insertStudentCourse,
+						Statement.RETURN_GENERATED_KEYS)) {
 					psCourse.setInt(1, studentId);
 					psCourse.setInt(2, courseId);
-					psCourse.executeUpdate();
+					int affectedRows = psCourse.executeUpdate();
+					if (affectedRows == 0) {
+						throw new SQLException("Assigning course failed, no rows affected.");
+					}
+					try (ResultSet generatedKeys = psCourse.getGeneratedKeys()) {
+						if (generatedKeys.next()) {
+							studentCourseId = generatedKeys.getInt(1);
+						} else {
+							throw new SQLException("Assigning course failed, no ID obtained.");
+						}
+					}
+				}
+				// Insert fee
+				try (PreparedStatement psFee = connection.prepareStatement(insertFee)) {
+					psFee.setInt(1, studentCourseId);
+					psFee.setBigDecimal(2, courseFee);
+					psFee.setBigDecimal(3, courseFee);
+					psFee.executeUpdate();
 				}
 				connection.commit();
-				success = true;
+				return true;
 			} catch (SQLException e) {
 				connection.rollback();
-				throw e;
+				System.out.println("Database error: " + e.getMessage());
+				return false;
 			} finally {
 				connection.setAutoCommit(true);
 			}
-			return success;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			System.out.println("Database error: " + e.getMessage());
 			return false;
 		}
 	}
