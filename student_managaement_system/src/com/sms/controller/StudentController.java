@@ -19,7 +19,6 @@ import com.sms.utils.payFeesUtils;
 
 public class StudentController {
 	private StudentService studentService;
-	@SuppressWarnings("unused")
 	private FeeService feeService;
 	private Scanner scanner = new Scanner(System.in);
 
@@ -317,18 +316,96 @@ public class StudentController {
 		}
 
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to assign a course: ", "Student ID");
+		String searchResult = studentService.searchStudentById(studentId);
+		if (!searchResult.equals("SUCCESS")) {
+			System.out.println("❌ " + searchResult);
+			return;
+		}
 
 		List<Course> courses = studentService.getAllCourses();
 		if (courses.isEmpty()) {
-			System.out.println("No courses available.");
+			System.out.println("❌ No courses available.");
 			return;
 		}
 		System.out.println("\nAvailable Courses:");
 		printCourses(courses);
 
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
+		if (courses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
+			System.out.println("❌ Invalid Course ID.");
+			return;
+		}
 
-		String result = studentService.assignCourseToStudent(studentId, courseId);
+		List<Subject> availableSubjects = studentService.getSubjectsByCourseId(courseId);
+		if (availableSubjects.isEmpty()) {
+			System.out.println("❌ No subjects available for Course ID " + courseId + ".");
+			return;
+		}
+
+		System.out.println("\n📚 Available Subjects for Course ID " + courseId + ":");
+		System.out.println("=".repeat(80));
+
+		List<Subject> mandatorySubjects = availableSubjects.stream()
+				.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
+		List<Subject> electiveSubjects = availableSubjects.stream()
+				.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
+
+		if (!mandatorySubjects.isEmpty()) {
+			System.out.println("🔴 MANDATORY SUBJECTS (Must select all):");
+			for (Subject subject : mandatorySubjects) {
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
+			}
+		}
+
+		if (!electiveSubjects.isEmpty()) {
+			System.out.println("\n🟢 ELECTIVE SUBJECTS (Optional):");
+			for (Subject subject : electiveSubjects) {
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
+			}
+		}
+
+		List<Integer> selectedSubjectIds = new ArrayList<>();
+		if (!mandatorySubjects.isEmpty()) {
+			System.out.println("\n🔴 Selecting Mandatory Subjects:");
+			for (Subject subject : mandatorySubjects) {
+				selectedSubjectIds.add(subject.getSubject_id());
+				System.out.println("   ✓ Auto-selected: " + subject.getSubject_name());
+			}
+		}
+
+		if (!electiveSubjects.isEmpty()) {
+			System.out.println("\n🟢 Select Elective Subjects:");
+			scanner.nextLine();
+			System.out.print("Enter elective subject IDs (comma-separated, or press Enter to skip): ");
+			String electiveInput = scanner.nextLine().trim();
+
+			if (!electiveInput.isEmpty()) {
+				try {
+					String[] electiveIds = electiveInput.split(",");
+					for (String idStr : electiveIds) {
+						int electiveId = Integer.parseInt(idStr.trim());
+						boolean isValidElective = electiveSubjects.stream()
+								.anyMatch(s -> s.getSubject_id() == electiveId);
+						if (isValidElective) {
+							selectedSubjectIds.add(electiveId);
+							Subject selectedSubject = electiveSubjects.stream()
+									.filter(s -> s.getSubject_id() == electiveId).findFirst().orElse(null);
+							System.out.println("   ✓ Selected: " + selectedSubject.getSubject_name());
+						} else {
+							System.out.println("   ❌ Invalid elective subject ID: " + electiveId);
+						}
+					}
+				} catch (NumberFormatException e) {
+					System.out.println("   ❌ Invalid input format. No elective subjects selected.");
+				}
+			} else {
+				System.out.println("   ⏭️ No elective subjects selected.");
+			}
+		}
+
+		String result = studentService.assignCourseToStudent(studentId, courseId, selectedSubjectIds);
 		System.out.println(result);
 	}
 

@@ -110,4 +110,21 @@ public class FeeService {
 	public List<Fee> getFeesListByCourse(int courseId) {
 		return feeDao.getFeesByCourse(courseId);
 	}
+
+	public int getStudentCourseId(int studentId, int courseId) {
+		try {
+			return feeDao.getStudentCourseId(studentId, courseId);
+		} catch (SQLException e) {
+			return -1; // Indicate failure
+		}
+	}
+
+	public String createFeeRecord(int studentCourseId, BigDecimal totalFee) {
+		try {
+			feeDao.createFeeRecord(studentCourseId, totalFee);
+			return "SUCCESS";
+		} catch (SQLException e) {
+			return "Failed to create fee record: " + e.getMessage();
+		}
+	}
 }

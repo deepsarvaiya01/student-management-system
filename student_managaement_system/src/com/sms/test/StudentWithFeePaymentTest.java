@@ -2,11 +2,11 @@ package com.sms.test;
 
 import java.sql.SQLException;
 import java.util.List;
-import com.sms.service.StudentService;
-import com.sms.service.FeeService;
-import com.sms.model.Student;
-import com.sms.model.Subject;
+
 import com.sms.model.Fee;
+import com.sms.model.Subject;
+import com.sms.service.FeeService;
+import com.sms.service.StudentService;
 
 public class StudentWithFeePaymentTest {
     

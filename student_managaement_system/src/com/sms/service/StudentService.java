@@ -39,7 +39,7 @@ public class StudentService {
 		return studentDao.getAllCourses();
 	}
 
-	public String assignCourseToStudent(int studentId, int courseId) {
+	public String assignCourseToStudent(int studentId, int courseId, List<Integer> subjectIds) {
 		if (studentId <= 0) {
 			return "Invalid student ID.";
 		}
@@ -52,16 +52,27 @@ public class StudentService {
 		if (getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
 			return "No such course exists.";
 		}
-		// Check if course is already assigned
 		List<Course> existingCourses = studentDao.readAllCourses(studentId);
 		if (existingCourses.stream().anyMatch(c -> c.getCourse_id() == courseId)) {
 			return "Course already assigned to student.";
 		}
-		boolean success = studentDao.assignCourseToStudent(studentId, courseId);
-		if (!success) {
-			return "Failed to assign course. Database error.";
+		if (subjectIds == null || subjectIds.isEmpty()) {
+			return "At least one subject must be selected.";
 		}
-		return "Course ID " + courseId + " assigned to student ID " + studentId + " successfully.";
+		List<Subject> availableSubjects = getSubjectsByCourseId(courseId);
+		List<Integer> availableSubjectIds = availableSubjects.stream().map(Subject::getSubject_id)
+				.collect(Collectors.toList());
+		for (Integer subjectId : subjectIds) {
+			if (!availableSubjectIds.contains(subjectId)) {
+				return "Invalid subject ID " + subjectId + " for course ID " + courseId;
+			}
+		}
+		boolean success = studentDao.assignCourseAndSubjectsToStudent(studentId, courseId, subjectIds);
+		if (!success) {
+			return "Failed to assign course and subjects. Database error.";
+		}
+		return "Course ID " + courseId + " with " + subjectIds.size() + " subjects assigned to student ID " + studentId
+				+ " successfully.";
 	}
 
 	public String searchStudentById(int studentId) {
@@ -142,12 +153,12 @@ public class StudentService {
 	public List<Course> getCoursesByStudentId(int studentId) {
 		return studentDao.readAllCourses(studentId);
 	}
-	
+
 	// Get subjects by course ID
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		return studentDao.getSubjectsByCourseId(courseId);
 	}
-	
+
 	// Add student with profile, course, and subjects
 	public String addStudentWithProfileAndCourseAndSubjects(Student student, int courseId, List<Integer> subjectIds) {
 		// First validate the student data
@@ -155,24 +166,23 @@ public class StudentService {
 		if (!validationResult.equals("VALID")) {
 			return validationResult;
 		}
-		
+
 		// Validate subject IDs
 		if (subjectIds == null || subjectIds.isEmpty()) {
 			return "At least one subject must be selected.";
 		}
-		
+
 		// Check if all subject IDs are valid for the course
 		List<Subject> availableSubjects = getSubjectsByCourseId(courseId);
-		List<Integer> availableSubjectIds = availableSubjects.stream()
-				.map(Subject::getSubject_id)
+		List<Integer> availableSubjectIds = availableSubjects.stream().map(Subject::getSubject_id)
 				.collect(Collectors.toList());
-		
+
 		for (Integer subjectId : subjectIds) {
 			if (!availableSubjectIds.contains(subjectId)) {
 				return "Invalid subject ID " + subjectId + " for course ID " + courseId;
 			}
 		}
-		
+
 		// Add student with subjects
 		boolean success = studentDao.addStudentWithProfileAndCourseAndSubjects(student, courseId, subjectIds);
 		if (!success) {
@@ -180,7 +190,7 @@ public class StudentService {
 		}
 		return "Student added successfully with " + subjectIds.size() + " subjects assigned.";
 	}
-	
+
 	// Helper method to validate student data
 	private String validateStudentData(Student student, int courseId) {
 		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {

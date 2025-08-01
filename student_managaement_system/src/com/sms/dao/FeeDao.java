@@ -230,6 +230,30 @@ public class FeeDao {
 		}
 		return students;
 	}
+	
+	public int getStudentCourseId(int studentId, int courseId) throws SQLException {
+        String query = "SELECT student_course_id FROM student_courses WHERE student_id = ? AND course_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, studentId);
+            pstmt.setInt(2, courseId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("student_course_id");
+            }
+            return -1; // No record found
+        }
+    }
+
+    public void createFeeRecord(int studentCourseId, BigDecimal totalFee) throws SQLException {
+        String query = "INSERT INTO fees (student_course_id, paid_amount, pending_amount, total_fee) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+            pstmt.setInt(1, studentCourseId);
+            pstmt.setBigDecimal(2, BigDecimal.ZERO);
+            pstmt.setBigDecimal(3, totalFee);
+            pstmt.setBigDecimal(4, totalFee);
+            pstmt.executeUpdate();
+        }
+    }
 
 	// Update fee payment
 	public boolean updateFeePayment(int studentId, BigDecimal paymentAmount, int courseId) {

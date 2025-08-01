@@ -156,7 +156,7 @@ public class StudentDao {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
 			return false;
 		}
-		
+
 		String updateStudent = "UPDATE students SET is_active = false WHERE student_id = ?";
 		String updateProfile = "UPDATE profiles SET is_active = false WHERE student_id = ?";
 		String updateStudentCourses = "UPDATE student_courses SET is_active = false WHERE student_id = ?";
@@ -355,14 +355,14 @@ public class StudentDao {
 			return false;
 		}
 	}
-	
+
 	// Get subjects by course ID
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		List<Subject> subjects = new ArrayList<>();
-		String sql = "SELECT s.subject_id, s.subject_name, s.subject_type FROM subjects s " +
-					 "JOIN subject_course sc ON s.subject_id = sc.subject_id " +
-					 "WHERE sc.course_id = ? AND s.is_active = 1";
-		
+		String sql = "SELECT s.subject_id, s.subject_name, s.subject_type FROM subjects s "
+				+ "JOIN subject_course sc ON s.subject_id = sc.subject_id "
+				+ "WHERE sc.course_id = ? AND s.is_active = 1";
+
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, courseId);
 			ResultSet rs = pstmt.executeQuery();
@@ -379,7 +379,7 @@ public class StudentDao {
 		}
 		return subjects;
 	}
-	
+
 	// Add student with profile, course, and subjects
 	public boolean addStudentWithProfileAndCourseAndSubjects(Student student, int courseId, List<Integer> subjectIds) {
 		try {
@@ -420,14 +420,14 @@ public class StudentDao {
 					return false;
 				}
 			}
-			
+
 			String insertStudent = "INSERT INTO students (name, gr_number, email) VALUES (?, ?, ?)";
 			String insertProfile = "INSERT INTO profiles (student_id, city, mobile_no, age) VALUES (?, ?, ?, ?)";
 			String insertStudentCourse = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
 			String insertFee = "INSERT INTO fees (student_course_id, paid_amount, pending_amount, total_fee) VALUES (?, 0.0, ?, ?)";
 			String insertStudentSubject = "INSERT INTO student_subjects (student_course_id, subject_course_id) VALUES (?, ?)";
 			String getSubjectCourseId = "SELECT id FROM subject_course WHERE subject_id = ? AND course_id = ?";
-			
+
 			try {
 				connection.setAutoCommit(false);
 				int studentId = -1;
@@ -493,7 +493,8 @@ public class StudentDao {
 						if (rs.next()) {
 							subjectCourseId = rs.getInt("id");
 						} else {
-							System.out.println("Warning: Subject ID " + subjectId + " not found for course ID " + courseId);
+							System.out.println(
+									"Warning: Subject ID " + subjectId + " not found for course ID " + courseId);
 							continue;
 						}
 					}
@@ -521,6 +522,107 @@ public class StudentDao {
 			System.err.println("Error adding student with subjects: " + e.getMessage());
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	public boolean assignCourseAndSubjectsToStudent(int studentId, int courseId, List<Integer> subjectIds) {
+		String courseSql = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
+		String subjectSql = "INSERT INTO student_subjects (student_course_id, subject_course_id) VALUES (?, ?)";
+		String getSubjectCourseId = "SELECT id FROM subject_course WHERE subject_id = ? AND course_id = ?";
+		String checkCourseSql = "SELECT total_fee FROM courses WHERE course_id = ?";
+		String insertFee = "INSERT INTO fees (student_course_id, paid_amount, pending_amount, total_fee) VALUES (?, 0.0, ?, ?)";
+
+		Connection conn = null;
+		try {
+			conn = connection != null ? connection : DBConnection.connect();
+			conn.setAutoCommit(false);
+
+			BigDecimal courseFee = null;
+			try (PreparedStatement pstmt = conn.prepareStatement(checkCourseSql)) {
+				pstmt.setInt(1, courseId);
+				ResultSet rs = pstmt.executeQuery();
+				if (rs.next()) {
+					courseFee = rs.getBigDecimal("total_fee");
+					if (courseFee == null) {
+						System.out.println("Error: Course ID " + courseId + " has no total fee set.");
+						conn.rollback();
+						return false;
+					}
+				} else {
+					System.out.println("Error: Invalid course ID " + courseId);
+					conn.rollback();
+					return false;
+				}
+			}
+
+			int studentCourseId;
+			try (PreparedStatement courseStmt = conn.prepareStatement(courseSql, Statement.RETURN_GENERATED_KEYS)) {
+				courseStmt.setInt(1, studentId);
+				courseStmt.setInt(2, courseId);
+				int rowsAffected = courseStmt.executeUpdate();
+				if (rowsAffected == 0) {
+					conn.rollback();
+					return false;
+				}
+				try (ResultSet generatedKeys = courseStmt.getGeneratedKeys()) {
+					if (generatedKeys.next()) {
+						studentCourseId = generatedKeys.getInt(1);
+					} else {
+						conn.rollback();
+						return false;
+					}
+				}
+			}
+
+			try (PreparedStatement feeStmt = conn.prepareStatement(insertFee)) {
+				feeStmt.setInt(1, studentCourseId);
+				feeStmt.setBigDecimal(2, courseFee);
+				feeStmt.setBigDecimal(3, courseFee);
+				feeStmt.executeUpdate();
+			}
+
+			try (PreparedStatement subjectStmt = conn.prepareStatement(subjectSql)) {
+				for (Integer subjectId : subjectIds) {
+					int subjectCourseId = -1;
+					try (PreparedStatement psGetSubjectCourse = conn.prepareStatement(getSubjectCourseId)) {
+						psGetSubjectCourse.setInt(1, subjectId);
+						psGetSubjectCourse.setInt(2, courseId);
+						ResultSet rs = psGetSubjectCourse.executeQuery();
+						if (rs.next()) {
+							subjectCourseId = rs.getInt("id");
+						} else {
+							System.out.println(
+									"Warning: Subject ID " + subjectId + " not found for course ID " + courseId);
+							continue;
+						}
+					}
+					subjectStmt.setInt(1, studentCourseId);
+					subjectStmt.setInt(2, subjectCourseId);
+					subjectStmt.addBatch();
+				}
+				subjectStmt.executeBatch();
+			}
+
+			conn.commit();
+			return true;
+		} catch (SQLException e) {
+			if (conn != null) {
+				try {
+					conn.rollback();
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
+			System.err.println("Database error: " + e.getMessage());
+			return false;
+		} finally {
+			if (conn != null) {
+				try {
+					conn.setAutoCommit(true);
+				} catch (SQLException ex) {
+					ex.printStackTrace();
+				}
+			}
 		}
 	}
 
