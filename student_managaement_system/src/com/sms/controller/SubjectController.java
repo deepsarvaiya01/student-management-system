@@ -8,8 +8,12 @@ import com.sms.model.Subject;
 import com.sms.service.SubjectService;
 
 public class SubjectController {
-    private final SubjectService subjectService = new SubjectService();
+    private final SubjectService subjectService;
     private final Scanner scanner = new Scanner(System.in);
+
+    public SubjectController() throws SQLException {
+        this.subjectService = new SubjectService();
+    }
 
     public void addSubject() {
         System.out.print("Enter subject name: ");

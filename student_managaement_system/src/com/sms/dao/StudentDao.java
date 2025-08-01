@@ -14,11 +14,15 @@ import com.sms.model.Student;
 
 public class StudentDao {
 
+	private static final int INVALID_ID = 0;
 	private Connection connection = null;
-	private Statement statement = null;
 
 	public StudentDao() throws SQLException {
-		this.connection = DBConnection.connect();
+		try {
+			this.connection = DBConnection.connect();
+		} catch (SQLException e) {
+			throw new SQLException("Failed to establish database connection: " + e.getMessage());
+		}
 	}
 
 	public List<Student> readAllStudents() {
@@ -38,13 +42,14 @@ public class StudentDao {
 				students.add(student);
 			}
 		} catch (SQLException e) {
+			System.err.println("Error reading students: " + e.getMessage());
 			e.printStackTrace();
 		}
 		return students;
 	}
 
 	public List<Course> readAllCourses(int studentId) {
-		if (studentId <= 0 || searchStudentById(studentId) == null) {
+		if (studentId <= INVALID_ID || searchStudentById(studentId) == null) {
 			return new ArrayList<>();
 		}
 

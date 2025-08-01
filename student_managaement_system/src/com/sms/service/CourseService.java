@@ -8,7 +8,11 @@ import com.sms.model.Course;
 import com.sms.model.Subject;
 
 public class CourseService {
-	private final CourseDAO courseDAO = new CourseDAO();
+	private final CourseDAO courseDAO;
+
+	public CourseService() throws SQLException {
+		this.courseDAO = new CourseDAO();
+	}
 
     public int addCourse(Course course) throws SQLException {
         return courseDAO.addCourse(course);

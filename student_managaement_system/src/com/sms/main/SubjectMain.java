@@ -1,11 +1,12 @@
 package com.sms.main;
 
+import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.sms.controller.SubjectController;
 
 public class SubjectMain {
-    public void show() {
+    public void show() throws SQLException {
         Scanner scanner = new Scanner(System.in);
         SubjectController subjectController = new SubjectController();
 
