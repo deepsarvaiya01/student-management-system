@@ -1,10 +1,11 @@
 package com.sms.test;
 
 import java.sql.SQLException;
-import com.sms.database.DBConnection;
+
 import com.sms.dao.CourseDAO;
 import com.sms.dao.StudentDao;
 import com.sms.dao.SubjectDAO;
+import com.sms.database.DBConnection;
 
 public class ConnectionTest {
     
@@ -14,7 +15,8 @@ public class ConnectionTest {
         try {
             // Test 1: Basic connection
             System.out.println("1. Testing basic connection...");
-            var connection = DBConnection.connect();
+            @SuppressWarnings("unused")
+			var connection = DBConnection.connect();
             System.out.println("✓ Connection established successfully");
             System.out.println("Connection valid: " + DBConnection.isConnectionValid());
             

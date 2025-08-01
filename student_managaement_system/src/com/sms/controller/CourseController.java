@@ -203,7 +203,7 @@ public class CourseController {
 			System.out.println("Choose subject addition method:");
 			System.out.println("1. Assign existing subjects");
 			System.out.println("2. Add new subjects and assign");
-			int choice = InputValidator.getValidIntegerInRange(scanner, "Enter choice: ", "Choice", 1, 2);
+			int choice = InputValidator.getValidIntegerInRangeWithNewline(scanner, "Enter choice: ", "Choice", 1, 2);
 
 			if (choice == 1) {
 				List<Subject> existingSubjects = subjectService.getAllSubjects();

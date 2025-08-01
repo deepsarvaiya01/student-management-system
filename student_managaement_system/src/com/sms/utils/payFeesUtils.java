@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.sms.dao.FeeDao;
 import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Student;
@@ -15,13 +14,11 @@ import com.sms.service.StudentService;
 
 public class payFeesUtils {
 	private FeeService feeService;
-	private FeeDao feeDao;
 	private StudentService studentService;
 	private Scanner scanner = new Scanner(System.in);
 
 	public payFeesUtils() throws SQLException {
 		feeService = new FeeService();
-		feeDao = new FeeDao();
 		studentService = new StudentService();
 	}
 
@@ -113,8 +110,9 @@ public class payFeesUtils {
 
 	public void processAndDisplayPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
+			String method = InputValidator.getValidPaymentMethod(scanner, "Enter payment method (card/cash/upi): ");
 			PaymentProcessor processor = new PaymentProcessor();
-			boolean paymentSuccess = processor.process(studentId, paymentAmount);
+			boolean paymentSuccess = processor.process(studentId, paymentAmount, method, scanner);
 
 			if (paymentSuccess) {
 				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
@@ -137,7 +135,6 @@ public class payFeesUtils {
 			}
 		} catch (Exception e) {
 			System.out.println("❌ Error while processing payment: " + e.getMessage());
-			e.printStackTrace();
 		}
 	}
 

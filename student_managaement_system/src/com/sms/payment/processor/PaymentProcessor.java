@@ -3,28 +3,30 @@ package com.sms.payment.processor;
 import java.math.BigDecimal;
 import java.util.Scanner;
 
-import com.sms.payment.strategy.*;
+import com.sms.payment.strategy.CardPayment;
+import com.sms.payment.strategy.CashPayment;
+import com.sms.payment.strategy.PaymentStrategy;
+import com.sms.payment.strategy.UPIPayment;
 
 public class PaymentProcessor {
-    private Scanner scanner = new Scanner(System.in);
 
-    public boolean process(int studentId, BigDecimal amount) {
-        System.out.println("Choose payment method:\n1. Cash\n2. Card\n3. UPI");
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // flush
+	public boolean process(int studentId, BigDecimal amount, String method, Scanner scanner) {
+		PaymentStrategy strategy;
+		switch (method.toLowerCase()) {
+		case "cash":
+			strategy = new CashPayment();
+			break;
+		case "card":
+			strategy = new CardPayment();
+			break;
+		case "upi":
+			strategy = new UPIPayment();
+			break;
+		default:
+			System.out.println("❌ Invalid payment method.");
+			return false;
+		}
 
-        PaymentStrategy strategy = switch (choice) {
-            case 1 -> new CashPayment();
-            case 2 -> new CardPayment();
-            case 3 -> new UPIPayment();
-            default -> null;
-        };
-
-        if (strategy == null) {
-            System.out.println("Invalid payment method.");
-            return false;
-        }
-
-        return strategy.pay(studentId, amount);
-    }
+		return strategy.pay(studentId, amount, scanner);
+	}
 }

@@ -4,27 +4,23 @@ import java.math.BigDecimal;
 import java.util.Scanner;
 
 import com.sms.payment.validator.PaymentValidator;
+import com.sms.utils.InputValidator;
 
 public class CardPayment implements PaymentStrategy {
-    private Scanner scanner = new Scanner(System.in);
 
-    @Override
-    public boolean pay(int studentId, BigDecimal amount) {
-        System.out.print("Enter card number: ");
-        String card = scanner.nextLine();
-        System.out.print("Enter expiry (MM/YY): ");
-        String expiry = scanner.nextLine();
-        System.out.print("Enter CVV: ");
-        String cvv = scanner.nextLine();
-        System.out.print("Enter cardholder name: ");
-        String name = scanner.nextLine();
+	@Override
+	public boolean pay(int studentId, BigDecimal amount, Scanner scanner) {
+		try {
+			PaymentValidator.getValidCardNumber(scanner, "Enter card number: ");
+			PaymentValidator.getValidExpiry(scanner, "Enter expiry (MM/YY): ");
+			PaymentValidator.getValidCVV(scanner, "Enter CVV: ");
+			InputValidator.getValidName(scanner, "Enter cardholder name: ");
 
-        if (!PaymentValidator.validateCard(card) || !PaymentValidator.validateCVV(cvv) || !PaymentValidator.validateExpiry(expiry)) {
-            System.out.println("Invalid card details.");
-            return false;
-        }
-
-        System.out.println("Processing card payment...");
-        return true;
-    }
+			System.out.println("Processing card payment for Student ID " + studentId + " of ₹" + amount + "...");
+			return true;
+		} catch (Exception e) {
+			System.out.println("❌ Card payment failed: " + e.getMessage());
+			return false;
+		}
+	}
 }
