@@ -166,14 +166,48 @@ public class TeacherDao {
 
 	// Restore teacher
 	public boolean restoreTeacher(int id) {
-		String sql = "UPDATE teachers SET is_active = TRUE WHERE teacher_id = ?";
-		try (PreparedStatement ps = connection.prepareStatement(sql)) {
-			ps.setInt(1, id);
-			return ps.executeUpdate() > 0;
+		String restoreSql = "UPDATE teachers SET is_active = TRUE WHERE teacher_id = ?";
+		String deleteSubjectsSql = "DELETE FROM subject_teachers WHERE teacher_id = ?";
+
+		try {
+			connection.setAutoCommit(false); // Begin transaction
+
+			// Step 1: Restore the teacher
+			try (PreparedStatement ps1 = connection.prepareStatement(restoreSql)) {
+				ps1.setInt(1, id);
+				int updated = ps1.executeUpdate();
+
+				if (updated == 0) {
+					connection.rollback();
+					return false; // No rows updated, teacher not found
+				}
+			}
+
+			// Step 2: Remove all subject assignments
+			try (PreparedStatement ps2 = connection.prepareStatement(deleteSubjectsSql)) {
+				ps2.setInt(1, id);
+				ps2.executeUpdate(); // No need to check count, just delete if any
+			}
+
+			connection.commit();
+			return true;
+
 		} catch (SQLException e) {
 			e.printStackTrace();
+			try {
+				connection.rollback();
+			} catch (SQLException ex) {
+				ex.printStackTrace();
+			}
 			return false;
+		} finally {
+			try {
+				connection.setAutoCommit(true); // Reset to default
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 	}
+
 
 }

@@ -29,7 +29,7 @@ public class Main {
 
 			while (!scanner.hasNextInt()) {
 				System.out.println("❗ Invalid input. Please enter a number between 0 and 4.");
-				scanner.next(); 
+				scanner.next();
 				System.out.print("👉 Enter your choice (0-4): ");
 
 			}
@@ -37,34 +37,35 @@ public class Main {
 			choice = scanner.nextInt();
 
 			switch (choice) {
-				case 1 -> {
-					StudentMain s = new StudentMain();
-					s.show(); 
-				}
-				case 2 -> {
-					TeacherMain t = new TeacherMain();
-					t.show();
-				}
-				case 3 -> {
-					FeeMain f = new FeeMain();
-					f.show();
-				}
-				case 4 -> {
-					CourseMain c = new CourseMain();
-					c.show();
-				}
-				case 5 -> {
-					DashboradMain d = new DashboradMain();
-					d.show();
-				}
-				case 0 -> {
-					System.out.println("✅ Exiting Student Management System... Thank you!");
-					break;
-				}
-				default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 4.");
+
+			case 1 -> {
+				StudentMain s = new StudentMain();
+				s.show();
+			}
+			case 2 -> {
+				TeacherMain t = new TeacherMain();
+				t.show();
+			}
+			case 3 -> {
+				FeeMain f = new FeeMain();
+				f.show();
+			}
+			case 4 -> {
+				CourseMain c = new CourseMain();
+				c.show();
+			}
+			case 5 -> {
+				DashboradMain d = new DashboradMain();
+				d.show();
+			}
+			case 0 -> {
+				System.out.println("✅ Exiting Student Management System... Thank you!");
+				break;
+			}
+			default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 4.");
 			}
 		} while (choice != 0);
 
-		scanner.close(); 
+		scanner.close();
 	}
 }
