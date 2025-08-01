@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.Scanner;
 
 import com.sms.main.CourseMain;
-import com.sms.main.DashboradMain;
+import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
@@ -26,36 +26,34 @@ public class Main {
 			System.out.println("║ 5. Dashboard                             ║");
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
-			
+
 			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-5): ", 5);
 
 			switch (choice) {
-
-			case 1 -> {
-				StudentMain s = new StudentMain();
-				s.show();
-			}
-			case 2 -> {
-				TeacherMain t = new TeacherMain();
-				t.show();
-			}
-			case 3 -> {
-				FeeMain f = new FeeMain();
-				f.show();
-			}
-			case 4 -> {
-				CourseMain c = new CourseMain();
-				c.show();
-			}
-			case 5 -> {
-				DashboradMain d = new DashboradMain();
-				d.show();
-			}
-			case 0 -> {
-				System.out.println("✅ Exiting Student Management System... Thank you!");
-				break;
-			}
-			default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 5.");
+				case 1 -> {
+					StudentMain s = new StudentMain();
+					s.show();
+				}
+				case 2 -> {
+					TeacherMain t = new TeacherMain();
+					t.show();
+				}
+				case 3 -> {
+					FeeMain f = new FeeMain();
+					f.show();
+				}
+				case 4 -> {
+					CourseMain c = new CourseMain();
+					c.show();
+				}
+				case 5 -> {
+					DashboardMain d = new DashboardMain(); 
+					d.show();
+				}
+				case 0 -> {
+					System.out.println("✅ Exiting Student Management System... Thank you!");
+				}
+				default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 5.");
 			}
 		} while (choice != 0);
 

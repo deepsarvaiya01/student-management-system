@@ -9,11 +9,16 @@ import com.sms.model.Subject;
 
 public class SubjectDAO {
 
+	private Connection connection = null;
+	
+	public SubjectDAO() throws SQLException {
+		this.connection = DBConnection.connect();
+	}
+
     public List<Subject> getAllSubjects() throws SQLException {
         List<Subject> subjects = new ArrayList<>();
         String sql = "SELECT * FROM subjects WHERE is_active = 1";
-        try (Connection conn = DBConnection.connect();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
             while (rs.next()) {
                 Subject subject = new Subject();
@@ -29,8 +34,7 @@ public class SubjectDAO {
 
     public int addSubject(Subject subject) {
         String sql = "INSERT INTO subjects (subject_name, subject_type, is_active) VALUES (?, ?, ?)";
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, subject.getSubject_name());
             pstmt.setString(2, subject.getSubject_type());
@@ -44,7 +48,8 @@ public class SubjectDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("❗ Error adding subject: " + e.getMessage());
+            System.err.println("Error adding subject: " + e.getMessage());
+            e.printStackTrace();
         }
         return -1;
     }
@@ -52,8 +57,7 @@ public class SubjectDAO {
 
     public Subject getSubjectById(int id) {
         String query = "SELECT * FROM subjects WHERE subject_id = ? AND is_active = 1";
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -66,34 +70,35 @@ public class SubjectDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println(e);
+            System.err.println("Error getting subject by ID: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
 
     public boolean updateSubject(Subject subject) {
         String sql = "UPDATE subjects SET subject_name = ?, subject_type = ? WHERE subject_id = ?";
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, subject.getSubject_name());
             stmt.setString(2, subject.getSubject_type());
             stmt.setInt(3, subject.getSubject_id());
 
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("❗ Error updating subject: " + e.getMessage());
+            System.err.println("Error updating subject: " + e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
 
     public boolean softDeleteSubject(int id) {
         String sql = "UPDATE subjects SET is_active = 0 WHERE subject_id = ?";
-        try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, id);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.out.println("❗ Error deleting subject: " + e.getMessage());
+            System.err.println("Error deleting subject: " + e.getMessage());
+            e.printStackTrace();
         }
         return false;
     }
