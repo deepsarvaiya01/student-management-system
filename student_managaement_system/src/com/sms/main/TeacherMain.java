@@ -3,6 +3,7 @@ package com.sms.main;
 import java.util.Scanner;
 
 import com.sms.controller.TeacherController;
+import com.sms.utils.InputValidator;
 
 public class TeacherMain {
 
@@ -22,21 +23,13 @@ public class TeacherMain {
 			System.out.println("║ 5. Remove Subject from Teacher                         ║");
 			System.out.println("║ 6. View Assigned Subjects                              ║");
 			System.out.println("║ 7. Search Teacher by ID                                ║");
-			System.out.println("║ 8. Restore deleted teacher                             ║");
+			System.out.println("║ 8. Restore Deleted Teacher                             ║");
 			System.out.println("║ 0. Back                                                ║");
 			System.out.println("╚════════════════════════════════════════════════════════╝");
-			System.out.print("👉 Enter your choice: ");
 
-
-			try {
-				choice = scanner.nextInt();
-			} catch (Exception e) {
-				choice = 10;
-			}
-			scanner.nextLine();
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-8): ", 8);
 
 			switch (choice) {
-
 			case 1 -> controller.addTeacher();
 			case 2 -> controller.viewTeachers();
 			case 3 -> controller.deleteTeacher();
@@ -45,9 +38,7 @@ public class TeacherMain {
 			case 6 -> controller.viewAssignedSubjects();
 			case 7 -> controller.searchTeacherById();
 			case 8 -> controller.restoreTeacher();
-
 			case 0 -> System.out.println("Returning to main menu.");
-			default -> System.out.println("Invalid input!");
 			}
 		} while (choice != 0);
 	}

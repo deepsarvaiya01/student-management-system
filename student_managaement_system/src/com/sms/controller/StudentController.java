@@ -10,13 +10,11 @@ import com.sms.model.Fee;
 import com.sms.model.Student;
 import com.sms.service.FeeService;
 import com.sms.service.StudentService;
-import com.sms.utils.payFeesUtils;
 import com.sms.utils.InputValidator;
+import com.sms.utils.payFeesUtils;
 
 public class StudentController {
-
 	private StudentService studentService;
-	@SuppressWarnings("unused")
 	private FeeService feeService;
 	private Scanner scanner = new Scanner(System.in);
 
@@ -25,7 +23,6 @@ public class StudentController {
 		this.feeService = new FeeService();
 	}
 
-	// View All Students
 	public void viewAllStudents() {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
@@ -39,12 +36,9 @@ public class StudentController {
 		}
 	}
 
-	// Add New Student with Profile and Course Assignment
 	public void addNewStudent() {
-		scanner.nextLine(); // Clear buffer from menu choice
 		String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
 		int grNumber = InputValidator.getValidGRNumber(scanner, "Enter GR Number: ");
-		scanner.nextLine(); // Clear buffer after GR number
 		String email = InputValidator.getValidEmail(scanner, "Enter Email: ");
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ");
@@ -72,7 +66,6 @@ public class StudentController {
 		System.out.println(result);
 	}
 
-	// Assign Course to Student
 	public void assignCourse() {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
@@ -96,7 +89,6 @@ public class StudentController {
 		System.out.println(result);
 	}
 
-	// View All Courses by Student ID
 	public void viewAllCourses() {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
@@ -115,7 +107,6 @@ public class StudentController {
 		}
 	}
 
-	// Search Student by ID
 	public void searchStudent() {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
@@ -135,7 +126,6 @@ public class StudentController {
 		}
 	}
 
-	// Delete Student by ID
 	public void deleteStudent() {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
@@ -176,7 +166,7 @@ public class StudentController {
 		System.out.println("\n💰 === FEES PAYMENT ===");
 		payFeesUtil.showAndGetAllStudents();
 
-		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID to pay fees: ", "Student ID");
+		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to pay fees: ", "Student ID");
 		String searchResult = studentService.searchStudentById(studentId);
 		if (!searchResult.equals("SUCCESS")) {
 			System.out.println(searchResult);
@@ -216,7 +206,6 @@ public class StudentController {
 		System.out.println(result);
 	}
 
-	// Helper: Print courses in tabular format
 	private void printCourses(List<Course> courses) {
 		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
 		System.out.println("-------------------------------------------------------------");
