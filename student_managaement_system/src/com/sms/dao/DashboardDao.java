@@ -26,13 +26,13 @@ public class DashboardDao {
 		List<DashboardModel> dashboardList = new ArrayList<>();
 
 		String query = """
-									SELECT
+										SELECT
 				    s.student_id,
 				    s.name AS student_name,
-				    GROUP_CONCAT(DISTINCT c.course_name) AS courses,
-				    SUM(DISTINCT f.total_fee) AS total_fee,
-				    SUM(DISTINCT f.paid_amount) AS total_paid_fee,
-				    SUM(DISTINCT f.pending_amount) AS total_pending_fee,
+				    c.course_name AS course,
+				    f.total_fee,
+				    f.paid_amount,
+				    f.pending_amount,
 				    GROUP_CONCAT(DISTINCT sub.subject_name) AS subjects,
 				    GROUP_CONCAT(DISTINCT t.name) AS teachers
 				FROM students s
@@ -45,28 +45,29 @@ public class DashboardDao {
 				LEFT JOIN subject_teachers st ON sub.subject_id = st.subject_id
 				LEFT JOIN teachers t ON st.teacher_id = t.teacher_id
 				WHERE s.is_active = TRUE
-				GROUP BY s.student_id, s.name;
+				GROUP BY s.student_id, s.name, c.course_name, f.total_fee, f.paid_amount, f.pending_amount;
 
-								""";
+
+												""";
 
 		try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
 
 			int srNo = 0;
-
 			while (rs.next()) {
-				DashboardModel model = new DashboardModel();
-				model.setSrNo(++srNo);
-				model.setStudentId(rs.getInt("student_id"));
-				model.setName(rs.getString("student_name"));
-				model.setCourse(rs.getString("courses"));
-				model.setPaidFee(rs.getDouble("total_paid_fee"));
-				model.setPendingFee(rs.getDouble("total_pending_fee"));
-				model.setTotalFee(rs.getDouble("total_fee"));
-				model.setSubjects(rs.getString("subjects"));
-				model.setTeachers(rs.getString("teachers"));
+			    DashboardModel model = new DashboardModel();
+			    model.setSrNo(++srNo);
+			    model.setStudentId(rs.getInt("student_id"));
+			    model.setName(rs.getString("student_name"));
+			    model.setCourse(rs.getString("course"));
+			    model.setTotalFee(rs.getDouble("total_fee"));
+			    model.setPaidFee(rs.getDouble("paid_amount"));
+			    model.setPendingFee(rs.getDouble("pending_amount"));
+			    model.setSubjects(rs.getString("subjects"));
+			    model.setTeachers(rs.getString("teachers"));
 
-				dashboardList.add(model);
+			    dashboardList.add(model);
 			}
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
