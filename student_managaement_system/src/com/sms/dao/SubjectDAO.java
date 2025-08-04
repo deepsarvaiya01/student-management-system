@@ -14,6 +14,8 @@ public class SubjectDAO {
 	public SubjectDAO() throws SQLException {
 		this.connection = DBConnection.connect();
 	}
+	
+	
 
     public List<Subject> getAllSubjects() throws SQLException {
         List<Subject> subjects = new ArrayList<>();
