@@ -27,7 +27,7 @@ public class InputValidator {
 			}
 		}
 	}
-	
+
 	// Get valid integer input and consume newline
 	public static int getValidIntegerWithNewline(Scanner scanner, String prompt, String fieldName) {
 		int value = getValidInteger(scanner, prompt, fieldName);
@@ -60,7 +60,8 @@ public class InputValidator {
 	public static int getValidIntegerInRange(Scanner scanner, String prompt, String fieldName, int min, int max) {
 		while (true) {
 			try {
-				int value = getValidInteger(scanner, prompt, fieldName);
+				int value = (min == 0) ? getValidIntegerAllowZero(scanner, prompt, fieldName)
+						: getValidInteger(scanner, prompt, fieldName);
 				if (value < min || value > max) {
 					throw new AppException("❌ Invalid " + fieldName + "! Must be between " + min + " and " + max
 							+ ".\nPlease try again:");
@@ -71,9 +72,10 @@ public class InputValidator {
 			}
 		}
 	}
-	
+
 	// Get valid integer with range validation and consume newline
-	public static int getValidIntegerInRangeWithNewline(Scanner scanner, String prompt, String fieldName, int min, int max) {
+	public static int getValidIntegerInRangeWithNewline(Scanner scanner, String prompt, String fieldName, int min,
+			int max) {
 		int value = getValidIntegerInRange(scanner, prompt, fieldName, min, max);
 		scanner.nextLine(); // Consume the newline character
 		return value;
