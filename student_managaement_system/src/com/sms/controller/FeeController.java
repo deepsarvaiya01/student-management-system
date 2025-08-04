@@ -19,16 +19,26 @@ public class FeeController {
 		this.feeService = new FeeService();
 	}
 
+	private void printBox(String title, BigDecimal amount) {
+		String valueStr = "₹" + amount;
+		int totalWidth = 50;
+		String top = "╔" + "═".repeat(totalWidth - 2) + "╗";
+		String bottom = "╚" + "═".repeat(totalWidth - 2) + "╝";
+		String content = String.format("║ %-46s ║", title + valueStr);
+
+		System.out.println("\n" + top);
+		System.out.println(content);
+		System.out.println(bottom);
+	}
+
 	public void viewTotalPaidFees() {
 		BigDecimal totalPaid = feeService.getTotalPaidFees();
-		System.out.println("\n💰 Total Paid Fees: ₹" + totalPaid);
-		System.out.println("=====================================");
+		printBox("💰 Total Paid Fees: ", totalPaid);
 	}
 
 	public void viewTotalPendingFees() {
 		BigDecimal totalPending = feeService.getTotalPendingFees();
-		System.out.println("\n⏳ Total Pending Fees: ₹" + totalPending);
-		System.out.println("=====================================");
+		printBox("⏳ Total Pending Fees: ", totalPending);
 	}
 
 	public void viewFeesByStudent() {
@@ -56,7 +66,7 @@ public class FeeController {
 	}
 
 	public void viewFeesByCourse() {
-		System.out.println("\nAvailable Courses:");
+		System.out.println("\n📘 Available Courses:");
 		List<Course> courses = feeService.getAllCourses();
 		if (courses.isEmpty()) {
 			System.out.println("No courses found.");
@@ -80,7 +90,7 @@ public class FeeController {
 	}
 
 	public void updateFeesOfCourse() {
-		System.out.println("\nAvailable Courses:");
+		System.out.println("\n📘 Available Courses:");
 		List<Course> courses = feeService.getAllCourses();
 		if (courses.isEmpty()) {
 			System.out.println("No courses found.");
@@ -98,9 +108,6 @@ public class FeeController {
 
 	public void viewTotalEarning() {
 		BigDecimal totalEarning = feeService.getTotalEarning();
-		System.out.println("\nTotal Earning: ₹" + totalEarning);
-		System.out.println("=====================================");
+		printBox("💼 Total Earning: ", totalEarning);
 	}
-
-
 }
