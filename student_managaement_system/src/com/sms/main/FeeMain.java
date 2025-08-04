@@ -23,7 +23,7 @@ public class FeeMain {
             System.out.println("║ 4. View Fees By Course                   ║");
             System.out.println("║ 5. Update Fees Of A Course               ║");
             System.out.println("║ 6. Total Earning                         ║");
-            System.out.println("║ 0. Exit                                  ║");
+            System.out.println("║ 0. Back                                  ║");
             System.out.println("╚══════════════════════════════════════════╝");
             
             choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-6): ", 6);
@@ -36,7 +36,7 @@ public class FeeMain {
                 case 5 -> controller.updateFeesOfCourse();
                 case 6 -> controller.viewTotalEarning();
                 case 0 -> {
-                    System.out.println("Exiting Fees Management... Thank you!");
+                    System.out.println("Going back to Student Main Menu...");
                     return;
                 }
             }
