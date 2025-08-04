@@ -26,7 +26,7 @@ public class CourseService {
         return courseDAO.getCourseById(id);
     }
     
-    public boolean deleteCourseById(int id) {
+    public boolean deleteCourseById(int id) throws SQLException {
         return courseDAO.deleteCourse(id);
     }
 
