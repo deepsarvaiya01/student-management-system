@@ -465,10 +465,10 @@ public class StudentController {
 			return;
 		}
 
-		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name");
+		System.out.printf("\n%-10s | %-20s\n", "Student ID", "Name");
 		System.out.println("-------------------------");
 		for (Student s : students) {
-			System.out.printf("%-10d %-20s\n", s.getStudent_id(), s.getName());
+			System.out.printf("%-10d | %-20s\n", s.getStudent_id(), s.getName());
 		}
 
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ", "Student ID");
