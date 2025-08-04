@@ -31,7 +31,7 @@ public class payFeesUtils {
 			return List.of();
 		}
 
-		printStudents(students);
+		HelperUtils.printStudents(students);
 		return students;
 	}
 
@@ -46,7 +46,7 @@ public class payFeesUtils {
 			System.out.println("No courses assigned to this student.");
 			return List.of();
 		}
-		printCourses(courses);
+		HelperUtils.printCourses(courses);
 		return courses;
 	}
 
@@ -201,22 +201,5 @@ public class payFeesUtils {
 		}
 	}
 
-	private void printStudents(List<Student> students) {
-		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name", "Email", "GR Number");
-		System.out.println("-------------------------------------------------------------");
-		for (Student s : students) {
-			System.out.printf("%-10d %-20s %-25s %-10d\n", s.getStudent_id(), s.getName(), s.getEmail(),
-					s.getGr_number());
-		}
-	}
 
-	private void printCourses(List<Course> courses) {
-		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
-		System.out.println("-------------------------------------------------------------");
-		for (Course c : courses) {
-			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
-			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(),
-					totalFee);
-		}
-	}
 }

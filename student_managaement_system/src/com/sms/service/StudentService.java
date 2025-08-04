@@ -8,6 +8,8 @@ import com.sms.dao.StudentDao;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
+import com.sms.utils.HelperUtils;
+
 
 public class StudentService {
 	private StudentDao studentDao;
@@ -32,7 +34,7 @@ public class StudentService {
 		if (courses.isEmpty()) {
 			return "No courses assigned to student ID: " + studentId;
 		}
-		return "SUCCESS"; // Special return value to indicate success
+		return "SUCCESS"; 
 	}
 
 	public List<Course> getAllCourses() {
@@ -100,39 +102,6 @@ public class StudentService {
 		return "Student ID " + studentId + " marked as inactive successfully.";
 	}
 
-	public String addStudentWithProfileAndCourse(Student student, int courseId) {
-		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {
-			return "Invalid name (letters/spaces, max 50 chars).";
-		}
-		if (student.getGr_number() <= 0 || String.valueOf(student.getGr_number()).length() < 4
-				|| String.valueOf(student.getGr_number()).length() > 10) {
-			return "Invalid GR number (4-10 digits).";
-		}
-		if (student.getEmail() == null || !student.getEmail().matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-				|| student.getEmail().length() > 100) {
-			return "Invalid email format or too long.";
-		}
-		if (student.getCity() == null || !student.getCity().matches("[a-zA-Z ]{1,50}")) {
-			return "Invalid city (letters/spaces, max 50 chars).";
-		}
-		if (student.getMobile_no() == null || !student.getMobile_no().matches("\\d{10}")
-				|| student.getMobile_no().length() > 15) {
-			return "Invalid mobile number (10 digits).";
-		}
-		if (student.getAge() < 15 || student.getAge() > 100) {
-			return "Invalid age (15-100).";
-		}
-		if (courseId <= 0 || getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			return "Invalid or non-existent course ID: " + courseId;
-		}
-		// Check for duplicate GR number and email in DB
-		boolean success = studentDao.addStudentWithProfileAndCourse(student, courseId);
-		if (!success) {
-			return "Duplicate GR number or email, or invalid course.";
-		}
-		return "Student added and course assigned successfully.";
-	}
-
 	public String restoreStudentById(int studentId) {
 		if (studentId <= 0) {
 			return "Invalid student ID.";
@@ -162,7 +131,7 @@ public class StudentService {
 	// Add student with profile, course, and subjects
 	public String addStudentWithProfileAndCourseAndSubjects(Student student, int courseId, List<Integer> subjectIds) {
 		// First validate the student data
-		String validationResult = validateStudentData(student, courseId);
+		String validationResult = HelperUtils.validateStudentData(student, courseId);
 		if (!validationResult.equals("VALID")) {
 			return validationResult;
 		}
@@ -191,32 +160,5 @@ public class StudentService {
 		return "Student added successfully with " + subjectIds.size() + " subjects assigned.";
 	}
 
-	// Helper method to validate student data
-	private String validateStudentData(Student student, int courseId) {
-		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {
-			return "Invalid name (letters/spaces, max 50 chars).";
-		}
-		if (student.getGr_number() <= 0 || String.valueOf(student.getGr_number()).length() < 4
-				|| String.valueOf(student.getGr_number()).length() > 10) {
-			return "Invalid GR number (4-10 digits).";
-		}
-		if (student.getEmail() == null || !student.getEmail().matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
-				|| student.getEmail().length() > 100) {
-			return "Invalid email format or too long.";
-		}
-		if (student.getCity() == null || !student.getCity().matches("[a-zA-Z ]{1,50}")) {
-			return "Invalid city (letters/spaces, max 50 chars).";
-		}
-		if (student.getMobile_no() == null || !student.getMobile_no().matches("\\d{10}")
-				|| student.getMobile_no().length() > 15) {
-			return "Invalid mobile number (10 digits).";
-		}
-		if (student.getAge() < 15 || student.getAge() > 100) {
-			return "Invalid age (15-100).";
-		}
-		if (courseId <= 0 || getAllCourses().stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			return "Invalid or non-existent course ID: " + courseId;
-		}
-		return "VALID";
-	}
+
 }

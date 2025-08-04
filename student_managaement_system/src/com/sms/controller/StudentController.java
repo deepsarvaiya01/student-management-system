@@ -2,6 +2,7 @@ package com.sms.controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,11 +12,15 @@ import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Student;
 import com.sms.model.Subject;
+
 import com.sms.payment.processor.PaymentProcessor;
+
 import com.sms.service.FeeService;
 import com.sms.service.StudentService;
+
 import com.sms.utils.InputValidator;
 import com.sms.utils.payFeesUtils;
+import com.sms.utils.HelperUtils;
 
 public class StudentController {
 	private StudentService studentService;
@@ -56,7 +61,7 @@ public class StudentController {
 			System.out.println("No courses available. Please add a course first.");
 			return;
 		}
-		printCourses(courses);
+		HelperUtils.printCourses(courses);
 
 		int courseId = InputValidator.getValidIntegerWithNewline(scanner, "Enter Course ID to assign: ", "Course ID");
 
@@ -328,7 +333,7 @@ public class StudentController {
 			return;
 		}
 		System.out.println("\nAvailable Courses:");
-		printCourses(courses);
+		HelperUtils.printCourses(courses);
 
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (courses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
@@ -421,7 +426,7 @@ public class StudentController {
 		if (result.equals("SUCCESS")) {
 			List<Course> courses = studentService.getCoursesByStudentId(studentId);
 			System.out.println("\nCourses for Student ID " + studentId + ":");
-			printCourses(courses);
+			HelperUtils.printCourses(courses);
 		} else {
 			System.out.println(result);
 		}
@@ -526,13 +531,5 @@ public class StudentController {
 		System.out.println(result);
 	}
 
-	private void printCourses(List<Course> courses) {
-		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
-		System.out.println("-------------------------------------------------------------");
-		for (Course c : courses) {
-			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
-			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(),
-					totalFee);
-		}
-	}
+
 }
