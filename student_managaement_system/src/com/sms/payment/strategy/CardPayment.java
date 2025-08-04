@@ -11,6 +11,7 @@ public class CardPayment implements PaymentStrategy {
 	@Override
 	public boolean pay(int studentId, BigDecimal amount, Scanner scanner) {
 		try {
+			scanner.nextLine();
 			PaymentValidator.getValidCardNumber(scanner, "Enter card number: ");
 			PaymentValidator.getValidExpiry(scanner, "Enter expiry (MM/YY): ");
 			PaymentValidator.getValidCVV(scanner, "Enter CVV: ");

@@ -14,7 +14,7 @@ import com.sms.model.Student;
 import com.sms.model.Subject;
 
 import com.sms.payment.processor.PaymentProcessor;
-
+import com.sms.service.CourseService;
 import com.sms.service.FeeService;
 import com.sms.service.StudentService;
 
@@ -25,11 +25,13 @@ import com.sms.utils.HelperUtils;
 public class StudentController {
 	private StudentService studentService;
 	private FeeService feeService;
+	private CourseService courseService;
 	private Scanner scanner = new Scanner(System.in);
 
 	public StudentController() throws SQLException {
 		this.studentService = new StudentService();
 		this.feeService = new FeeService();
+		this.courseService = new CourseService();
 	}
 
 	public void viewAllStudents() {
@@ -39,10 +41,7 @@ public class StudentController {
 			return;
 		}
 
-		Student.printHeader();
-		for (Student student : students) {
-			System.out.println(student);
-		}
+		HelperUtils.printStudents(students);
 	}
 
 	// Add New Student with Profile and Course Assignment
@@ -319,24 +318,41 @@ public class StudentController {
 			System.out.println("No students available.");
 			return;
 		}
+		
+		
+		HelperUtils.printStudents(students);
 
-		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to assign a course: ", "Student ID");
+		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID to assign a course: ", "Student ID");
 		String searchResult = studentService.searchStudentById(studentId);
 		if (!searchResult.equals("SUCCESS")) {
 			System.out.println("❌ " + searchResult);
 			return;
 		}
 
-		List<Course> courses = studentService.getAllCourses();
-		if (courses.isEmpty()) {
-			System.out.println("❌ No courses available.");
-			return;
+		// 🔽 Fetch all courses
+		List<Course> allCourses = courseService.getAllCourses();
+
+		// 🔽 Fetch already assigned courses
+		List<Course> assignedCourses = studentService.getCoursesByStudentId(studentId);
+
+		// 🔁 Filter out assigned courses from all courses
+		List<Course> unassignedCourses = allCourses.stream()
+			.filter(c -> assignedCourses.stream().noneMatch(ac -> ac.getCourse_id() == c.getCourse_id()))
+		    .collect(Collectors.toList());
+
+		if (unassignedCourses.isEmpty()) {
+		    System.out.println("🎉 All courses are already assigned to this student!");
+		    return;
 		}
-		System.out.println("\nAvailable Courses:");
-		HelperUtils.printCourses(courses);
+
+		// 🔽 Display unassigned courses
+		System.out.println("Available Courses:");
+		for (Course course : unassignedCourses) {
+			System.out.println(course.getCourse_id() + ". " + course.getCourse_name());
+		}
 
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
-		if (courses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
+		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
 			System.out.println("❌ Invalid Course ID.");
 			return;
 		}
@@ -420,8 +436,10 @@ public class StudentController {
 			System.out.println("No students available.");
 			return;
 		}
+		
+		HelperUtils.printStudents(students);
 
-		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID: ", "Student ID");
+		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID: ", "Student ID");
 		String result = studentService.readAllCourses(studentId);
 		if (result.equals("SUCCESS")) {
 			List<Course> courses = studentService.getCoursesByStudentId(studentId);
@@ -439,6 +457,12 @@ public class StudentController {
 			return;
 		}
 
+		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name");
+        System.out.println("-------------------------");
+        for (Student s : students) {
+            System.out.printf("%-10d %-20s\n", s.getStudent_id(), s.getName());
+        }
+        
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ", "Student ID");
 		String result = studentService.searchStudentById(studentId);
 		if (result.equals("SUCCESS")) {
@@ -456,9 +480,11 @@ public class StudentController {
 		if (students.isEmpty()) {
 			System.out.println("No students available.");
 			return;
-		}
+		}		
+		
+		HelperUtils.printStudents(students);
 
-		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to delete: ", "Student ID");
+		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID to delete: ", "Student ID");
 		String searchResult = studentService.searchStudentById(studentId);
 		if (searchResult.equals("SUCCESS")) {
 			Student student = studentService.getStudentById(studentId);
@@ -466,13 +492,19 @@ public class StudentController {
 			Student.printHeader();
 			System.out.println(student);
 
+			scanner.nextLine();
 			boolean confirmation = InputValidator.getValidConfirmation(scanner,
-					"Are you sure you want to delete this student? (y/n): ");
+					"\nAre you sure you want to delete this student? (y/n): ");
 			if (!confirmation) {
 				System.out.println("Deletion cancelled.");
 				return;
 			}
 
+			if (!studentService.isFeeClearedForStudent(studentId)) {
+	            System.out.println("❌ This student has pending fees. Please clear the dues before deletion.");
+	            return;
+	        }
+			
 			String result = studentService.deleteStudentById(studentId);
 			System.out.println(result);
 		} else {
@@ -491,7 +523,7 @@ public class StudentController {
 		System.out.println("\n💰 === FEES PAYMENT ===");
 		payFeesUtil.showAndGetAllStudents();
 
-		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to pay fees: ", "Student ID");
+		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID to pay fees: ", "Student ID");
 		String searchResult = studentService.searchStudentById(studentId);
 		if (!searchResult.equals("SUCCESS")) {
 			System.out.println(searchResult);

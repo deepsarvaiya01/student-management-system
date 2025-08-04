@@ -88,6 +88,11 @@ public class StudentService {
 		return "SUCCESS"; // Special return value to indicate success
 	}
 
+	public boolean isFeeClearedForStudent(int studentId) {
+	    return studentDao.isFeeClearedForStudent(studentId);
+	}
+
+	
 	public String deleteStudentById(int studentId) {
 		if (studentId <= 0) {
 			return "Invalid student ID.";
