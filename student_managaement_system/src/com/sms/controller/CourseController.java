@@ -42,7 +42,10 @@ public class CourseController {
 			String name = InputValidator.getValidName(scanner, "Enter course name: ");
 			int semesters = InputValidator.getValidIntegerInRange(scanner, "Enter number of semesters: ",
 					"Number of Semesters", 1, 10);
+			scanner.nextLine(); // Clear buffer
+
 			BigDecimal fee = InputValidator.getValidDecimal(scanner, "Enter total fee: ₹", "Total Fee");
+			scanner.nextLine(); // Clear buffer
 
 			Course course = new Course();
 			course.setCourse_name(name);
@@ -51,16 +54,23 @@ public class CourseController {
 
 			int courseId = courseService.addCourse(course);
 			if (courseId == -1) {
-				System.out.println("❌ Failed to add course.");
+				System.out.println("Failed to add course.");
 				return;
 			}
 
 			int totalSubjects;
 			while (true) {
-				System.out.println("You must assign at least 5 subjects to the course.");
-				System.out.println("1. Assign exactly 5 subjects");
-				System.out.println("2. Assign more than 5 subjects");
+				System.out.println("\n📌 You must assign at least 5 subjects to the course:");
+				System.out.println("+----+----------------------------------------+");
+				System.out.println("| No | Option                                 |");
+				System.out.println("+----+----------------------------------------+");
+				System.out.println("| 1  | Assign exactly 5 subjects              |");
+				System.out.println("| 2  | Assign more than 5 subjects            |");
+				System.out.println("+----+----------------------------------------+");
+
 				int assignChoice = InputValidator.getValidIntegerInRange(scanner, "Enter choice: ", "Choice", 1, 2);
+				scanner.nextLine(); // Clear buffer
+
 				if (assignChoice == 1) {
 					totalSubjects = 5;
 					break;
@@ -68,6 +78,7 @@ public class CourseController {
 					totalSubjects = InputValidator.getValidIntegerInRange(scanner,
 							"Enter total number of subjects to assign (minimum 5): ", "Number of Subjects", 5,
 							Integer.MAX_VALUE);
+					scanner.nextLine(); // Clear buffer
 					break;
 				}
 			}
@@ -75,25 +86,24 @@ public class CourseController {
 			int existingCount = InputValidator.getValidIntegerInRange(scanner,
 					"How many subjects do you want to choose from existing ones (0 to " + totalSubjects + "): ",
 					"Number of Existing Subjects", 0, totalSubjects);
+			scanner.nextLine(); // Clear buffer
 
 			if (existingCount > 0) {
 				List<Subject> subjects = subjectService.getAllSubjects();
 				if (subjects.isEmpty()) {
 					System.out.println(
-							"No existing subjects found. You'll need to create all " + totalSubjects + " subjects.");
+							" No existing subjects found. You must create all " + totalSubjects + " subjects.");
 					existingCount = 0;
 				} else {
-					System.out.println("Available Subjects:");
-					for (Subject subject : subjects) {
-						System.out.println("ID: " + subject.getSubject_id() + " - " + subject.getSubject_name());
-					}
+					System.out.println("\nAvailable Subjects:");
+					HelperUtils.viewSubjects(subjects); // Already a formatted viewer
 
 					while (true) {
 						System.out.print("Enter " + existingCount + " subject IDs (comma-separated): ");
 						String input = scanner.nextLine().trim();
 						String[] ids = input.split(",");
 						if (ids.length != existingCount) {
-							System.out.println("❌ You must enter exactly " + existingCount + " IDs.");
+							System.out.println("You must enter exactly " + existingCount + " IDs.");
 							continue;
 						}
 
@@ -103,12 +113,12 @@ public class CourseController {
 							try {
 								subjectIds[i] = Integer.parseInt(ids[i].trim());
 								if (!subjectService.subjectExists(subjectIds[i])) {
-									System.out.println("❌ Subject ID " + subjectIds[i] + " does not exist.");
+									System.out.println(" Subject ID " + subjectIds[i] + " does not exist.");
 									allValid = false;
 									break;
 								}
 							} catch (NumberFormatException e) {
-								System.out.println("❌ Invalid ID format: " + ids[i]);
+								System.out.println("Invalid ID format: " + ids[i]);
 								allValid = false;
 								break;
 							}
@@ -124,9 +134,12 @@ public class CourseController {
 				}
 			}
 
+			// Add new subjects if required
 			int newSubjectCount = totalSubjects - existingCount;
+			TeacherService teacherService = new TeacherService(); // Reuse instance
 			for (int i = 1; i <= newSubjectCount; i++) {
 				String subjectName = InputValidator.getValidName(scanner, "Enter name for new subject " + i + ": ");
+
 				String subjectType;
 				while (true) {
 					System.out.print("Enter subject type (Mandatory/Elective): ");
@@ -136,22 +149,22 @@ public class CourseController {
 								+ subjectType.substring(1).toLowerCase();
 						break;
 					} else {
-						System.out.println("❌ Invalid input. Please enter 'Mandatory' or 'Elective'.");
+						System.out.println("Invalid input. Please enter 'Mandatory' or 'Elective'.");
 					}
 				}
 
 				int subjectId = subjectService.addSubject(subjectName, subjectType);
 				if (subjectId == -1) {
-					System.out.println("❌ Failed to add subject: " + subjectName);
+					System.out.println("Failed to add subject: " + subjectName);
 					continue;
 				}
 				courseService.assignSubjectToCourse(courseId, subjectId);
 
-				List<Teacher> teachers = new TeacherService().fetchAllTeachers();
+				List<Teacher> teachers = teacherService.fetchAllTeachers();
 				if (teachers.isEmpty()) {
-					System.out.println("❗ No teachers found. Skipping assignment.");
+					System.out.println("⚠ No teachers found. Skipping assignment.");
 				} else {
-					System.out.println("Available Teachers:");
+					System.out.println("\n👩‍🏫 Available Teachers:");
 					System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
 					System.out.println("------------------------------------------------------------");
 					for (Teacher t : teachers) {
@@ -161,22 +174,25 @@ public class CourseController {
 
 					int teacherId = InputValidator.getValidIntegerAllowZero(scanner,
 							"Enter Teacher ID to assign to subject '" + subjectName + "' or 0 to skip: ", "Teacher ID");
+					scanner.nextLine(); // Clear buffer
+
 					if (teacherId > 0) {
-						boolean assigned = new TeacherService().assignSubject(teacherId, subjectId);
+						boolean assigned = teacherService.assignSubject(teacherId, subjectId);
 						if (assigned) {
 							System.out.println("✅ Teacher assigned to subject.");
 						} else {
 							System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
 						}
 					} else {
-						System.out.println("Skipped teacher assignment for this subject.");
+						System.out.println("⏭️ Skipped teacher assignment for this subject.");
 					}
 				}
 			}
 
-			System.out.println("✅ Course created and " + totalSubjects + " subjects assigned successfully.");
+			System.out.println("\n✅ Course created and " + totalSubjects + " subjects assigned successfully.");
+
 		} catch (Exception e) {
-			System.out.println("❗ Error: " + e.getMessage());
+			System.out.println("❗ Unexpected error: " + e.getMessage());
 		}
 	}
 
@@ -189,9 +205,7 @@ public class CourseController {
 			}
 
 			System.out.println("Available Courses:");
-			for (Course c : courses) {
-				System.out.println(c.getCourse_id() + " - " + c.getCourse_name());
-			}
+			HelperUtils.printCourses(courses);
 
 			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to add subjects to: ", "Course ID");
 			Course selectedCourse = courseService.getCourseById(courseId);
@@ -202,8 +216,13 @@ public class CourseController {
 			}
 
 			System.out.println("Choose subject addition method:");
-			System.out.println("1. Assign existing subjects");
-			System.out.println("2. Add new subjects and assign");
+			System.out.println("+----+----------------------------------------+");
+			System.out.println("| No | Option                                 |");
+			System.out.println("+----+----------------------------------------+");
+			System.out.println("| 1  | Assign Existing subjects               |");
+			System.out.println("| 2  | Add new subject and Assign             |");
+			System.out.println("+----+----------------------------------------+");
+
 			int choice = InputValidator.getValidIntegerInRangeWithNewline(scanner, "Enter choice: ", "Choice", 1, 2);
 
 			if (choice == 1) {
@@ -214,9 +233,7 @@ public class CourseController {
 				}
 
 				System.out.println("Available Subjects:");
-				for (Subject subject : existingSubjects) {
-					System.out.println(subject.getSubject_id() + ": " + subject.getSubject_name());
-				}
+				HelperUtils.viewSubjects(existingSubjects);
 
 				System.out.print("Enter comma-separated subject IDs to assign: ");
 				String[] ids = scanner.nextLine().split(",");
@@ -286,15 +303,25 @@ public class CourseController {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println("❗ Error: " + e.getMessage());
+			String message = e.getMessage();
+
+			if (message != null && message.contains("Duplicate entry")) {
+				System.out.println(" Subject is already assigned to this course. Please choose a different subject.");
+			} else {
+				System.out.println("An unexpected error occurred: " + message);
+			}
 		}
+
 	}
 
 	public void searchCourse() {
 		try {
-			System.out.println("Search course by:");
-			System.out.println("1. Course ID");
-			System.out.println("2. Course Name");
+			System.out.println("\n🔍 Search course by:");
+			System.out.println("+----------------+");
+			System.out.println("| 1. Course ID   |");
+			System.out.println("| 2. Course Name |");
+			System.out.println("+----------------+");
+
 			int choice = InputValidator.getValidIntegerInRange(scanner, "Enter choice: ", "Choice", 1, 2);
 
 			Course course = null;
@@ -307,13 +334,18 @@ public class CourseController {
 			}
 
 			if (course != null) {
-				System.out.println("Course Found:");
-				System.out.println("ID: " + course.getCourse_id());
-				System.out.println("Name: " + course.getCourse_name());
-				System.out.println("Semesters: " + course.getNo_of_semester());
-				System.out.println("Total Fee: " + course.getTotal_fee());
+				System.out.println("\n📘 Course Found:");
+				System.out.println("+-----------+---------------------------+---------------------+--------------+");
+				System.out.printf("| %-9s | %-25s | %-19s | %-12s |\n", "Course ID", "Course Name", "No. of Semesters",
+						"Total Fee");
+				System.out.println("+-----------+---------------------------+---------------------+--------------+");
+				System.out.printf("| %-9d | %-25s | %-19d | ₹%-11s |\n", course.getCourse_id(), course.getCourse_name(),
+						course.getNo_of_semester(),
+						course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
+				System.out.println("+-----------+---------------------------+---------------------+--------------+");
+
 			} else {
-				System.out.println("Course not found.");
+				System.out.println("❌ Course not found.");
 			}
 		} catch (Exception e) {
 			System.out.println("❗ Error while searching course: " + e.getMessage());
@@ -323,6 +355,7 @@ public class CourseController {
 	public void deleteCourse() {
 		try {
 			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to delete: ", "Course ID");
+			scanner.nextLine();
 			Course course = courseService.getCourseById(courseId);
 			if (course == null) {
 				System.out.println("❗ Course not found.");
@@ -364,15 +397,10 @@ public class CourseController {
 
 			System.out.println(
 					"\nSubjects for Course: " + course.getCourse_name() + " (ID: " + course.getCourse_id() + ")");
-			System.out.printf("%-10s %-30s\n", "Subject ID", "Subject Name");
-			System.out.println("----------------------------------------");
-			for (Subject subject : subjects) {
-				System.out.printf("%-10d %-30s\n", subject.getSubject_id(), subject.getSubject_name());
-			}
+			HelperUtils.viewSubjects(subjects);
 		} catch (Exception e) {
 			System.out.println("❗ Error while fetching subjects: " + e.getMessage());
 		}
 	}
-
 
 }

@@ -70,28 +70,41 @@ public class TeacherController {
 	public void viewTeachers() {
 		List<Teacher> list = service.fetchAllTeachers();
 		if (list.isEmpty()) {
-			System.out.println("No teachers found.");
+			System.out.println("❗ No teachers found.");
 			return;
 		}
 
+		String format = "| %-4s | %-20s | %-20s | %-5s | %-50s |%n";
+		String line = "+------+----------------------+----------------------+-------+----------------------------------------------------+";
+
 		System.out.println("\nList of Teachers");
-		System.out.printf("%-5s %-20s %-20s %-10s %-50s%n", "ID", "Name", "Qualification", "Exp", "Subjects");
-		System.out.println(
-				"---------------------------------------------------------------------------------------------");
+		System.out.println(line);
+		System.out.printf(format, "ID", "Name", "Qualification", "Exp", "Subjects");
+		System.out.println(line);
+
 		for (Teacher t : list) {
 			Map<Integer, String> subjects = service.viewAssignedSubjects(t.getTeacherId());
 			String subjectList = subjects.isEmpty() ? "None" : String.join(", ", subjects.values());
-			System.out.printf("%-5d %-20s %-20s %-10.1f %-50s%n", t.getTeacherId(), t.getName(), t.getQualification(),
-					t.getExperience(), subjectList);
+
+			// Trim subjectList if it’s too long
+			if (subjectList.length() > 50) {
+				subjectList = subjectList.substring(0, 47) + "...";
+			}
+
+			System.out.printf(format, t.getTeacherId(), t.getName(), t.getQualification(),
+					String.format("%.1f", t.getExperience()), subjectList);
 		}
+
+		System.out.println(line);
 	}
 
 	public void deleteTeacher() {
-		List<Teacher> list = service.fetchAllTeachers();
-		if (list.isEmpty()) {
-			System.out.println("No teachers found.");
-			return;
-		}
+		viewTeachers();
+//		List<Teacher> list = service.fetchAllTeachers();
+//		if (list.isEmpty()) {
+//			System.out.println("No teachers found.");
+//			return;
+//		}
 
 		int id = InputValidator.getValidInteger(scanner, "Enter Teacher ID to delete: ", "Teacher ID");
 		if (service.deleteTeacher(id)) {
@@ -102,11 +115,8 @@ public class TeacherController {
 	}
 
 	public void assignSubject() {
-		List<Teacher> list = service.fetchAllTeachers();
-		if (list.isEmpty()) {
-			System.out.println("No teachers found.");
-			return;
-		}
+
+		viewTeachers();
 
 		int teacherId = InputValidator.getValidInteger(scanner, "Enter Teacher ID: ", "Teacher ID");
 		if (!service.isTeacherActive(teacherId)) {

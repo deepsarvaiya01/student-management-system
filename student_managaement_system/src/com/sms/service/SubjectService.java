@@ -41,7 +41,7 @@ public class SubjectService {
         return subjectDAO.updateSubject(subject);
     }
 
-//    public boolean deleteSubject(int id) {
-//        return subjectDAO.softDeleteSubject(id);
-//    }
+    public boolean deleteSubject(int id) {
+        return subjectDAO.softDeleteSubject(id);
+    }
 }
