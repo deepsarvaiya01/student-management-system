@@ -57,7 +57,8 @@ public class StudentDao {
 
 		List<Course> courses = new ArrayList<>();
 		String sql = "SELECT c.course_id, c.course_name, c.no_of_semester, c.total_fee "
-				+ "FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id " + "WHERE sc.student_id = ? and c.is_active = true";
+				+ "FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id "
+				+ "WHERE sc.student_id = ? and c.is_active = true";
 
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);
@@ -152,6 +153,37 @@ public class StudentDao {
 		return student;
 	}
 
+	public boolean isFeeClearedForStudent(int studentId) {
+		String query = """
+					        SELECT
+				    COALESCE(SUM(fees.total_fee), 0) AS total_fee,
+				    COALESCE(SUM(fees.paid_amount), 0) AS total_paid,
+				    COALESCE(SUM(fees.pending_amount), 0) AS total_pending
+				FROM
+				    student_courses sc
+				JOIN
+				    fees ON sc.student_course_id = fees.student_course_id
+				WHERE
+				    sc.student_id = ?;
+
+					    """;
+
+		try (PreparedStatement ps = connection.prepareStatement(query)) {
+
+			ps.setInt(1, studentId);
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+				double totalFee = rs.getDouble("total_fee");
+				double totalPaid = rs.getDouble("total_paid");
+				return totalPaid >= totalFee;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public boolean deleteStudentById(int studentId) {
 		if (studentId <= 0 || searchStudentById(studentId) == null) {
 			return false;
@@ -243,7 +275,6 @@ public class StudentDao {
 			return false;
 		}
 	}
-
 
 	// Get subjects by course ID
 	public List<Subject> getSubjectsByCourseId(int courseId) {

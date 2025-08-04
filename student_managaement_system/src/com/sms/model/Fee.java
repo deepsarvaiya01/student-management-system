@@ -4,131 +4,129 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Fee {
-    private int feeId;
-    private int studentCourseId;
-    private BigDecimal paidAmount;
-    private BigDecimal pendingAmount;
-    private BigDecimal totalFee;
-    private LocalDate lastPaymentDate;
-    
-    // Additional fields for display purposes
-    private String studentName;
-    private String courseName;
-    private int studentId;
-    private int courseId;
+	private int feeId;
+	private int studentCourseId;
+	private BigDecimal paidAmount;
+	private BigDecimal pendingAmount;
+	private BigDecimal totalFee;
+	private LocalDate lastPaymentDate;
 
-    public Fee() {
-    }
+	// Additional fields for display purposes
+	private String studentName;
+	private String courseName;
+	private int studentId;
+	private int courseId;
 
-    public Fee(int feeId, int studentCourseId, BigDecimal paidAmount, BigDecimal pendingAmount, 
-               BigDecimal totalFee, LocalDate lastPaymentDate) {
-        this.feeId = feeId;
-        this.studentCourseId = studentCourseId;
-        this.paidAmount = paidAmount;
-        this.pendingAmount = pendingAmount;
-        this.totalFee = totalFee;
-        this.lastPaymentDate = lastPaymentDate;
-    }
+	public Fee() {
+	}
 
-    // Getters and Setters
-    public int getFeeId() {
-        return feeId;
-    }
+	public Fee(int feeId, int studentCourseId, BigDecimal paidAmount, BigDecimal pendingAmount, BigDecimal totalFee,
+			LocalDate lastPaymentDate) {
+		this.feeId = feeId;
+		this.studentCourseId = studentCourseId;
+		this.paidAmount = paidAmount;
+		this.pendingAmount = pendingAmount;
+		this.totalFee = totalFee;
+		this.lastPaymentDate = lastPaymentDate;
+	}
 
-    public void setFeeId(int feeId) {
-        this.feeId = feeId;
-    }
+	// Getters and Setters
+	public int getFeeId() {
+		return feeId;
+	}
 
-    public int getStudentCourseId() {
-        return studentCourseId;
-    }
+	public void setFeeId(int feeId) {
+		this.feeId = feeId;
+	}
 
-    public void setStudentCourseId(int studentCourseId) {
-        this.studentCourseId = studentCourseId;
-    }
+	public int getStudentCourseId() {
+		return studentCourseId;
+	}
 
-    public BigDecimal getPaidAmount() {
-        return paidAmount;
-    }
+	public void setStudentCourseId(int studentCourseId) {
+		this.studentCourseId = studentCourseId;
+	}
 
-    public void setPaidAmount(BigDecimal paidAmount) {
-        this.paidAmount = paidAmount;
-    }
+	public BigDecimal getPaidAmount() {
+		return paidAmount;
+	}
 
-    public BigDecimal getPendingAmount() {
-        return pendingAmount;
-    }
+	public void setPaidAmount(BigDecimal paidAmount) {
+		this.paidAmount = paidAmount;
+	}
 
-    public void setPendingAmount(BigDecimal pendingAmount) {
-        this.pendingAmount = pendingAmount;
-    }
+	public BigDecimal getPendingAmount() {
+		return pendingAmount;
+	}
 
-    public BigDecimal getTotalFee() {
-        return totalFee;
-    }
+	public void setPendingAmount(BigDecimal pendingAmount) {
+		this.pendingAmount = pendingAmount;
+	}
 
-    public void setTotalFee(BigDecimal totalFee) {
-        this.totalFee = totalFee;
-    }
+	public BigDecimal getTotalFee() {
+		return totalFee;
+	}
 
-    public LocalDate getLastPaymentDate() {
-        return lastPaymentDate;
-    }
+	public void setTotalFee(BigDecimal totalFee) {
+		this.totalFee = totalFee;
+	}
 
-    public void setLastPaymentDate(LocalDate lastPaymentDate) {
-        this.lastPaymentDate = lastPaymentDate;
-    }
+	public LocalDate getLastPaymentDate() {
+		return lastPaymentDate;
+	}
 
-    public String getStudentName() {
-        return studentName;
-    }
+	public void setLastPaymentDate(LocalDate lastPaymentDate) {
+		this.lastPaymentDate = lastPaymentDate;
+	}
 
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
+	public String getStudentName() {
+		return studentName;
+	}
 
-    public String getCourseName() {
-        return courseName;
-    }
+	public void setStudentName(String studentName) {
+		this.studentName = studentName;
+	}
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
+	public String getCourseName() {
+		return courseName;
+	}
 
-    public int getStudentId() {
-        return studentId;
-    }
+	public void setCourseName(String courseName) {
+		this.courseName = courseName;
+	}
 
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
-    }
+	public int getStudentId() {
+		return studentId;
+	}
 
-    public int getCourseId() {
-        return courseId;
-    }
+	public void setStudentId(int studentId) {
+		this.studentId = studentId;
+	}
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
+	public int getCourseId() {
+		return courseId;
+	}
 
-    // Tabular Display Header
-    public static void printHeader() {
-        System.out.printf("\n%-8s %-20s %-15s %-15s %-15s %-15s %-15s\n", 
-            "Fee ID", "Student Name", "Course", "Total Fee", "Paid Amount", "Pending Amount", "Last Payment");
-        System.out.println("----------------------------------------------------------------------------------------------");
-    }
+	public void setCourseId(int courseId) {
+		this.courseId = courseId;
+	}
 
-    // Tabular Display toString
-    @Override
-    public String toString() {
-        String lastPaymentStr = (lastPaymentDate != null) ? lastPaymentDate.toString() : "N/A";
-        return String.format("%-8d %-20s %-15s %-15.2f %-15.2f %-15.2f %-15s", 
-            feeId, 
-            (studentName != null) ? studentName : "N/A", 
-            (courseName != null) ? courseName : "N/A", 
-            totalFee, 
-            paidAmount, 
-            pendingAmount, 
-            lastPaymentStr);
-    }
-} 
+	public static void printHeader() {
+		System.out.println(
+				"+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
+		System.out.printf("| %-6s | %-20s | %-15s | %-15s | %-15s | %-15s | %-15s |\n", "Fee ID", "Student Name",
+				"Course", "Total Fee", "Paid Amount", "Pending Amount", "Last Payment");
+		System.out.println(
+				"+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
+	}
+
+	// Tabular Display toString
+	@Override
+	public String toString() {
+		String lastPaymentStr = (lastPaymentDate != null) ? lastPaymentDate.toString() : "N/A";
+		return String.format("| %-6d | %-20s | %-15s | %-15.2f | %-15.2f | %-15.2f | %-15s |", feeId,
+				(studentName != null) ? studentName : "N/A", (courseName != null) ? courseName : "N/A", totalFee,
+				paidAmount, pendingAmount, lastPaymentStr);
+	}
+
+}

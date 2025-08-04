@@ -86,7 +86,26 @@ public class CourseDAO {
 
 
 
-            
+	public boolean deleteCourse(int courseId) {
+        String deleteSubjectMapping = "DELETE FROM subject_course WHERE course_id = ?";
+        String softDeleteCourse = "UPDATE courses SET is_active = 0 WHERE course_id = ?";
+        
+        try (PreparedStatement stmt1 = connection.prepareStatement(deleteSubjectMapping);
+             PreparedStatement stmt2 = connection.prepareStatement(softDeleteCourse)) {
+
+            stmt1.setInt(1, courseId);
+            stmt1.executeUpdate();
+
+            stmt2.setInt(1, courseId);
+            return stmt2.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error deleting course: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+	
 
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		List<Subject> subjects = new ArrayList<>();
