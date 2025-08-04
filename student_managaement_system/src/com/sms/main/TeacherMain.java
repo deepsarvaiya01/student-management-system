@@ -38,7 +38,7 @@ public class TeacherMain {
 			case 6 -> controller.viewAssignedSubjects();
 			case 7 -> controller.searchTeacherById();
 			case 8 -> controller.restoreTeacher();
-			case 0 -> System.out.println("Returning to main menu.");
+			case 0 -> System.out.println("Going back to Student Main Menu...");
 			}
 		} while (choice != 0);
 	}

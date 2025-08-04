@@ -37,7 +37,7 @@ public class StudentMain {
                 case 6 -> controller.deleteStudent();
                 case 7 -> controller.payFees();
                 case 8 -> controller.restoreStudent();
-                case 0 -> System.out.println("Going to Student Main Menu...");
+                case 0 -> System.out.println("Going back to Student Main Menu...");
                 default -> System.out.println("Invalid choice. Try again.");
             }
         } while (choice != 0);

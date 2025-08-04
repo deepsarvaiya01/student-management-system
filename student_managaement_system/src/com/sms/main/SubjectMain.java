@@ -27,7 +27,7 @@ public class SubjectMain {
 			case 1 -> subjectController.addSubject();
 			case 2 -> subjectController.viewSubjects();
 			case 3 -> subjectController.updateSubject();
-			case 0 -> System.out.println("Exiting Subject Management. Goodbye!");
+			case 0 -> System.out.println("Going back to Student Main Menu...");
 			}
 		} while (input != 0);
 	}

@@ -428,6 +428,16 @@ public class StudentController {
 
 		String result = studentService.assignCourseToStudent(studentId, courseId, selectedSubjectIds);
 		System.out.println(result);
+		
+		if (result.toLowerCase().contains("success")) {
+			String studentName = students.stream()
+					.filter(s -> s.getStudent_id() == studentId)
+					.map(Student::getName)
+					.findFirst()
+					.orElse("Student");
+
+			askForFeePayment(studentName, courseId);
+		}
 	}
 
 	public void viewAllCourses() {

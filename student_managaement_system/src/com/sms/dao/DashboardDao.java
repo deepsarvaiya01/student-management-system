@@ -54,20 +54,19 @@ public class DashboardDao {
 
 			int srNo = 0;
 			while (rs.next()) {
-			    DashboardModel model = new DashboardModel();
-			    model.setSrNo(++srNo);
-			    model.setStudentId(rs.getInt("student_id"));
-			    model.setName(rs.getString("student_name"));
-			    model.setCourse(rs.getString("course"));
-			    model.setTotalFee(rs.getDouble("total_fee"));
-			    model.setPaidFee(rs.getDouble("paid_amount"));
-			    model.setPendingFee(rs.getDouble("pending_amount"));
-			    model.setSubjects(rs.getString("subjects"));
-			    model.setTeachers(rs.getString("teachers"));
+				DashboardModel model = new DashboardModel();
+				model.setSrNo(++srNo);
+				model.setStudentId(rs.getInt("student_id"));
+				model.setName(rs.getString("student_name"));
+				model.setCourse(rs.getString("course"));
+				model.setTotalFee(rs.getDouble("total_fee"));
+				model.setPaidFee(rs.getDouble("paid_amount"));
+				model.setPendingFee(rs.getDouble("pending_amount"));
+				model.setSubjects(rs.getString("subjects"));
+				model.setTeachers(rs.getString("teachers"));
 
-			    dashboardList.add(model);
+				dashboardList.add(model);
 			}
-
 
 		} catch (Exception e) {
 			e.printStackTrace();
