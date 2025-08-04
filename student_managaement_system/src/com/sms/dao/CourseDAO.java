@@ -84,35 +84,25 @@ public class CourseDAO {
 		return null;
 	}
 
-	public boolean deleteCourse(int courseId) throws SQLException {
-		String deleteStudentSubjects = "DELETE FROM student_subjects WHERE subject_course_id IN "
-				+ "(SELECT id FROM subject_course WHERE course_id = ?)";
+ public boolean deleteCourse(int courseId) {
+        String deleteSubjectMapping = "DELETE FROM subject_course WHERE course_id = ?";
+        String softDeleteCourse = "UPDATE courses SET is_active = 0 WHERE course_id = ?";
+        
+        try (PreparedStatement stmt1 = connection.prepareStatement(deleteSubjectMapping);
+             PreparedStatement stmt2 = connection.prepareStatement(softDeleteCourse)) {
 
-		String deleteSubjectMapping = "DELETE FROM subject_course WHERE course_id = ?";
+            stmt1.setInt(1, courseId);
+            stmt1.executeUpdate();
 
-		String softDeleteCourse = "UPDATE courses SET is_active = 0 WHERE course_id = ?";
+            stmt2.setInt(1, courseId);
+            return stmt2.executeUpdate() > 0;
 
-		try (PreparedStatement stmt1 = connection.prepareStatement(deleteStudentSubjects);
-				PreparedStatement stmt2 = connection.prepareStatement(deleteSubjectMapping);
-				PreparedStatement stmt3 = connection.prepareStatement(softDeleteCourse)) {
-			// Step 1: Delete from student_subjects
-			stmt1.setInt(1, courseId);
-			stmt1.executeUpdate();
-
-			// Step 2: Delete from subject_course
-			stmt2.setInt(1, courseId);
-			stmt2.executeUpdate();
-
-			// Step 3: Soft delete from courses
-			stmt3.setInt(1, courseId);
-			return stmt3.executeUpdate() > 0;
-
-		} catch (SQLException e) {
-			System.err.println("❗ Error deleting course: " + e.getMessage());
-			e.printStackTrace();
-		}
-		return false;
-	}
+        } catch (SQLException e) {
+            System.err.println("Error deleting course: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		List<Subject> subjects = new ArrayList<>();
