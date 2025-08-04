@@ -13,6 +13,7 @@ import com.sms.service.StudentService;
 import com.sms.service.SubjectService;
 import com.sms.service.TeacherService;
 import com.sms.utils.InputValidator;
+import com.sms.utils.HelperUtils;
 
 public class CourseController {
 	private StudentService studentService;
@@ -33,7 +34,7 @@ public class CourseController {
 			return;
 		}
 		System.out.println("\nAvailable Courses:");
-		printCourses(courses);
+		HelperUtils.printCourses(courses);
 	}
 
 	public void addNewCourse() {
@@ -374,13 +375,5 @@ public class CourseController {
 		}
 	}
 
-	private void printCourses(List<Course> courses) {
-		System.out.printf("\n%-10s %-25s %-20s %-15s\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
-		System.out.println("-------------------------------------------------------------");
-		for (Course c : courses) {
-			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
-			System.out.printf("%-10d %-25s %-20d %-15s\n", c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(),
-					totalFee);
-		}
-	}
+
 }
