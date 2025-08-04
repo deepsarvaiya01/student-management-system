@@ -27,7 +27,7 @@ public class Main {
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-5): ", 5);
+			choice = InputValidator.getValidMenuChoice(scanner, " Enter your choice (0-5): ", 5);
 
 			switch (choice) {
 				case 1 -> {
@@ -51,9 +51,9 @@ public class Main {
 					d.show();
 				}
 				case 0 -> {
-					System.out.println("✅ Exiting Student Management System... Thank you!");
+					System.out.println("Exiting Student Management System... Thank you!");
 				}
-				default -> System.out.println("❗ Invalid choice! Please enter a number between 0 and 5.");
+				default -> System.out.println(" Invalid choice! Please enter a number between 0 and 5.");
 			}
 		} while (choice != 0);
 

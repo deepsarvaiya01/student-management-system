@@ -40,7 +40,6 @@ public class CourseDAO {
 	    return courses;
 	}
 
-	
 	public int addCourse(Course course) throws SQLException {
 		String sql = "INSERT INTO courses (course_name, no_of_semester, total_fee) VALUES (?, ?, ?)";
 		try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -85,7 +84,6 @@ public class CourseDAO {
 	    }
 	    return null;
 	}
-
 
 	public boolean deleteCourse(int courseId) {
 	    String deleteSubjectMapping = "DELETE FROM subject_course WHERE course_id = ?";
