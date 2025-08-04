@@ -57,7 +57,7 @@ public class StudentDao {
 
 		List<Course> courses = new ArrayList<>();
 		String sql = "SELECT c.course_id, c.course_name, c.no_of_semester, c.total_fee "
-				+ "FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id " + "WHERE sc.student_id = ?";
+				+ "FROM courses c JOIN student_courses sc ON c.course_id = sc.course_id " + "WHERE sc.student_id = ? and c.is_active = true";
 
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, studentId);

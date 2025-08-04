@@ -13,7 +13,6 @@ import com.sms.service.StudentService;
 import com.sms.service.SubjectService;
 import com.sms.service.TeacherService;
 import com.sms.utils.InputValidator;
-import com.sms.utils.HelperUtils;
 
 public class CourseController {
 	private StudentService studentService;
