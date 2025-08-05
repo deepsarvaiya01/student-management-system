@@ -427,6 +427,8 @@ public class CourseController {
 
 	public void deleteCourse() {
 		try {
+			
+			viewAllCourses();
 			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to delete: ", "Course ID");
 			scanner.nextLine();
 			Course course = courseService.getCourseById(courseId);
