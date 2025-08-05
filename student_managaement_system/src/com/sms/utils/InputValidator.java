@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.Scanner;
 
 import com.sms.exception.AppException;
+import com.sms.model.Gender;
 import com.sms.service.StudentService;
 
 public class InputValidator {
@@ -197,6 +198,19 @@ public class InputValidator {
 	// Get valid age input
 	public static int getValidAge(Scanner scanner, String prompt) {
 		return getValidIntegerInRange(scanner, prompt, "Age", 15, 100);
+	}
+
+	public static Gender getValidGender(Scanner scanner, String prompt) {
+		while (true) {
+			System.out.print(prompt);
+			String input = scanner.nextLine().trim().toUpperCase();
+			Gender gender = Gender.fromString(input);
+			if (gender != null) {
+				return gender;
+			} else {
+				System.out.println("Invalid gender. Please enter M for Male, F for Female, or O for Other.");
+			}
+		}
 	}
 
 	// Get valid decimal input (for payment amounts)
