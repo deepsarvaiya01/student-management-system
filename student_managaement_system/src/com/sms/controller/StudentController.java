@@ -47,8 +47,9 @@ public class StudentController {
 	// Add New Student with Profile and Course Assignment
 	public void addNewStudent() {
 		String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
-		int grNumber = InputValidator.getValidGRNumber(scanner, "Enter GR Number: ");
-		scanner.nextLine();
+		int lastGrNumber = studentService.getLastGrNumber();
+		int grNumber = (lastGrNumber == 0) ? 1001 : lastGrNumber + 1;
+		//System.out.println("Auto-assigned GR Number: " + grNumber);
 		String email = InputValidator.getValidEmail(scanner, "Enter Email: ");
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ");
@@ -428,13 +429,10 @@ public class StudentController {
 
 		String result = studentService.assignCourseToStudent(studentId, courseId, selectedSubjectIds);
 		System.out.println(result);
-		
+
 		if (result.toLowerCase().contains("success")) {
-			String studentName = students.stream()
-					.filter(s -> s.getStudent_id() == studentId)
-					.map(Student::getName)
-					.findFirst()
-					.orElse("Student");
+			String studentName = students.stream().filter(s -> s.getStudent_id() == studentId).map(Student::getName)
+					.findFirst().orElse("Student");
 
 			askForFeePayment(studentName, courseId);
 		}
@@ -467,10 +465,10 @@ public class StudentController {
 			return;
 		}
 
-		System.out.printf("\n%-10s %-20s %-25s %-10s\n", "Student ID", "Name");
+		System.out.printf("\n%-10s | %-20s\n", "Student ID", "Name");
 		System.out.println("-------------------------");
 		for (Student s : students) {
-			System.out.printf("%-10d %-20s\n", s.getStudent_id(), s.getName());
+			System.out.printf("%-10d | %-20s\n", s.getStudent_id(), s.getName());
 		}
 
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ", "Student ID");

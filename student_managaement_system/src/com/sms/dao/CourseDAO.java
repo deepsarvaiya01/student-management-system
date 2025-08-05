@@ -84,7 +84,9 @@ public class CourseDAO {
 		return null;
 	}
 
- public boolean deleteCourse(int courseId) {
+
+
+	public boolean deleteCourse(int courseId) {
         String deleteSubjectMapping = "DELETE FROM subject_course WHERE course_id = ?";
         String softDeleteCourse = "UPDATE courses SET is_active = 0 WHERE course_id = ?";
         
@@ -103,6 +105,7 @@ public class CourseDAO {
         }
         return false;
     }
+	
 
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		List<Subject> subjects = new ArrayList<>();

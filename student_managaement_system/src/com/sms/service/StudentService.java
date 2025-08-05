@@ -165,5 +165,8 @@ public class StudentService {
 		return "Student added successfully with " + subjectIds.size() + " subjects assigned.";
 	}
 
+	public int getLastGrNumber() {
+	    return studentDao.getLastGrNumber();
+	}
 
 }
