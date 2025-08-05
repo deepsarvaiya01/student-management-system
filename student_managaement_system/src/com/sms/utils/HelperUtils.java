@@ -25,7 +25,7 @@ public class HelperUtils {
 		}
 
 		System.out.println(line);
-
+		
 	}
 
 	public static void printCourses(List<Course> courses) {
@@ -94,6 +94,9 @@ public class HelperUtils {
 		if (student.getAge() < 15 || student.getAge() > 100) {
 			return "Invalid age (15-100).";
 		}
+		if (student.getGender() == null) {
+            return "Invalid gender. Must be M for Male, F for Female, or O for Other.";
+        }
 		return "VALID";
 	}
 

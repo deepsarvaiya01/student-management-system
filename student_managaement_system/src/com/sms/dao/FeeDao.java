@@ -140,6 +140,51 @@ public class FeeDao {
 			return false;
 		}
 	}
+	
+	public List<Fee> getPaidFeesByStudents() {
+		List<Fee> paidFeesList = new ArrayList<>();
+		String sql = "SELECT s.name AS student_name, SUM(f.paid_amount) AS total_paid " +
+		             "FROM fees f " +
+		             "JOIN student_courses sc ON f.student_course_id = sc.student_course_id " +
+		             "JOIN students s ON sc.student_id = s.student_id " +
+		             "GROUP BY s.student_id, s.name " +
+		             "ORDER BY s.name";
+
+		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+			while (rs.next()) {
+				Fee fee = new Fee();
+				fee.setStudentName(rs.getString("student_name"));
+				fee.setPaidAmount(rs.getBigDecimal("total_paid"));
+				paidFeesList.add(fee);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return paidFeesList;
+	}
+
+	public List<Fee> getPendingFeesByStudents() {
+		List<Fee> pendingFeesList = new ArrayList<>();
+		String sql = "SELECT s.name AS student_name, SUM(f.pending_amount) AS total_pending " +
+		             "FROM fees f " +
+		             "JOIN student_courses sc ON f.student_course_id = sc.student_course_id " +
+		             "JOIN students s ON sc.student_id = s.student_id " +
+		             "GROUP BY s.student_id, s.name " +
+		             "ORDER BY s.name";
+
+		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+			while (rs.next()) {
+				Fee fee = new Fee();
+				fee.setStudentName(rs.getString("student_name"));
+				fee.setPendingAmount(rs.getBigDecimal("total_pending"));
+				pendingFeesList.add(fee);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return pendingFeesList;
+	}
+
 
 	// Get Total Earning
 	public BigDecimal getTotalEarning() {

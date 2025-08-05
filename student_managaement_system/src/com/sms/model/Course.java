@@ -7,6 +7,7 @@ public class Course {
 	private String course_name;
 	private int no_of_semester;
 	private BigDecimal total_fee;
+	private BigDecimal totalFee;
 
 	public int getCourse_id() {
 		return course_id;
@@ -58,5 +59,11 @@ public class Course {
 	public Course() {
 		super();
 	}
+	
+	public BigDecimal getFee() {
+	    
+		return totalFee;
+	}
+
 
 }

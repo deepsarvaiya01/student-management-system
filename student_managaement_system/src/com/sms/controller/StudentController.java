@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.sms.model.Course;
 import com.sms.model.Fee;
+import com.sms.model.Gender;
 import com.sms.model.Student;
 import com.sms.model.Subject;
 import com.sms.payment.processor.PaymentProcessor;
@@ -50,7 +51,7 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
-		String gender = InputValidator.getValidGender(scanner, "Enter Gender (Male/Female/Other): ");
+		Gender gender = InputValidator.getValidGender(scanner, "Enter Gender (M for Male, F for Female, O for Other): ");
 
 		
 

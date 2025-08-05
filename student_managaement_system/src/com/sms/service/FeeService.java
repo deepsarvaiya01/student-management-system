@@ -4,25 +4,38 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.sms.dao.CourseDAO;
 import com.sms.dao.FeeDao;
+import com.sms.model.Course;
 import com.sms.model.Fee;
 
 public class FeeService {
 	private FeeDao feeDao;
+	private CourseDAO courseDao;
 
 	public FeeService() throws SQLException {
 		this.feeDao = new FeeDao();
+		this.courseDao = new CourseDAO();
 	}
 
 	// View Total Paid Fees
 	public BigDecimal getTotalPaidFees() {
 		return feeDao.getTotalPaidFees();
 	}
+	
+	public List<Fee> getPaidFeesByStudents() {
+		return feeDao.getPaidFeesByStudents();
+	}
+
 
 	// View Total Pending Fees
 	public BigDecimal getTotalPendingFees() {
 		return feeDao.getTotalPendingFees();
 	}
+	public List<Fee> getPendingFeesByStudents() {
+		return feeDao.getPendingFeesByStudents();
+	}
+
 
 	// View Fees By Student
 	public String getFeesByStudent(int studentId) {
@@ -47,6 +60,35 @@ public class FeeService {
 		}
 		return "SUCCESS";
 	}
+	
+	 public String getCourseFeeSummary(int courseId) {
+	        Course course;
+	        try {
+	            course = courseDao.getCourseById(courseId);
+	        } catch (Exception e) {
+	            e.printStackTrace();
+	            return "Error retrieving course.";
+	        }
+
+	        if (course == null) {
+	            return "Invalid Course ID.";
+	        }
+
+	        List<Fee> fees = feeDao.getFeesByCourse(courseId);
+	        int studentCount = fees.size();
+
+	        BigDecimal courseFee = course.getTotal_fee();  // Assuming getTotal_fee() exists
+	        BigDecimal totalExpectedFees = courseFee.multiply(BigDecimal.valueOf(studentCount));
+
+	        StringBuilder summary = new StringBuilder();
+	        summary.append("\n📘 Course: ").append(course.getCourse_name());
+	        summary.append("\n👥 Students Enrolled: ").append(studentCount);
+	        summary.append(String.format("\n💰 Total Expected Fees: ₹%.2f\n", totalExpectedFees));
+
+	        return summary.toString();
+	    }
+
+
 
 	// Update Fees Of A Course
 	public String updateCourseFees(int courseId, BigDecimal newTotalFee) {
@@ -127,4 +169,9 @@ public class FeeService {
 			return "Failed to create fee record: " + e.getMessage();
 		}
 	}
+	
+	public Course getCourseById(int courseId) {
+	    return courseDao.getCourseById(courseId);
+	}
+
 }

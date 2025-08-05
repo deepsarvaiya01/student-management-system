@@ -1,5 +1,6 @@
 package com.sms.service;
 
+import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -50,4 +51,13 @@ public class CourseService {
     public List<Subject> getUnassignedSubjectsForCourse(int courseId) {
         return courseDAO.getUnassignedSubjectsForCourse(courseId);
     }
+
+    public boolean updateCourseFees(Course course) {
+        if (course == null || course.getCourse_id() <= 0 || course.getTotal_fee() == null) {
+            return false;
+        }
+        return courseDAO.updateCourseFees(course.getCourse_id(), course.getTotal_fee());
+    }
+
+    
 }
