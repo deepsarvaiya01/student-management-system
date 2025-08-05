@@ -280,10 +280,20 @@ public class StudentController {
 		}
 
 		// 🔽 Display unassigned courses
-		System.out.println("Available Courses:");
+		System.out.println("\n📚 Available Courses:");
+		String line = "+------------+---------------------------+";
+		String format = "| %-10s | %-25s |%n";
+
+		System.out.println(line);
+		System.out.printf(format, "Course ID", "Course Name");
+		System.out.println(line);
+
 		for (Course course : unassignedCourses) {
-			System.out.println(course.getCourse_id() + ". " + course.getCourse_name());
+		    System.out.printf(format, course.getCourse_id(), course.getCourse_name());
 		}
+
+		System.out.println(line);
+
 
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
