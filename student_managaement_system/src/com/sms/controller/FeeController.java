@@ -84,7 +84,6 @@ public class FeeController {
 
 
 	public void viewFeesByStudent() {
-		System.out.println("\n📚 Available Students:");
 		List<Student> students = feeService.getAllStudents();
 		if (students.isEmpty()) {
 			System.out.println("No students found.");
@@ -94,18 +93,37 @@ public class FeeController {
 		HelperUtils.printStudents(students);
 
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to view fees: ", "Student ID");
+
 		String result = feeService.getFeesByStudent(studentId);
-		if (result.equals("SUCCESS")) {
-			List<Fee> fees = feeService.getFeesListByStudent(studentId);
-			System.out.println("\nFees for Student ID " + studentId + ":");
-			Fee.printHeader();
-			for (Fee fee : fees) {
-				System.out.println(fee);
-			}
-		} else {
+		if (!result.equals("SUCCESS")) {
 			System.out.println(result);
+			return;
 		}
+
+		List<Fee> fees = feeService.getFeesListByStudent(studentId);
+
+		if (fees.isEmpty()) {
+			System.out.println("No fee records found.");
+			return;
+		}
+
+		System.out.println("\nFees for Student ID " + studentId + ":");
+		Fee.printHeader();
+
+		BigDecimal totalPending = BigDecimal.ZERO;
+
+		for (Fee fee : fees) {
+			System.out.println(fee);
+			totalPending = totalPending.add(fee.getPendingAmount());
+		}
+
+		// ✅ Bottom line to close the table
+		System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
+
+		// ✅ Show total pending fees
+		System.out.println("Total Pending Fees: ₹" + totalPending);
 	}
+
 
 	public void viewFeesByCourse() {
 		System.out.println("\n📘 Available Courses:");

@@ -169,4 +169,22 @@ public class StudentService {
 	    return studentDao.getLastGrNumber();
 	}
 
+	public List<Student> fetchInactiveStudents() {
+		return studentDao.getInactiveStudents();
+	}
+	
+	public boolean isEmailExists(String email) {
+	    List<Student> students = studentDao.readAllStudents(); // or your equivalent fetch method
+	    for (Student s : students) {
+	        if (s.getEmail().equalsIgnoreCase(email)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
+	public boolean isNameAndMobileExists(String name, String mobile) {
+	    return studentDao.isNameAndMobileExists(name, mobile);
+	}
+
 }

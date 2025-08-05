@@ -23,6 +23,14 @@ public class Student {
 		this.mobile_no = mobile_no;
 	}
 
+	public Student(int student_id, String name, String email, int gr_number) {
+		super();
+		this.student_id = student_id;
+		this.name = name;
+		this.gr_number = gr_number;
+		this.email = email;
+	}
+
 	// Getters and Setters
 	public int getStudent_id() {
 		return student_id;
