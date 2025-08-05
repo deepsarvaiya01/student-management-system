@@ -8,6 +8,7 @@ import com.sms.dao.StudentDao;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
+import com.sms.model.Teacher;
 import com.sms.utils.HelperUtils;
 
 
@@ -167,6 +168,11 @@ public class StudentService {
 
 	public int getLastGrNumber() {
 	    return studentDao.getLastGrNumber();
+	}
+
+	public List<Student> fetchInactiveStudents() {
+		// TODO Auto-generated method stub
+		return studentDao.getInactiveStudents();
 	}
 
 }
