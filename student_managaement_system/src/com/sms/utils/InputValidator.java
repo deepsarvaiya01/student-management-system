@@ -194,7 +194,6 @@ public class InputValidator {
 		}
 		return mobile;
 	}
-	
 
 	public static String getValidMobileOnly(Scanner scanner, String prompt) {
 		String mobile;
@@ -227,11 +226,17 @@ public class InputValidator {
 			scanner.nextLine();
 			System.out.print(prompt);
 			String input = scanner.nextLine().trim().toUpperCase();
+
+			if (input.length() != 1 || !input.matches("[MFO]")) {
+				System.out.println("❌ Invalid gender. Please enter only M, F, or O.");
+				continue;
+			}
+
 			Gender gender = Gender.fromString(input);
 			if (gender != null) {
 				return gender;
 			} else {
-				System.out.println("Invalid gender. Please enter M for Male, F for Female, or O for Other.");
+				System.out.println("❌ Invalid gender. Please enter M for Male, F for Female, or O for Other.");
 			}
 		}
 	}

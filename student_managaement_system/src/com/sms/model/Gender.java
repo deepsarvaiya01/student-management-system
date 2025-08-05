@@ -1,9 +1,9 @@
 package com.sms.model;
 
 public enum Gender {
-    MALE("Male"),
-    FEMALE("Female"),
-    OTHER("Other");
+    M("M"),
+    F("F"),
+    O("O");
 
     private final String displayName;
 
@@ -21,11 +21,11 @@ public enum Gender {
         }
         switch (input.toUpperCase()) {
             case "M":
-                return MALE;
+                return M;
             case "F":
-                return FEMALE;
+                return F;
             case "O":
-                return OTHER;
+                return O;
             default:
                 return null;
         }

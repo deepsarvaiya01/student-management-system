@@ -51,9 +51,7 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
-		Gender gender = InputValidator.getValidGender(scanner, "Enter Gender (M for Male, F for Female, O for Other): ");
-
-		
+		Gender gender = InputValidator.getValidGender(scanner, "Enter Gender (M for Male, F for Female, O for Other): ");		
 
 		System.out.println("\nAvailable Courses:");
 		List<Course> courses = studentService.getAllCourses();

@@ -374,7 +374,7 @@ public class StudentDao {
 					psStudent.setString(1, student.getName());
 					psStudent.setInt(2, student.getGr_number());
 					psStudent.setString(3, student.getEmail());
-					psStudent.setString(4, student.getGender() != null ? student.getGender().name() : null);
+					psStudent.setString(4, student.getGender() != null ? student.getGender().name().substring(0, 1) : null);
 					int affectedRows = psStudent.executeUpdate();
 					if (affectedRows == 0) {
 						throw new SQLException("Creating student failed, no rows affected.");
