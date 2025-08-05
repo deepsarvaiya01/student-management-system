@@ -24,7 +24,7 @@ public class CourseMain {
             System.out.println("║ 5. Search a Course                        ║");
             System.out.println("║ 6. Delete a Course                        ║");
             System.out.println("║ 7. Manage Subjects                        ║");
-            System.out.println("║ 0. Exit                                   ║");
+            System.out.println("║ 0. Back                                   ║");
             System.out.println("╚═══════════════════════════════════════════╝");
             
             choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-7): ", 7);
@@ -41,7 +41,7 @@ public class CourseMain {
                     subjectMain.show();
                 }
                 case 0 -> {
-                    System.out.println("Exiting Course Management... Thank you!");
+                    System.out.println("Going back to Student Main Menu...");
                     return;
                 }
             }

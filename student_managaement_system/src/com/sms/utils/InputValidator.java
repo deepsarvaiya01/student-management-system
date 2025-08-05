@@ -27,7 +27,7 @@ public class InputValidator {
 			}
 		}
 	}
-	
+
 	// Get valid integer input and consume newline
 	public static int getValidIntegerWithNewline(Scanner scanner, String prompt, String fieldName) {
 		int value = getValidInteger(scanner, prompt, fieldName);
@@ -60,7 +60,8 @@ public class InputValidator {
 	public static int getValidIntegerInRange(Scanner scanner, String prompt, String fieldName, int min, int max) {
 		while (true) {
 			try {
-				int value = getValidInteger(scanner, prompt, fieldName);
+				int value = (min == 0) ? getValidIntegerAllowZero(scanner, prompt, fieldName)
+						: getValidInteger(scanner, prompt, fieldName);
 				if (value < min || value > max) {
 					throw new AppException("❌ Invalid " + fieldName + "! Must be between " + min + " and " + max
 							+ ".\nPlease try again:");
@@ -71,9 +72,10 @@ public class InputValidator {
 			}
 		}
 	}
-	
+
 	// Get valid integer with range validation and consume newline
-	public static int getValidIntegerInRangeWithNewline(Scanner scanner, String prompt, String fieldName, int min, int max) {
+	public static int getValidIntegerInRangeWithNewline(Scanner scanner, String prompt, String fieldName, int min,
+			int max) {
 		int value = getValidIntegerInRange(scanner, prompt, fieldName, min, max);
 		scanner.nextLine(); // Consume the newline character
 		return value;
@@ -190,24 +192,6 @@ public class InputValidator {
 	// Get valid age input
 	public static int getValidAge(Scanner scanner, String prompt) {
 		return getValidIntegerInRange(scanner, prompt, "Age", 15, 100);
-	}
-
-	// Get valid GR number input
-	public static int getValidGRNumber(Scanner scanner, String prompt) {
-		while (true) {
-			try {
-				int grNumber = getValidInteger(scanner, prompt, "GR Number");
-				String grString = String.valueOf(grNumber);
-
-				if (grString.length() < 4 || grString.length() > 10) {
-					throw new AppException("❌ Invalid GR Number! Must be between 4 and 10 digits.\nPlease try again:");
-				}
-
-				return grNumber;
-			} catch (AppException e) {
-				System.out.println(e.getMessage());
-			}
-		}
 	}
 
 	// Get valid decimal input (for payment amounts)

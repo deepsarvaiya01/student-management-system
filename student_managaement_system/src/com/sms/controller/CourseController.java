@@ -12,8 +12,8 @@ import com.sms.service.CourseService;
 import com.sms.service.StudentService;
 import com.sms.service.SubjectService;
 import com.sms.service.TeacherService;
-import com.sms.utils.InputValidator;
 import com.sms.utils.HelperUtils;
+import com.sms.utils.InputValidator;
 
 public class CourseController {
 	private StudentService studentService;
@@ -362,6 +362,7 @@ public class CourseController {
 				return;
 			}
 
+			scanner.nextLine();
 			boolean confirm = InputValidator.getValidConfirmation(scanner,
 					"Are you sure you want to delete course '" + course.getCourse_name() + "'? (y/n): ");
 			if (confirm) {
