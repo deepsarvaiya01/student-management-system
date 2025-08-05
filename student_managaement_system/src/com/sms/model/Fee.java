@@ -127,6 +127,8 @@ public class Fee {
 		return String.format("| %-6d | %-20s | %-15s | %-15.2f | %-15.2f | %-15.2f | %-15s |", feeId,
 				(studentName != null) ? studentName : "N/A", (courseName != null) ? courseName : "N/A", totalFee,
 				paidAmount, pendingAmount, lastPaymentStr);
+		
+		
 	}
 
 }

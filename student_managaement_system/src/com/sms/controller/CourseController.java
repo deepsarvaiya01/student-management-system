@@ -173,7 +173,7 @@ public class CourseController {
 					}
 
 					int teacherId = InputValidator.getValidIntegerAllowZero(scanner,
-							"Enter Teacher ID to assign to subject '" + subjectName + "' or 0 to skip: ", "Teacher ID");
+							"Enter Teacher ID to assign to subject '" + subjectName + "' or", "Teacher ID");
 					scanner.nextLine(); // Clear buffer
 
 					if (teacherId > 0) {
