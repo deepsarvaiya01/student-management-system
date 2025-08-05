@@ -2,6 +2,7 @@ package com.sms.controller;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -38,6 +39,10 @@ public class CourseController {
 	}
 
 	public void addNewCourse() {
+		// Track newly created entities for rollback
+		List<Integer> newlyCreatedSubjectIds = new ArrayList<>();
+		int courseId = -1;
+		
 		try {
 			String name = InputValidator.getValidName(scanner, "Enter course name: ");
 			int semesters = InputValidator.getValidIntegerInRange(scanner, "Enter number of semesters: ",
@@ -52,7 +57,7 @@ public class CourseController {
 			course.setNo_of_semester(semesters);
 			course.setTotal_fee(fee);
 
-			int courseId = courseService.addCourse(course);
+			courseId = courseService.addCourse(course);
 			if (courseId == -1) {
 				System.out.println("Failed to add course.");
 				return;
@@ -137,6 +142,8 @@ public class CourseController {
 			// Add new subjects if required
 			int newSubjectCount = totalSubjects - existingCount;
 			TeacherService teacherService = new TeacherService(); // Reuse instance
+			boolean teacherAssignmentFailed = false;
+			
 			for (int i = 1; i <= newSubjectCount; i++) {
 				String subjectName = InputValidator.getValidName(scanner, "Enter name for new subject " + i + ": ");
 
@@ -158,6 +165,9 @@ public class CourseController {
 					System.out.println("Failed to add subject: " + subjectName);
 					continue;
 				}
+				
+				// Track newly created subject for potential rollback
+				newlyCreatedSubjectIds.add(subjectId);
 				courseService.assignSubjectToCourse(courseId, subjectId);
 
 				List<Teacher> teachers = teacherService.fetchAllTeachers();
@@ -172,27 +182,94 @@ public class CourseController {
 								t.getQualification(), t.getExperience());
 					}
 
-					int teacherId = InputValidator.getValidIntegerAllowZero(scanner,
-							"Enter Teacher ID to assign to subject '" + subjectName + "' or", "Teacher ID");
-					scanner.nextLine(); // Clear buffer
+					// Try teacher assignment with 3 attempts
+					int attempts = 0;
+					boolean assigned = false;
+					
+					while (attempts < 3 && !assigned) {
+						int teacherId = InputValidator.getValidInteger(scanner,
+								"Enter Teacher ID to assign to subject '" + subjectName + "': ", "Teacher ID");
+						scanner.nextLine(); // Clear buffer
 
-					if (teacherId > 0) {
-						boolean assigned = teacherService.assignSubject(teacherId, subjectId);
-						if (assigned) {
-							System.out.println("✅ Teacher assigned to subject.");
+						if (teacherId > 0) {
+							assigned = teacherService.assignSubject(teacherId, subjectId);
+							if (assigned) {
+								System.out.println("✅ Teacher assigned to subject.");
+							} else {
+								System.out.println("❌ Assignment failed. Attempt " + (attempts + 1) + " of 3.");
+								attempts++;
+								if (attempts < 3) {
+									System.out.println("Please try again with a different Teacher ID.");
+								}
+							}
 						} else {
-							System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
+							System.out.println("❌ Invalid Teacher ID. Attempt " + (attempts + 1) + " of 3.");
+							attempts++;
 						}
-					} else {
-						System.out.println("⏭️ Skipped teacher assignment for this subject.");
+					}
+					
+					// If teacher assignment failed after 3 attempts, mark for rollback
+					if (!assigned && attempts >= 3) {
+						System.out.println("❌ Failed to assign teacher after 3 attempts for subject: " + subjectName);
+						teacherAssignmentFailed = true;
+						break;
 					}
 				}
+			}
+
+			// Check if we need to rollback due to teacher assignment failure
+			if (teacherAssignmentFailed) {
+				System.out.println("\n🔄 Rolling back course creation due to teacher assignment failure...");
+				performRollback(courseId, newlyCreatedSubjectIds);
+				return;
 			}
 
 			System.out.println("\n✅ Course created and " + totalSubjects + " subjects assigned successfully.");
 
 		} catch (Exception e) {
 			System.out.println("❗ Unexpected error: " + e.getMessage());
+			// If there's an exception, also perform rollback
+			if (courseId != -1) {
+				System.out.println("\n🔄 Rolling back due to unexpected error...");
+				performRollback(courseId, newlyCreatedSubjectIds);
+			}
+		}
+	}
+	
+	/**
+	 * Performs rollback by deleting the course and all newly created subjects
+	 * @param courseId The ID of the course to delete
+	 * @param newlyCreatedSubjectIds List of subject IDs that were newly created
+	 */
+	private void performRollback(int courseId, List<Integer> newlyCreatedSubjectIds) {
+		try {
+			System.out.println("🗑️ Deleting newly created subjects...");
+			
+			// Delete all newly created subjects
+			for (Integer subjectId : newlyCreatedSubjectIds) {
+				boolean deleted = subjectService.deleteSubject(subjectId);
+				if (deleted) {
+					System.out.println("✅ Deleted subject ID: " + subjectId);
+				} else {
+					System.out.println("❌ Failed to delete subject ID: " + subjectId);
+				}
+			}
+			
+			System.out.println("🗑️ Deleting course...");
+			
+			// Delete the course
+			boolean courseDeleted = courseService.deleteCourseById(courseId);
+			if (courseDeleted) {
+				System.out.println("✅ Deleted course ID: " + courseId);
+			} else {
+				System.out.println("❌ Failed to delete course ID: " + courseId);
+			}
+			
+			System.out.println("🔄 Rollback completed successfully.");
+			
+		} catch (Exception e) {
+			System.out.println("❌ Error during rollback: " + e.getMessage());
+			System.out.println("⚠️ Manual cleanup may be required.");
 		}
 	}
 
@@ -284,18 +361,14 @@ public class CourseController {
 										t.getQualification(), t.getExperience());
 							}
 
-							int teacherId = InputValidator.getValidIntegerAllowZero(scanner,
-									"Enter Teacher ID to assign to subject '" + subjectName + "' or 0 to skip: ",
+							int teacherId = InputValidator.getValidInteger(scanner,
+									"Enter Teacher ID to assign to subject '" + subjectName + "': ",
 									"Teacher ID");
-							if (teacherId > 0) {
-								boolean assigned = new TeacherService().assignSubject(teacherId, newSubjectId);
-								if (assigned) {
-									System.out.println("✅ Teacher assigned to subject.");
-								} else {
-									System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
-								}
+							boolean assigned = new TeacherService().assignSubject(teacherId, newSubjectId);
+							if (assigned) {
+								System.out.println("✅ Teacher assigned to subject.");
 							} else {
-								System.out.println("Skipped teacher assignment.");
+								System.out.println("❌ Assignment failed. Possibly invalid ID or already assigned.");
 							}
 						}
 						System.out.println("✅ Subject created and assigned.");
