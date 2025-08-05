@@ -1,6 +1,9 @@
 package com.sms.utils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.util.stream.Collectors;
 
 import com.sms.model.Course;
 import com.sms.model.Student;
@@ -93,4 +96,73 @@ public class HelperUtils {
 		}
 		return "VALID";
 	}
+
+	public static List<Integer> selectSubjectsForCourse(int courseId, List<Subject> availableSubjects,
+			Scanner scanner) {
+		List<Integer> selectedSubjectIds = new ArrayList<>();
+
+		List<Subject> mandatorySubjects = availableSubjects.stream()
+				.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
+
+		List<Subject> electiveSubjects = availableSubjects.stream()
+				.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
+
+		System.out.println("\n📚 Available Subjects for Course ID " + courseId + ":");
+		System.out.println("=".repeat(80));
+
+		if (!mandatorySubjects.isEmpty()) {
+			System.out.println("🔴 MANDATORY SUBJECTS (Must select all):");
+			for (Subject subject : mandatorySubjects) {
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
+			}
+		}
+
+		if (!electiveSubjects.isEmpty()) {
+			System.out.println("\n🟢 ELECTIVE SUBJECTS (Optional):");
+			for (Subject subject : electiveSubjects) {
+				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+						subject.getSubject_name(), subject.getSubject_type());
+			}
+		}
+
+		// Auto-select mandatory subjects
+		for (Subject subject : mandatorySubjects) {
+			selectedSubjectIds.add(subject.getSubject_id());
+			System.out.println("   ✓ Auto-selected: " + subject.getSubject_name());
+		}
+
+		// User selects elective subjects
+		if (!electiveSubjects.isEmpty()) {
+			System.out.print("\n🟢 Enter elective subject IDs (comma-separated, or press Enter to skip): ");
+			String electiveInput = scanner.nextLine().trim();
+
+			if (!electiveInput.isEmpty()) {
+				try {
+					String[] electiveIds = electiveInput.split(",");
+					for (String idStr : electiveIds) {
+						int electiveId = Integer.parseInt(idStr.trim());
+						boolean isValid = electiveSubjects.stream().anyMatch(s -> s.getSubject_id() == electiveId);
+						if (isValid) {
+							selectedSubjectIds.add(electiveId);
+							Subject selectedSubject = electiveSubjects.stream()
+									.filter(s -> s.getSubject_id() == electiveId).findFirst().orElse(null);
+							if (selectedSubject != null) {
+								System.out.println("   ✓ Selected: " + selectedSubject.getSubject_name());
+							}
+						} else {
+							System.out.println("   ❌ Invalid elective subject ID: " + electiveId);
+						}
+					}
+				} catch (NumberFormatException e) {
+					System.out.println("   ❌ Invalid input format. No elective subjects selected.");
+				}
+			} else {
+				System.out.println("   ⏭️ No elective subjects selected.");
+			}
+		}
+
+		return selectedSubjectIds;
+	}
+
 }

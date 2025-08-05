@@ -13,7 +13,6 @@ import com.sms.database.DBConnection;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
-import com.sms.model.Teacher;
 
 public class StudentDao {
 
@@ -245,6 +244,7 @@ public class StudentDao {
 			}
 		}
 	}
+
 	public List<Student> getInactiveStudents() {
 		List<Student> list = new ArrayList<>();
 		String sql = "SELECT * FROM students WHERE is_active = FALSE";
@@ -258,7 +258,6 @@ public class StudentDao {
 		}
 		return list;
 	}
-
 
 	public boolean restoreStudentById(int studentId) {
 		if (studentId <= 0) {
@@ -572,6 +571,28 @@ public class StudentDao {
 				}
 			}
 		}
+	}
+
+	public boolean isNameAndMobileExists(String name, String mobile) {
+		String sql = """
+				    SELECT COUNT(*)
+				    FROM students s
+				    JOIN profiles p ON s.student_id = p.student_id
+				    WHERE s.name = ? AND p.mobile_no = ?
+				""";
+
+		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+			stmt.setString(1, name);
+			stmt.setString(2, mobile);
+			try (ResultSet rs = stmt.executeQuery()) {
+				if (rs.next()) {
+					return rs.getInt(1) > 0;
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

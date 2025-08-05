@@ -2,7 +2,9 @@ package com.sms.utils;
 
 import java.math.BigDecimal;
 import java.util.Scanner;
+
 import com.sms.exception.AppException;
+import com.sms.service.StudentService;
 
 public class InputValidator {
 
@@ -108,7 +110,7 @@ public class InputValidator {
 	}
 
 	// Get valid email input
-	public static String getValidEmail(Scanner scanner, String prompt) {
+	public static String getValidEmail(Scanner scanner, String prompt, StudentService studentService) {
 		while (true) {
 			try {
 				System.out.print(prompt);
@@ -125,6 +127,10 @@ public class InputValidator {
 				if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
 					throw new AppException(
 							"❌ Invalid email format! Please enter a valid email (e.g., user@example.com)\nPlease try again:");
+				}
+
+				if (studentService.isEmailExists(email)) {
+					throw new AppException("❌ Email already exists. Please enter a different email");
 				}
 
 				return email;
@@ -162,31 +168,30 @@ public class InputValidator {
 		}
 	}
 
-	// Get valid mobile number input
-	public static String getValidMobile(Scanner scanner, String prompt) {
+	public static String getValidMobile(Scanner scanner, String prompt, String name, StudentService studentService) {
+		String mobile;
 		while (true) {
-			try {
-				System.out.print(prompt);
-				String mobile = scanner.nextLine().trim();
+			System.out.print(prompt);
+			mobile = scanner.nextLine().trim();
 
-				if (mobile.isEmpty()) {
-					throw new AppException("❌ Mobile number cannot be empty!\nPlease try again:");
-				}
-
-				if (mobile.length() > 15) {
-					throw new AppException(
-							"❌ Mobile number is too long! Maximum 15 characters allowed.\nPlease try again:");
-				}
-
-				if (!mobile.matches("\\d{10}")) {
-					throw new AppException("❌ Invalid mobile number! Must be exactly 10 digits.\nPlease try again:");
-				}
-
-				return mobile;
-			} catch (AppException e) {
-				System.out.println(e.getMessage());
+			if (mobile.isEmpty()) {
+				System.out.println("❌ Mobile number cannot be empty!");
+				continue;
 			}
+
+			if (!mobile.matches("^[6-9]\\d{9}$")) {
+				System.out.println("❌ Invalid mobile number! It should be 10 digits and start with 6-9.");
+				continue;
+			}
+
+			if (studentService.isNameAndMobileExists(name, mobile)) {
+				System.out.println("❌ A student with the same name and mobile number already exists.");
+				continue;
+			}
+
+			break;
 		}
+		return mobile;
 	}
 
 	// Get valid age input
