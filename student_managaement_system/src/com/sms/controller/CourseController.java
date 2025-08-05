@@ -198,12 +198,25 @@ public class CourseController {
 
 	private String getSubjectTypeFromUser() {
 		while (true) {
-			System.out.print("Enter subject type (Mandatory/Elective): ");
-			String subjectType = scanner.nextLine().trim();
-			if (subjectType.equalsIgnoreCase("Mandatory") || subjectType.equalsIgnoreCase("Elective")) {
-				return subjectType.substring(0, 1).toUpperCase() + subjectType.substring(1).toLowerCase();
-			} else {
-				System.out.println("Invalid input. Please enter 'Mandatory' or 'Elective'.");
+			System.out.println("\n📚 Select Subject Type:");
+			System.out.println("+----+------------+");
+			System.out.println("| No | Type       |");
+			System.out.println("+----+------------+");
+			System.out.println("| 1  | Mandatory  |");
+			System.out.println("| 2  | Elective   |");
+			System.out.println("+----+------------+");
+			
+			System.out.print("Enter your choice (1 or 2): ");
+			String choice = scanner.nextLine().trim();
+			
+			switch (choice) {
+				case "1":
+					return "Mandatory";
+				case "2":
+					return "Elective";
+				default:
+					System.out.println("❌ Invalid choice. Please enter 1 for Mandatory or 2 for Elective.");
+					break;
 			}
 		}
 	}
@@ -247,12 +260,19 @@ public class CourseController {
 
 	private void displayTeachers(List<Teacher> teachers) {
 		System.out.println("\n👩‍🏫 Available Teachers:");
-		System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
-		System.out.println("------------------------------------------------------------");
+		String separator = "+-----+--------------------+--------------------+----------+";
+		String headerFormat = "| %-3s | %-18s | %-18s | %-8s |%n";
+		String rowFormat = "| %-3d | %-18s | %-18s | %-8.1f |%n";
+		
+		System.out.println(separator);
+		System.out.printf(headerFormat, "ID", "Name", "Qualification", "Experience");
+		System.out.println(separator);
+		
 		for (Teacher t : teachers) {
-			System.out.printf("%-5d %-20s %-20s %-10.1f%n", t.getTeacherId(), t.getName(),
+			System.out.printf(rowFormat, t.getTeacherId(), t.getName(),
 					t.getQualification(), t.getExperience());
 		}
+		System.out.println(separator);
 	}
 
 	private void performRollback(int courseId, List<Integer> newlyCreatedSubjectIds) {
@@ -369,12 +389,19 @@ public class CourseController {
 		}
 
 		System.out.println("Available Teachers:");
-		System.out.printf("%-5s %-20s %-20s %-10s%n", "ID", "Name", "Qualification", "Experience");
-		System.out.println("------------------------------------------------------------");
+		String separator = "+-----+--------------------+--------------------+----------+";
+		String headerFormat = "| %-3s | %-18s | %-18s | %-8s |%n";
+		String rowFormat = "| %-3d | %-18s | %-18s | %-8.1f |%n";
+		
+		System.out.println(separator);
+		System.out.printf(headerFormat, "ID", "Name", "Qualification", "Experience");
+		System.out.println(separator);
+		
 		for (Teacher t : teachers) {
-			System.out.printf("%-5d %-20s %-20s %-10.1f%n", t.getTeacherId(), t.getName(),
+			System.out.printf(rowFormat, t.getTeacherId(), t.getName(),
 					t.getQualification(), t.getExperience());
 		}
+		System.out.println(separator);
 
 		int teacherId = InputValidator.getValidInteger(scanner,
 				"Enter Teacher ID to assign to subject '" + subjectName + "': ", "Teacher ID");
