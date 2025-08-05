@@ -13,7 +13,6 @@ import com.sms.database.DBConnection;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
-import com.sms.model.Teacher;
 
 public class StudentDao {
 
