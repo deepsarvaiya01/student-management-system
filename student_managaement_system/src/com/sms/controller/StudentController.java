@@ -12,7 +12,7 @@ import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Student;
 import com.sms.model.Subject;
-
+import com.sms.model.Teacher;
 import com.sms.payment.processor.PaymentProcessor;
 import com.sms.service.CourseService;
 import com.sms.service.FeeService;
@@ -566,6 +566,26 @@ public class StudentController {
 	}
 
 	public void restoreStudent() {
+				
+		List<Student> list = studentService.fetchInactiveStudents();
+		if (list.isEmpty()) {
+			System.out.println("No inactive students found.");
+			return;
+		}
+
+		System.out.println("\n📋 Inactive Students");
+		String line = "+-----+----------------------+----------------------+------------+";
+		String format = "| %-3s | %-20s | %-20s | %-10s |%n";
+
+		System.out.println(line);
+		System.out.printf(format, "ID", "Name", "Email", "GR number");
+		System.out.println(line);
+
+		for (Student s : list) {
+			System.out.printf(format, s.getStudent_id(), s.getName(), s.getEmail(), s.getGr_number());
+		}
+
+		System.out.println(line);
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to restore: ", "Student ID");
 		String result = studentService.restoreStudentById(studentId);
 		System.out.println(result);

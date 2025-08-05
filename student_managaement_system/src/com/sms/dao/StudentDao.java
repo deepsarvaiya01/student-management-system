@@ -13,6 +13,7 @@ import com.sms.database.DBConnection;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
+import com.sms.model.Teacher;
 
 public class StudentDao {
 
@@ -244,6 +245,20 @@ public class StudentDao {
 			}
 		}
 	}
+	public List<Student> getInactiveStudents() {
+		List<Student> list = new ArrayList<>();
+		String sql = "SELECT * FROM students WHERE is_active = FALSE";
+		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
+			while (rs.next()) {
+				list.add(new Student(rs.getInt("student_id"), rs.getString("name"), rs.getString("email"),
+						rs.getInt("gr_number")));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
 
 	public boolean restoreStudentById(int studentId) {
 		if (studentId <= 0) {
