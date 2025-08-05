@@ -303,25 +303,29 @@ public class CourseController {
 			int choice = InputValidator.getValidIntegerInRangeWithNewline(scanner, "Enter choice: ", "Choice", 1, 2);
 
 			if (choice == 1) {
-				List<Subject> existingSubjects = subjectService.getAllSubjects();
-				if (existingSubjects.isEmpty()) {
-					System.out.println("❗ No subjects found. Please create new subjects.");
+				List<Subject> unassignedSubjects = courseService.getUnassignedSubjectsForCourse(courseId);
+				if (unassignedSubjects.isEmpty()) {
+					System.out.println("❗ No unassigned subjects found. All subjects are already assigned to this course.");
 					return;
 				}
 
-				System.out.println("Available Subjects:");
-				HelperUtils.viewSubjects(existingSubjects);
+				System.out.println("Available Unassigned Subjects:");
+				HelperUtils.viewSubjects(unassignedSubjects);
 
 				System.out.print("Enter comma-separated subject IDs to assign: ");
 				String[] ids = scanner.nextLine().split(",");
 				for (String idStr : ids) {
 					try {
 						int subjectId = Integer.parseInt(idStr.trim());
-						if (subjectService.subjectExists(subjectId)) {
+						// Check if the subject is in the unassigned list
+						boolean isValidSubject = unassignedSubjects.stream()
+								.anyMatch(s -> s.getSubject_id() == subjectId);
+						
+						if (isValidSubject) {
 							courseService.assignSubjectToCourse(courseId, subjectId);
 							System.out.println("✅ Subject " + subjectId + " assigned.");
 						} else {
-							System.out.println("❗ Subject ID " + subjectId + " does not exist.");
+							System.out.println("❗ Subject ID " + subjectId + " is not available for assignment (may be already assigned or doesn't exist).");
 						}
 					} catch (NumberFormatException e) {
 						System.out.println("❗ Invalid input: " + idStr);
@@ -457,6 +461,7 @@ public class CourseController {
 
 	public void viewSubjectsOfCourse() {
 		try {
+			viewAllCourses();
 			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to view its subjects: ",
 					"Course ID");
 			Course course = courseService.getCourseById(courseId);
