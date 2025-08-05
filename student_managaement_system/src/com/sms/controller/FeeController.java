@@ -32,14 +32,56 @@ public class FeeController {
 	}
 
 	public void viewTotalPaidFees() {
-		BigDecimal totalPaid = feeService.getTotalPaidFees();
-		printBox("💰 Total Paid Fees: ", totalPaid);
+		List<Fee> paidFees = feeService.getPaidFeesByStudents();
+
+		if (paidFees.isEmpty()) {
+			System.out.println("No fee records found.");
+			return;
+		}
+
+		System.out.println("\n╔═════════════════════════════════════════════╗");
+		System.out.println("║              PAID FEES BY STUDENT           ║");
+		System.out.println("╠═════════════════════════════════════════════╣");
+		System.out.printf("║%-25s  │ %-15s ║\n", "Student Name", "Paid Amount");
+		System.out.println("╠═════════════════════════════════════════════╣");
+
+		BigDecimal total = BigDecimal.ZERO;
+		for (Fee fee : paidFees) {
+			System.out.printf("║ %-25s │ ₹%-13.2f  ║\n", fee.getStudentName(), fee.getPaidAmount());
+			total = total.add(fee.getPaidAmount());
+		}
+
+		System.out.println("╠═════════════════════════════════════════════╣");
+		System.out.printf("║ %-25s │ ₹%-13.2f  ║\n", "TOTAL", total);
+		System.out.println("╚═════════════════════════════════════════════╝");
 	}
 
+
 	public void viewTotalPendingFees() {
-		BigDecimal totalPending = feeService.getTotalPendingFees();
-		printBox("⏳ Total Pending Fees: ", totalPending);
+		List<Fee> pendingFees = feeService.getPendingFeesByStudents();
+
+		if (pendingFees.isEmpty()) {
+			System.out.println("No pending fee records found.");
+			return;
+		}
+
+		System.out.println("\n╔═════════════════════════════════════════════╗");
+		System.out.println("║         PENDING FEES BY STUDENT             ║");
+		System.out.println("╠═════════════════════════════════════════════╣");
+		System.out.printf("║ %-25s │ %-15s ║\n", "Student Name", "Pending Amount");
+		System.out.println("╠═════════════════════════════════════════════╣");
+
+		BigDecimal total = BigDecimal.ZERO;
+		for (Fee fee : pendingFees) {
+			System.out.printf("║ %-25s │ ₹%-13.2f  ║\n", fee.getStudentName(), fee.getPendingAmount());
+			total = total.add(fee.getPendingAmount());
+		}
+
+		System.out.println("╠═════════════════════════════════════════════╣");
+		System.out.printf("║ %-25s │ ₹%-13.2f  ║\n", "TOTAL", total);
+		System.out.println("╚═════════════════════════════════════════════╝");
 	}
+
 
 	public void viewFeesByStudent() {
 		System.out.println("\n📚 Available Students:");

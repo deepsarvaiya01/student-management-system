@@ -18,11 +18,20 @@ public class FeeService {
 	public BigDecimal getTotalPaidFees() {
 		return feeDao.getTotalPaidFees();
 	}
+	
+	public List<Fee> getPaidFeesByStudents() {
+		return feeDao.getPaidFeesByStudents();
+	}
+
 
 	// View Total Pending Fees
 	public BigDecimal getTotalPendingFees() {
 		return feeDao.getTotalPendingFees();
 	}
+	public List<Fee> getPendingFeesByStudents() {
+		return feeDao.getPendingFeesByStudents();
+	}
+
 
 	// View Fees By Student
 	public String getFeesByStudent(int studentId) {

@@ -445,6 +445,19 @@ public class StudentDao {
 		}
 	}
 
+	public int getLastGrNumber() {
+		int lastGr = 0;
+		String sql = "SELECT MAX(gr_number) FROM students";
+		try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+			if (rs.next()) {
+				lastGr = rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return lastGr;
+	}
+
 	public boolean assignCourseAndSubjectsToStudent(int studentId, int courseId, List<Integer> subjectIds) {
 		String courseSql = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
 		String subjectSql = "INSERT INTO student_subjects (student_course_id, subject_course_id) VALUES (?, ?)";

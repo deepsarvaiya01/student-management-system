@@ -194,24 +194,6 @@ public class InputValidator {
 		return getValidIntegerInRange(scanner, prompt, "Age", 15, 100);
 	}
 
-	// Get valid GR number input
-	public static int getValidGRNumber(Scanner scanner, String prompt) {
-		while (true) {
-			try {
-				int grNumber = getValidInteger(scanner, prompt, "GR Number");
-				String grString = String.valueOf(grNumber);
-
-				if (grString.length() < 4 || grString.length() > 10) {
-					throw new AppException("❌ Invalid GR Number! Must be between 4 and 10 digits.\nPlease try again:");
-				}
-
-				return grNumber;
-			} catch (AppException e) {
-				System.out.println(e.getMessage());
-			}
-		}
-	}
-
 	// Get valid decimal input (for payment amounts)
 	public static BigDecimal getValidDecimal(Scanner scanner, String prompt, String fieldName) {
 		while (true) {
