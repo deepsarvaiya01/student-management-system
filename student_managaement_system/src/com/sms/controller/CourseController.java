@@ -67,7 +67,13 @@ public class CourseController {
 			}
 
 			System.out.println("\n✅ Course created and " + totalSubjects + " subjects assigned successfully.");
-
+			
+			// Display comprehensive course details
+			displayCourseDetails(courseId);
+			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
+			System.out.println("║" + " ".repeat(30) + "✅ COURSE CREATED SUCCESSFULLY" + " ".repeat(20) + "║");
+			System.out.println("╚" + "═".repeat(78) + "╝");
+			
 		} catch (Exception e) {
 			System.out.println("❗ Unexpected error: " + e.getMessage());
 			if (courseId != -1) {
@@ -211,9 +217,9 @@ public class CourseController {
 			
 			switch (choice) {
 				case "1":
-					return "Mandatory";
+					return "mandatory";
 				case "2":
-					return "Elective";
+					return "elective";
 				default:
 					System.out.println("❌ Invalid choice. Please enter 1 for Mandatory or 2 for Elective.");
 					break;
@@ -437,7 +443,7 @@ public class CourseController {
 				course = courseService.getCourseByName(name);
 			}
 
-			displayCourseSearchResult(course);
+			displayCourseDetails(course.getCourse_id());
 		} catch (Exception e) {
 			System.out.println("❗ Error while searching course: " + e.getMessage());
 		}
@@ -503,6 +509,104 @@ public class CourseController {
 			HelperUtils.viewSubjects(subjects);
 		} catch (Exception e) {
 			System.out.println("❗ Error while fetching subjects: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Displays comprehensive course details including subjects and assigned teachers
+	 * @param courseId The ID of the course to display
+	 */
+	private void displayCourseDetails(int courseId) {
+		try {
+			// Get course details
+			Course course = courseService.getCourseById(courseId);
+			if (course == null) {
+				System.out.println("❌ Course not found.");
+				return;
+			}
+			
+			// Get subjects for the course
+			List<Subject> subjects = courseService.getSubjectsForCourse(courseId);
+			
+			// Display course header with modern design
+			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
+			System.out.println("║" + " ".repeat(25) + "🎓 COURSE DETAILS" + " ".repeat(35) + "║");
+			System.out.println("╚" + "═".repeat(78) + "╝");
+			
+			// Course information card
+			System.out.println("\n📋 COURSE INFORMATION");
+			System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
+			System.out.printf("│ %-23s │ %-48s │%n", "Course ID", course.getCourse_id());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "Course Name", course.getCourse_name());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48d │%n", "Semesters", course.getNo_of_semester());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee", 
+				course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
+			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
+			
+			// Subjects and teachers information
+			if (subjects != null && !subjects.isEmpty()) {
+				System.out.println("\n📚 SUBJECTS & TEACHERS ASSIGNMENT");
+				System.out.println("┌" + "─".repeat(10) + "┬" + "─".repeat(30) + "┬" + "─".repeat(15) + "┬" + "─".repeat(17) + "┐");
+				System.out.printf("│ %-8s │ %-28s │ %-13s │ %-15s │%n", "ID", "Subject Name", "Type", "Teacher");
+				System.out.println("├" + "─".repeat(10) + "┼" + "─".repeat(30) + "┼" + "─".repeat(15) + "┼" + "─".repeat(17) + "┤");
+				
+				TeacherService teacherService = new TeacherService();
+				for (Subject subject : subjects) {
+					// Get teacher for this subject
+					Teacher teacher = teacherService.getTeacherBySubjectId(subject.getSubject_id());
+					String teacherName = (teacher != null) ? teacher.getName() : "Not Assigned";
+					
+					// Capitalize first letter for display
+					String displayType = (subject.getSubject_type() != null) ? 
+						subject.getSubject_type().substring(0, 1).toUpperCase() + 
+						subject.getSubject_type().substring(1).toLowerCase() : "N/A";
+					
+					// Truncate long names for better display
+					String truncatedSubjectName = subject.getSubject_name().length() > 28 ? 
+						subject.getSubject_name().substring(0, 25) + "..." : subject.getSubject_name();
+					String truncatedTeacherName = teacherName.length() > 15 ? 
+						teacherName.substring(0, 12) + "..." : teacherName;
+					
+					System.out.printf("│ %-8d │ %-28s │ %-13s │ %-15s │%n", 
+						subject.getSubject_id(), 
+						truncatedSubjectName, 
+						displayType,
+						truncatedTeacherName);
+				}
+				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(30) + "┴" + "─".repeat(15) + "┴" + "─".repeat(17) + "┘");
+				
+				// Summary statistics with modern design
+				long mandatoryCount = subjects.stream().filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
+				long electiveCount = subjects.stream().filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
+				long assignedTeachersCount = subjects.stream()
+					.mapToInt(s -> teacherService.getTeacherBySubjectId(s.getSubject_id()) != null ? 1 : 0)
+					.sum();
+				
+				System.out.println("\n📊 SUMMARY STATISTICS");
+				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(15) + "┐");
+				System.out.printf("│ %-23s │ %-13s │%n", "Metric", "Count");
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Total Subjects", subjects.size());
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Mandatory Subjects", mandatoryCount);
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Elective Subjects", electiveCount);
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Teachers Assigned", assignedTeachersCount);
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Unassigned Subjects", subjects.size() - assignedTeachersCount);
+				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(15) + "┘");
+				
+			} else {
+				System.out.println("\n📚 No subjects assigned to this course yet.");
+			}
+			
+
+		} catch (Exception e) {
+			System.out.println("❌ Error displaying course details: " + e.getMessage());
 		}
 	}
 }

@@ -106,7 +106,7 @@ public class CourseDAO {
 	
 	public List<Subject> getSubjectsByCourseId(int courseId) {
 		List<Subject> subjects = new ArrayList<>();
-		String sql = "SELECT s.subject_id, s.subject_name FROM subjects s "
+		String sql = "SELECT s.subject_id, s.subject_name, s.subject_type FROM subjects s "
 				+ "JOIN subject_course cs ON s.subject_id = cs.subject_id WHERE cs.course_id = ?";
 		try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 			stmt.setInt(1, courseId);
@@ -115,6 +115,7 @@ public class CourseDAO {
 				Subject subject = new Subject();
 				subject.setSubject_id(rs.getInt("subject_id"));
 				subject.setSubject_name(rs.getString("subject_name"));
+				subject.setSubject_type(rs.getString("subject_type"));
 				subjects.add(subject);
 			}
 		} catch (SQLException e) {
