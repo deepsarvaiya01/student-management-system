@@ -449,21 +449,6 @@ public class CourseController {
 		}
 	}
 
-	private void displayCourseSearchResult(Course course) {
-		if (course != null) {
-			System.out.println("\n📘 Course Found:");
-			System.out.println("+-----------+---------------------------+---------------------+--------------+");
-			System.out.printf("| %-9s | %-25s | %-19s | %-12s |\n", "Course ID", "Course Name", "No. of Semesters", "Total Fee");
-			System.out.println("+-----------+---------------------------+---------------------+--------------+");
-			System.out.printf("| %-9d | %-25s | %-19d | ₹%-11s |\n", course.getCourse_id(), course.getCourse_name(),
-					course.getNo_of_semester(),
-					course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
-			System.out.println("+-----------+---------------------------+---------------------+--------------+");
-		} else {
-			System.out.println("❌ Course not found.");
-		}
-	}
-
 	public void deleteCourse() {
 		try {
 			viewAllCourses();
