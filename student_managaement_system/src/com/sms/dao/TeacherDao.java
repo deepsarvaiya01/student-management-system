@@ -209,5 +209,32 @@ public class TeacherDao {
 		}
 	}
 
+	/**
+	 * Get teacher assigned to a specific subject
+	 * @param subjectId The subject ID
+	 * @return Teacher object or null if no teacher is assigned
+	 */
+	public Teacher getTeacherBySubjectId(int subjectId) {
+		String sql = "SELECT t.teacher_id, t.name, t.qualification, t.experience " +
+					"FROM teachers t " +
+					"JOIN subject_teachers st ON t.teacher_id = st.teacher_id " +
+					"WHERE st.subject_id = ? AND t.is_active = 1";
+		
+		try (PreparedStatement ps = connection.prepareStatement(sql)) {
+			ps.setInt(1, subjectId);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				return new Teacher(
+					rs.getInt("teacher_id"),
+					rs.getString("name"),
+					rs.getString("qualification"),
+					rs.getDouble("experience")
+				);
+			}
+		} catch (SQLException e) {
+			System.out.println("Error fetching teacher by subject ID: " + e.getMessage());
+		}
+		return null;
+	}
 
 }
