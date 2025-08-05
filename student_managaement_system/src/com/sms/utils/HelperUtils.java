@@ -25,7 +25,7 @@ public class HelperUtils {
 		}
 
 		System.out.println(line);
-		System.out.println();
+		
 	}
 
 	public static void printCourses(List<Course> courses) {
@@ -34,18 +34,18 @@ public class HelperUtils {
 			return;
 		}
 
-		String headerFormat = "| %-10s | %-25s | %-18s |%n";
-		String rowFormat = "| %-10d | %-25s | %-18d |%n";
+		String headerFormat = "| %-10s | %-25s | %-18s | %-15s |%n";
+		String rowFormat = "| %-10d | %-25s | %-18d | %-15s |%n";
 		String separator = "+------------+---------------------------+--------------------+-----------------+";
 
 		System.out.println("\n🎓 List of Courses");
 		System.out.println(separator);
-		System.out.printf(headerFormat, "Course ID", "Course Name", "No. of Semesters");
+		System.out.printf(headerFormat, "Course ID", "Course Name", "No. of Semesters", "Total Fee");
 		System.out.println(separator);
 
 		for (Course c : courses) {
-//			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
-			System.out.printf(rowFormat, c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester());
+			String totalFee = (c.getTotal_fee() != null) ? "₹" + c.getTotal_fee() : "N/A";
+			System.out.printf(rowFormat, c.getCourse_id(), c.getCourse_name(), c.getNo_of_semester(), totalFee);
 		}
 
 		System.out.println(separator);
@@ -94,6 +94,9 @@ public class HelperUtils {
 		if (student.getAge() < 15 || student.getAge() > 100) {
 			return "Invalid age (15-100).";
 		}
+		if (student.getGender() == null) {
+            return "Invalid gender. Must be M for Male, F for Female, or O for Other.";
+        }
 		return "VALID";
 	}
 
