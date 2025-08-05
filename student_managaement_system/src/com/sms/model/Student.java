@@ -9,11 +9,13 @@ public class Student {
 	private String city;
 	private String mobile_no;
 	private boolean is_active;
+	private Gender gender;
 
 	public Student() {
 	}
 
-	public Student(int student_id, String name, int age, int gr_number, String email, String city, String mobile_no) {
+	public Student(int student_id, String name, int age, int gr_number, String email, String city, String mobile_no,
+			Gender gender) {
 		this.student_id = student_id;
 		this.name = name;
 		this.age = age;
@@ -21,17 +23,17 @@ public class Student {
 		this.email = email;
 		this.city = city;
 		this.mobile_no = mobile_no;
+		this.gender = gender;
 	}
 
-	public Student(int student_id, String name, String email, int gr_number) {
-		super();
+	public Student(int student_id, String name, String email, int gr_number, Gender gender) {
 		this.student_id = student_id;
 		this.name = name;
 		this.gr_number = gr_number;
 		this.email = email;
+		this.gender = gender;
 	}
 
-	// Getters and Setters
 	public int getStudent_id() {
 		return student_id;
 	}
@@ -96,18 +98,24 @@ public class Student {
 		this.is_active = is_active;
 	}
 
-	// Tabular Display Header
-	public static void printHeader() {
-		System.out.printf("\n%-5s %-20s %-5s %-10s %-25s %-15s %-15s\n", "ID", "Name", "Age", "GR No", "Email", "City",
-				"Mobile No");
-		System.out.println(
-				"----------------------------------------------------------------------------------------------");
+	public Gender getGender() {
+		return gender;
 	}
 
-	// Tabular Display toString
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public static void printHeader() {
+		System.out.printf("\n%-5s %-20s %-5s %-10s %-25s %-15s %-15s %-10s\n", "ID", "Name", "Age", "GR No", "Email",
+				"City", "Mobile No", "Gender");
+		System.out.println(
+				"---------------------------------------------------------------------------------------------------");
+	}
+
 	@Override
 	public String toString() {
-		return String.format("%-5d %-20s %-5d %-10d %-25s %-15s %-15s", student_id, name, age, gr_number, email, city,
-				mobile_no);
+		return String.format("%-5d %-20s %-5d %-10d %-25s %-15s %-15s %-10s", student_id, name, age, gr_number, email,
+				city, mobile_no, gender != null ? gender.getDisplayName() : "N/A");
 	}
 }

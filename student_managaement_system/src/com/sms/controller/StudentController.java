@@ -50,6 +50,9 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
+		String gender = InputValidator.getValidGender(scanner, "Enter Gender (Male/Female/Other): ");
+
+		
 
 		System.out.println("\nAvailable Courses:");
 		List<Course> courses = studentService.getAllCourses();
@@ -77,7 +80,8 @@ public class StudentController {
 		student.setCity(city);
 		student.setMobile_no(mobileNo);
 		student.setAge(age);
-
+		student.setGender(gender);
+		
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
 		System.out.println(result);
 
