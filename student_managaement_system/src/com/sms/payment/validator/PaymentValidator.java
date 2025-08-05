@@ -80,6 +80,6 @@ public class PaymentValidator {
 
     // Reuse InputValidator's mobile validation for consistency
     public static String getValidMobile(Scanner scanner, String prompt) {
-        return InputValidator.getValidMobile(scanner, prompt,null,null);
+        return InputValidator.getValidMobileOnly(scanner, prompt);
     }
 }

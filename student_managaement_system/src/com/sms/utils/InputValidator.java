@@ -194,6 +194,28 @@ public class InputValidator {
 		}
 		return mobile;
 	}
+	
+
+	public static String getValidMobileOnly(Scanner scanner, String prompt) {
+		String mobile;
+		while (true) {
+			System.out.print(prompt);
+			mobile = scanner.nextLine().trim();
+
+			if (mobile.isEmpty()) {
+				System.out.println("❌ Mobile number cannot be empty!");
+				continue;
+			}
+
+			if (!mobile.matches("^[6-9]\\d{9}$")) {
+				System.out.println("❌ Invalid mobile number! It should be 10 digits and start with 6-9.");
+				continue;
+			}
+
+			break;
+		}
+		return mobile;
+	}
 
 	// Get valid age input
 	public static int getValidAge(Scanner scanner, String prompt) {
@@ -202,6 +224,7 @@ public class InputValidator {
 
 	public static Gender getValidGender(Scanner scanner, String prompt) {
 		while (true) {
+			scanner.nextLine();
 			System.out.print(prompt);
 			String input = scanner.nextLine().trim().toUpperCase();
 			Gender gender = Gender.fromString(input);

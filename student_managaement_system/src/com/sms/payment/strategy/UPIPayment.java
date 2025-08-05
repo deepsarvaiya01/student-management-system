@@ -10,6 +10,7 @@ public class UPIPayment implements PaymentStrategy {
 	@Override
 	public boolean pay(int studentId, BigDecimal amount, Scanner scanner) {
 		try {
+			scanner.nextLine();
 			PaymentValidator.getValidUPI(scanner, "Enter UPI ID: ");
 			PaymentValidator.getValidMobile(scanner, "Enter mobile number: ");
 
