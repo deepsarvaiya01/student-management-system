@@ -52,9 +52,14 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
+<<<<<<< HEAD
 		Gender gender = InputValidator.getValidGender(scanner, "Enter Gender (M for Male, F for Female, O for Other): ");
 
 		
+=======
+		Gender gender = InputValidator.getValidGender(scanner,
+				"Enter Gender (M for Male, F for Female, O for Other): ");
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 
 		System.out.println("\nAvailable Courses:");
 		List<Course> courses = studentService.getAllCourses();
@@ -83,7 +88,11 @@ public class StudentController {
 		student.setMobile_no(mobileNo);
 		student.setAge(age);
 		student.setGender(gender);
+<<<<<<< HEAD
 		
+=======
+
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
 		System.out.println(result);
 
@@ -295,12 +304,19 @@ public class StudentController {
 		System.out.println(line);
 
 		for (Course course : unassignedCourses) {
+<<<<<<< HEAD
 		    System.out.printf(format, course.getCourse_id(), course.getCourse_name());
+=======
+			System.out.printf(format, course.getCourse_id(), course.getCourse_name());
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 		}
 
 		System.out.println(line);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
 			System.out.println("❌ Invalid Course ID.");

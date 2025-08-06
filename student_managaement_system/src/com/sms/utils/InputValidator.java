@@ -195,6 +195,27 @@ public class InputValidator {
 		return mobile;
 	}
 
+	public static String getValidMobileOnly(Scanner scanner, String prompt) {
+		String mobile;
+		while (true) {
+			System.out.print(prompt);
+			mobile = scanner.nextLine().trim();
+
+			if (mobile.isEmpty()) {
+				System.out.println("❌ Mobile number cannot be empty!");
+				continue;
+			}
+
+			if (!mobile.matches("^[6-9]\\d{9}$")) {
+				System.out.println("❌ Invalid mobile number! It should be 10 digits and start with 6-9.");
+				continue;
+			}
+
+			break;
+		}
+		return mobile;
+	}
+
 	// Get valid age input
 	public static int getValidAge(Scanner scanner, String prompt) {
 		return getValidIntegerInRange(scanner, prompt, "Age", 15, 100);
@@ -202,13 +223,29 @@ public class InputValidator {
 
 	public static Gender getValidGender(Scanner scanner, String prompt) {
 		while (true) {
+<<<<<<< HEAD
 			System.out.print(prompt);
 			String input = scanner.nextLine().trim().toUpperCase();
+=======
+			scanner.nextLine();
+			System.out.print(prompt);
+			String input = scanner.nextLine().trim().toUpperCase();
+
+			if (input.length() != 1 || !input.matches("[MFO]")) {
+				System.out.println("❌ Invalid gender. Please enter only M, F, or O.");
+				continue;
+			}
+
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 			Gender gender = Gender.fromString(input);
 			if (gender != null) {
 				return gender;
 			} else {
+<<<<<<< HEAD
 				System.out.println("Invalid gender. Please enter M for Male, F for Female, or O for Other.");
+=======
+				System.out.println("❌ Invalid gender. Please enter M for Male, F for Female, or O for Other.");
+>>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 			}
 		}
 	}

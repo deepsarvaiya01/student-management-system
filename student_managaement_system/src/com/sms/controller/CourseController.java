@@ -41,7 +41,7 @@ public class CourseController {
 	public void addNewCourse() {
 		List<Integer> newlyCreatedSubjectIds = new ArrayList<>();
 		int courseId = -1;
-		
+
 		try {
 			Course course = createCourseFromInput();
 			courseId = courseService.addCourse(course);
@@ -52,13 +52,14 @@ public class CourseController {
 
 			int totalSubjects = getTotalSubjectsFromUser();
 			int existingCount = getExistingSubjectsCount(totalSubjects);
-			
+
 			if (existingCount > 0) {
 				assignExistingSubjects(courseId, existingCount);
 			}
 
 			int newSubjectCount = totalSubjects - existingCount;
-			boolean teacherAssignmentFailed = createNewSubjectsWithTeachers(courseId, newSubjectCount, newlyCreatedSubjectIds);
+			boolean teacherAssignmentFailed = createNewSubjectsWithTeachers(courseId, newSubjectCount,
+					newlyCreatedSubjectIds);
 
 			if (teacherAssignmentFailed) {
 				System.out.println("\n🔄 Rolling back course creation due to teacher assignment failure...");
@@ -67,13 +68,13 @@ public class CourseController {
 			}
 
 			System.out.println("\n✅ Course created and " + totalSubjects + " subjects assigned successfully.");
-			
+
 			// Display comprehensive course details
 			displayCourseDetails(courseId);
 			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
 			System.out.println("║" + " ".repeat(30) + "✅ COURSE CREATED SUCCESSFULLY" + " ".repeat(20) + "║");
 			System.out.println("╚" + "═".repeat(78) + "╝");
-			
+
 		} catch (Exception e) {
 			System.out.println("❗ Unexpected error: " + e.getMessage());
 			if (courseId != -1) {
@@ -146,7 +147,7 @@ public class CourseController {
 			System.out.print("Enter " + existingCount + " subject IDs (comma-separated): ");
 			String input = scanner.nextLine().trim();
 			String[] ids = input.split(",");
-			
+
 			if (ids.length != existingCount) {
 				System.out.println("You must enter exactly " + existingCount + " IDs.");
 				continue;
@@ -179,9 +180,10 @@ public class CourseController {
 		return true;
 	}
 
-	private boolean createNewSubjectsWithTeachers(int courseId, int newSubjectCount, List<Integer> newlyCreatedSubjectIds) throws SQLException {
+	private boolean createNewSubjectsWithTeachers(int courseId, int newSubjectCount,
+			List<Integer> newlyCreatedSubjectIds) throws SQLException {
 		TeacherService teacherService = new TeacherService();
-		
+
 		for (int i = 1; i <= newSubjectCount; i++) {
 			String subjectName = InputValidator.getValidName(scanner, "Enter name for new subject " + i + ": ");
 			String subjectType = getSubjectTypeFromUser();
@@ -191,7 +193,7 @@ public class CourseController {
 				System.out.println("Failed to add subject: " + subjectName);
 				continue;
 			}
-			
+
 			newlyCreatedSubjectIds.add(subjectId);
 			courseService.assignSubjectToCourse(courseId, subjectId);
 
@@ -211,18 +213,18 @@ public class CourseController {
 			System.out.println("| 1  | Mandatory  |");
 			System.out.println("| 2  | Elective   |");
 			System.out.println("+----+------------+");
-			
+
 			System.out.print("Enter your choice (1 or 2): ");
 			String choice = scanner.nextLine().trim();
-			
+
 			switch (choice) {
-				case "1":
-					return "mandatory";
-				case "2":
-					return "elective";
-				default:
-					System.out.println("❌ Invalid choice. Please enter 1 for Mandatory or 2 for Elective.");
-					break;
+			case "1":
+				return "mandatory";
+			case "2":
+				return "elective";
+			default:
+				System.out.println("❌ Invalid choice. Please enter 1 for Mandatory or 2 for Elective.");
+				break;
 			}
 		}
 	}
@@ -259,7 +261,7 @@ public class CourseController {
 				attempts++;
 			}
 		}
-		
+
 		System.out.println("❌ Failed to assign teacher after 3 attempts for subject: " + subjectName);
 		return true; // Teacher assignment failed
 	}
@@ -269,14 +271,13 @@ public class CourseController {
 		String separator = "+-----+--------------------+--------------------+----------+";
 		String headerFormat = "| %-3s | %-18s | %-18s | %-8s |%n";
 		String rowFormat = "| %-3d | %-18s | %-18s | %-8.1f |%n";
-		
+
 		System.out.println(separator);
 		System.out.printf(headerFormat, "ID", "Name", "Qualification", "Experience");
 		System.out.println(separator);
-		
+
 		for (Teacher t : teachers) {
-			System.out.printf(rowFormat, t.getTeacherId(), t.getName(),
-					t.getQualification(), t.getExperience());
+			System.out.printf(rowFormat, t.getTeacherId(), t.getName(), t.getQualification(), t.getExperience());
 		}
 		System.out.println(separator);
 	}
@@ -286,14 +287,16 @@ public class CourseController {
 			System.out.println("🗑️ Deleting newly created subjects...");
 			for (Integer subjectId : newlyCreatedSubjectIds) {
 				boolean deleted = subjectService.deleteSubject(subjectId);
-				System.out.println(deleted ? "✅ Deleted subject ID: " + subjectId : "❌ Failed to delete subject ID: " + subjectId);
+				System.out.println(
+						deleted ? "✅ Deleted subject ID: " + subjectId : "❌ Failed to delete subject ID: " + subjectId);
 			}
-			
+
 			System.out.println("🗑️ Deleting course...");
 			boolean courseDeleted = courseService.deleteCourseById(courseId);
-			System.out.println(courseDeleted ? "✅ Deleted course ID: " + courseId : "❌ Failed to delete course ID: " + courseId);
+			System.out.println(
+					courseDeleted ? "✅ Deleted course ID: " + courseId : "❌ Failed to delete course ID: " + courseId);
 			System.out.println("🔄 Rollback completed successfully.");
-			
+
 		} catch (Exception e) {
 			System.out.println("❌ Error during rollback: " + e.getMessage());
 			System.out.println("⚠️ Manual cleanup may be required.");
@@ -357,14 +360,14 @@ public class CourseController {
 		for (String idStr : ids) {
 			try {
 				int subjectId = Integer.parseInt(idStr.trim());
-				boolean isValidSubject = unassignedSubjects.stream()
-						.anyMatch(s -> s.getSubject_id() == subjectId);
-				
+				boolean isValidSubject = unassignedSubjects.stream().anyMatch(s -> s.getSubject_id() == subjectId);
+
 				if (isValidSubject) {
 					courseService.assignSubjectToCourse(courseId, subjectId);
 					System.out.println("✅ Subject " + subjectId + " assigned.");
 				} else {
-					System.out.println("❗ Subject ID " + subjectId + " is not available for assignment (may be already assigned or doesn't exist).");
+					System.out.println("❗ Subject ID " + subjectId
+							+ " is not available for assignment (may be already assigned or doesn't exist).");
 				}
 			} catch (NumberFormatException e) {
 				System.out.println("❗ Invalid input: " + idStr);
@@ -373,7 +376,8 @@ public class CourseController {
 	}
 
 	private void addNewSubjectsToCourse(int courseId) throws SQLException {
-		int count = InputValidator.getValidInteger(scanner, "Enter number of new subjects to add: ", "Number of Subjects");
+		int count = InputValidator.getValidInteger(scanner, "Enter number of new subjects to add: ",
+				"Number of Subjects");
 		for (int i = 1; i <= count; i++) {
 			String subjectName = InputValidator.getValidName(scanner, "Enter name for new subject " + i + ": ");
 			String subjectType = getSubjectTypeFromUser();
@@ -398,21 +402,21 @@ public class CourseController {
 		String separator = "+-----+--------------------+--------------------+----------+";
 		String headerFormat = "| %-3s | %-18s | %-18s | %-8s |%n";
 		String rowFormat = "| %-3d | %-18s | %-18s | %-8.1f |%n";
-		
+
 		System.out.println(separator);
 		System.out.printf(headerFormat, "ID", "Name", "Qualification", "Experience");
 		System.out.println(separator);
-		
+
 		for (Teacher t : teachers) {
-			System.out.printf(rowFormat, t.getTeacherId(), t.getName(),
-					t.getQualification(), t.getExperience());
+			System.out.printf(rowFormat, t.getTeacherId(), t.getName(), t.getQualification(), t.getExperience());
 		}
 		System.out.println(separator);
 
 		int teacherId = InputValidator.getValidInteger(scanner,
 				"Enter Teacher ID to assign to subject '" + subjectName + "': ", "Teacher ID");
 		boolean assigned = new TeacherService().assignSubject(teacherId, newSubjectId);
-		System.out.println(assigned ? "✅ Teacher assigned to subject." : "❌ Assignment failed. Possibly invalid ID or already assigned.");
+		System.out.println(assigned ? "✅ Teacher assigned to subject."
+				: "❌ Assignment failed. Possibly invalid ID or already assigned.");
 	}
 
 	private void handleSubjectAssignmentError(Exception e) {
@@ -477,7 +481,8 @@ public class CourseController {
 	public void viewSubjectsOfCourse() {
 		try {
 			viewAllCourses();
-			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to view its subjects: ", "Course ID");
+			int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to view its subjects: ",
+					"Course ID");
 			Course course = courseService.getCourseById(courseId);
 			if (course == null) {
 				System.out.println("❗ Course not found with ID: " + courseId);
@@ -490,15 +495,18 @@ public class CourseController {
 				return;
 			}
 
-			System.out.println("\nSubjects for Course: " + course.getCourse_name() + " (ID: " + course.getCourse_id() + ")");
+			System.out.println(
+					"\nSubjects for Course: " + course.getCourse_name() + " (ID: " + course.getCourse_id() + ")");
 			HelperUtils.viewSubjects(subjects);
 		} catch (Exception e) {
 			System.out.println("❗ Error while fetching subjects: " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Displays comprehensive course details including subjects and assigned teachers
+	 * Displays comprehensive course details including subjects and assigned
+	 * teachers
+	 * 
 	 * @param courseId The ID of the course to display
 	 */
 	private void displayCourseDetails(int courseId) {
@@ -509,15 +517,15 @@ public class CourseController {
 				System.out.println("❌ Course not found.");
 				return;
 			}
-			
+
 			// Get subjects for the course
 			List<Subject> subjects = courseService.getSubjectsForCourse(courseId);
-			
+
 			// Display course header with modern design
 			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
 			System.out.println("║" + " ".repeat(25) + "🎓 COURSE DETAILS" + " ".repeat(35) + "║");
 			System.out.println("╚" + "═".repeat(78) + "╝");
-			
+
 			// Course information card
 			System.out.println("\n📋 COURSE INFORMATION");
 			System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
@@ -527,49 +535,52 @@ public class CourseController {
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
 			System.out.printf("│ %-23s │ %-48d │%n", "Semesters", course.getNo_of_semester());
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
-			System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee", 
-				course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
+			System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee",
+					course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
 			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
-			
+
 			// Subjects and teachers information
 			if (subjects != null && !subjects.isEmpty()) {
 				System.out.println("\n📚 SUBJECTS & TEACHERS ASSIGNMENT");
-				System.out.println("┌" + "─".repeat(10) + "┬" + "─".repeat(30) + "┬" + "─".repeat(15) + "┬" + "─".repeat(17) + "┐");
+				System.out.println("┌" + "─".repeat(10) + "┬" + "─".repeat(30) + "┬" + "─".repeat(15) + "┬"
+						+ "─".repeat(17) + "┐");
 				System.out.printf("│ %-8s │ %-28s │ %-13s │ %-15s │%n", "ID", "Subject Name", "Type", "Teacher");
-				System.out.println("├" + "─".repeat(10) + "┼" + "─".repeat(30) + "┼" + "─".repeat(15) + "┼" + "─".repeat(17) + "┤");
-				
+				System.out.println("├" + "─".repeat(10) + "┼" + "─".repeat(30) + "┼" + "─".repeat(15) + "┼"
+						+ "─".repeat(17) + "┤");
+
 				TeacherService teacherService = new TeacherService();
 				for (Subject subject : subjects) {
 					// Get teacher for this subject
 					Teacher teacher = teacherService.getTeacherBySubjectId(subject.getSubject_id());
 					String teacherName = (teacher != null) ? teacher.getName() : "Not Assigned";
-					
+
 					// Capitalize first letter for display
-					String displayType = (subject.getSubject_type() != null) ? 
-						subject.getSubject_type().substring(0, 1).toUpperCase() + 
-						subject.getSubject_type().substring(1).toLowerCase() : "N/A";
-					
+					String displayType = (subject.getSubject_type() != null)
+							? subject.getSubject_type().substring(0, 1).toUpperCase()
+									+ subject.getSubject_type().substring(1).toLowerCase()
+							: "N/A";
+
 					// Truncate long names for better display
-					String truncatedSubjectName = subject.getSubject_name().length() > 28 ? 
-						subject.getSubject_name().substring(0, 25) + "..." : subject.getSubject_name();
-					String truncatedTeacherName = teacherName.length() > 15 ? 
-						teacherName.substring(0, 12) + "..." : teacherName;
-					
-					System.out.printf("│ %-8d │ %-28s │ %-13s │ %-15s │%n", 
-						subject.getSubject_id(), 
-						truncatedSubjectName, 
-						displayType,
-						truncatedTeacherName);
+					String truncatedSubjectName = subject.getSubject_name().length() > 28
+							? subject.getSubject_name().substring(0, 25) + "..."
+							: subject.getSubject_name();
+					String truncatedTeacherName = teacherName.length() > 15 ? teacherName.substring(0, 12) + "..."
+							: teacherName;
+
+					System.out.printf("│ %-8d │ %-28s │ %-13s │ %-15s │%n", subject.getSubject_id(),
+							truncatedSubjectName, displayType, truncatedTeacherName);
 				}
-				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(30) + "┴" + "─".repeat(15) + "┴" + "─".repeat(17) + "┘");
-				
+				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(30) + "┴" + "─".repeat(15) + "┴"
+						+ "─".repeat(17) + "┘");
+
 				// Summary statistics with modern design
-				long mandatoryCount = subjects.stream().filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
-				long electiveCount = subjects.stream().filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
+				long mandatoryCount = subjects.stream().filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type()))
+						.count();
+				long electiveCount = subjects.stream().filter(s -> "elective".equalsIgnoreCase(s.getSubject_type()))
+						.count();
 				long assignedTeachersCount = subjects.stream()
-					.mapToInt(s -> teacherService.getTeacherBySubjectId(s.getSubject_id()) != null ? 1 : 0)
-					.sum();
-				
+						.mapToInt(s -> teacherService.getTeacherBySubjectId(s.getSubject_id()) != null ? 1 : 0).sum();
+
 				System.out.println("\n📊 SUMMARY STATISTICS");
 				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(15) + "┐");
 				System.out.printf("│ %-23s │ %-13s │%n", "Metric", "Count");
@@ -582,13 +593,13 @@ public class CourseController {
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
 				System.out.printf("│ %-23s │ %-13d │%n", "Teachers Assigned", assignedTeachersCount);
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
-				System.out.printf("│ %-23s │ %-13d │%n", "Unassigned Subjects", subjects.size() - assignedTeachersCount);
+				System.out.printf("│ %-23s │ %-13d │%n", "Unassigned Subjects",
+						subjects.size() - assignedTeachersCount);
 				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(15) + "┘");
-				
+
 			} else {
 				System.out.println("\n📚 No subjects assigned to this course yet.");
 			}
-			
 
 		} catch (Exception e) {
 			System.out.println("❌ Error displaying course details: " + e.getMessage());
