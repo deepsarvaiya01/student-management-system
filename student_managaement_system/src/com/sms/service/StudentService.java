@@ -8,7 +8,6 @@ import com.sms.dao.StudentDao;
 import com.sms.model.Course;
 import com.sms.model.Student;
 import com.sms.model.Subject;
-import com.sms.model.Teacher;
 import com.sms.utils.HelperUtils;
 
 
@@ -171,8 +170,21 @@ public class StudentService {
 	}
 
 	public List<Student> fetchInactiveStudents() {
-		// TODO Auto-generated method stub
 		return studentDao.getInactiveStudents();
+	}
+	
+	public boolean isEmailExists(String email) {
+	    List<Student> students = studentDao.readAllStudents(); // or your equivalent fetch method
+	    for (Student s : students) {
+	        if (s.getEmail().equalsIgnoreCase(email)) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+
+	public boolean isNameAndMobileExists(String name, String mobile) {
+	    return studentDao.isNameAndMobileExists(name, mobile);
 	}
 
 }
