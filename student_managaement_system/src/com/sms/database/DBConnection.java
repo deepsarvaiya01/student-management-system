@@ -1,60 +1,46 @@
 package com.sms.database;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class DBConnection {
-	private static Connection connection = null;
 	private static final Object lock = new Object();
-
-	public DBConnection() {
-	}
 
 	public static Connection connect() throws SQLException {
 		synchronized (lock) {
-			if (connection == null || connection.isClosed() || !isConnectionValid()) {
-				try {
-					// Close existing connection if it exists
-					if (connection != null && !connection.isClosed()) {
-						connection.close();
-					}
-					
-					connection = DriverManager.getConnection(DBConfig.DB_URL, DBConfig.DB_USERNAME, DBConfig.DB_PASSWORD);
-					// Set auto-commit to true for better transaction management
-					connection.setAutoCommit(true);
-					System.out.println("Database connection established successfully");
-				} catch (SQLException e) {
-					System.err.println("Failed to establish database connection: " + e.getMessage());
-					throw new SQLException("Failed to establish database connection: " + e.getMessage(), e);
-				}
+			try {
+				Connection connection = DBConfig.getDataSource().getConnection();
+				connection.setAutoCommit(true); // Maintain your auto-commit setting
+				System.out.println("Database connection obtained from HikariCP pool");
+				return connection;
+			} catch (SQLException e) {
+				System.err.println("Failed to obtain database connection: " + e.getMessage());
+				throw new SQLException("Failed to obtain database connection: " + e.getMessage(), e);
 			}
-			return connection;
 		}
 	}
-	
-	public static void closeConnection() {
+
+	public static void closeConnection(Connection connection) {
 		synchronized (lock) {
 			if (connection != null) {
 				try {
 					if (!connection.isClosed()) {
-						connection.close();
+						connection.close(); // Returns connection to the pool
+						System.out.println("Database connection returned to HikariCP pool");
 					}
 				} catch (SQLException e) {
 					System.err.println("Error closing database connection: " + e.getMessage());
-				} finally {
-					connection = null;
 				}
 			}
 		}
 	}
-	
-	public static boolean isConnectionValid() {
+
+	public static boolean isConnectionValid(Connection connection) {
 		if (connection == null) {
 			return false;
 		}
 		try {
-			return !connection.isClosed() && connection.isValid(5); // 5 second timeout
+			return !connection.isClosed() && connection.isValid(5); // 5-second timeout
 		} catch (SQLException e) {
 			return false;
 		}
