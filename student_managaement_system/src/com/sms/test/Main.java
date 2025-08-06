@@ -3,6 +3,7 @@ package com.sms.test;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.sms.main.AnalysisMain;
 import com.sms.main.CourseMain;
 import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
@@ -24,10 +25,11 @@ public class Main {
 			System.out.println("║ 3. Fees Management                       ║");
 			System.out.println("║ 4. Course Management                     ║");
 			System.out.println("║ 5. Dashboard                             ║");
+			System.out.println("║ 6. Analysis                              ║");
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 
-			choice = InputValidator.getValidMenuChoice(scanner, " Enter your choice (0-5): ", 5);
+			choice = InputValidator.getValidMenuChoice(scanner, " Enter your choice (0-6): ", 6);
 
 			switch (choice) {
 				case 1 -> {
@@ -50,10 +52,14 @@ public class Main {
 					DashboardMain d = new DashboardMain(); 
 					d.show();
 				}
+				case 6 -> {
+					AnalysisMain a = new AnalysisMain();
+					a.show();
+				}
 				case 0 -> {
 					System.out.println("Exiting Student Management System... Thank you!");
 				}
-				default -> System.out.println(" Invalid choice! Please enter a number between 0 and 5.");
+				default -> System.out.println(" Invalid choice! Please enter a number between 0 and 6.");
 			}
 		} while (choice != 0);
 
