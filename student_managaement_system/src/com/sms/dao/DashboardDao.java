@@ -204,4 +204,133 @@ public class DashboardDao {
 			}
 		}
 	}
+
+	/**
+	 * Get course-wise student counts for chart visualization
+	 */
+	public List<DashboardModel> getCourseWiseStudentCounts() {
+		List<DashboardModel> courseCounts = new ArrayList<>();
+		String query = """
+				SELECT 
+				    c.course_name,
+				    COUNT(DISTINCT s.student_id) AS student_count
+				FROM courses c
+				LEFT JOIN student_courses sc ON c.course_id = sc.course_id
+				LEFT JOIN students s ON sc.student_id = s.student_id AND s.is_active = TRUE
+				WHERE c.is_active = TRUE
+				GROUP BY c.course_name, c.course_id
+				ORDER BY student_count DESC, c.course_name;
+				""";
+
+		try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+			int srNo = 0;
+			while (rs.next()) {
+				DashboardModel model = new DashboardModel();
+				model.setSrNo(++srNo);
+				model.setCourse(rs.getString("course_name"));
+				model.setTotalStudents(rs.getInt("student_count"));
+				courseCounts.add(model);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return courseCounts;
+	}
+
+	/**
+	 * Get course-wise subject counts for chart visualization
+	 */
+	public List<DashboardModel> getCourseWiseSubjectCounts() {
+		List<DashboardModel> courseSubjectCounts = new ArrayList<>();
+		String query = """
+				SELECT 
+				    c.course_name,
+				    COUNT(DISTINCT sub.subject_id) AS subject_count
+				FROM courses c
+				LEFT JOIN subject_course sc ON c.course_id = sc.course_id
+				LEFT JOIN subjects sub ON sc.subject_id = sub.subject_id
+				WHERE c.is_active = TRUE
+				GROUP BY c.course_name, c.course_id
+				ORDER BY subject_count DESC, c.course_name;
+				""";
+
+		try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+			int srNo = 0;
+			while (rs.next()) {
+				DashboardModel model = new DashboardModel();
+				model.setSrNo(++srNo);
+				model.setCourse(rs.getString("course_name"));
+				model.setTotalSubjects(rs.getInt("subject_count"));
+				courseSubjectCounts.add(model);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return courseSubjectCounts;
+	}
+
+	/**
+	 * Get teacher-wise subject counts for chart visualization
+	 */
+	public List<DashboardModel> getTeacherWiseSubjectCounts() {
+		List<DashboardModel> teacherSubjectCounts = new ArrayList<>();
+		String query = """
+				SELECT 
+				    t.name AS teacher_name,
+				    COUNT(DISTINCT st.subject_id) AS subject_count
+				FROM teachers t
+				LEFT JOIN subject_teachers st ON t.teacher_id = st.teacher_id
+				WHERE t.is_active = TRUE
+				GROUP BY t.teacher_id, t.name
+				ORDER BY subject_count DESC, t.name;
+				""";
+
+		try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+			int srNo = 0;
+			while (rs.next()) {
+				DashboardModel model = new DashboardModel();
+				model.setSrNo(++srNo);
+				model.setTeacherName(rs.getString("teacher_name"));
+				model.setTotalSubjects(rs.getInt("subject_count"));
+				teacherSubjectCounts.add(model);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return teacherSubjectCounts;
+	}
+
+	/**
+	 * Get subject-wise student counts for chart visualization
+	 */
+	public List<DashboardModel> getSubjectWiseStudentCounts() {
+		List<DashboardModel> subjectStudentCounts = new ArrayList<>();
+		String query = """
+				SELECT 
+				    sub.subject_name,
+				    COUNT(DISTINCT s.student_id) AS student_count
+				FROM subjects sub
+				LEFT JOIN subject_course sc ON sub.subject_id = sc.subject_id
+				LEFT JOIN student_subjects ss ON sc.id = ss.subject_course_id
+				LEFT JOIN student_courses stc ON ss.student_course_id = stc.student_course_id
+				LEFT JOIN students s ON stc.student_id = s.student_id AND s.is_active = TRUE
+				WHERE sub.is_active = TRUE
+				GROUP BY sub.subject_id, sub.subject_name
+				ORDER BY student_count DESC, sub.subject_name;
+				""";
+
+		try (PreparedStatement ps = connection.prepareStatement(query); ResultSet rs = ps.executeQuery()) {
+			int srNo = 0;
+			while (rs.next()) {
+				DashboardModel model = new DashboardModel();
+				model.setSrNo(++srNo);
+				model.setSubjects(rs.getString("subject_name"));
+				model.setTotalStudents(rs.getInt("student_count"));
+				subjectStudentCounts.add(model);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return subjectStudentCounts;
+	}
 }
