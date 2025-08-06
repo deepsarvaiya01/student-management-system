@@ -6,16 +6,26 @@ import java.util.List;
 
 import com.sms.dao.CourseDAO;
 import com.sms.dao.FeeDao;
+import com.sms.dao.FeeNotifierDao;
 import com.sms.model.Course;
 import com.sms.model.Fee;
+import com.sms.model.FeeNotifier;
+import com.sms.payment.notifier.EmailFeeNotifier;
+import com.sms.payment.notifier.FeeAlert;
+import com.sms.payment.notifier.SmsFeeNotifier;
+import com.sms.payment.notifier.WhatsAppFeeNotifier;
 
 public class FeeService {
 	private FeeDao feeDao;
 	private CourseDAO courseDao;
+	private FeeNotifierDao feeNotifierDao;
+	private FeeNotifierService feeNotifierService;
+
 
 	public FeeService() throws SQLException {
 		this.feeDao = new FeeDao();
 		this.courseDao = new CourseDAO();
+		this.feeNotifierService = new FeeNotifierService();
 	}
 
 	// View Total Paid Fees
@@ -140,6 +150,21 @@ public class FeeService {
 		if (!success) {
 			return "Failed to update fee payment. Please check the Student ID or Course ID.";
 		}
+		
+		FeeNotifier prefs = feeNotifierService.getPreferences(studentId);
+		if (prefs == null) {
+			feeNotifierService.createDefaultPreferences(studentId);
+			prefs = feeNotifierService.getPreferences(studentId);
+		}
+
+		FeeAlert alert = new FeeAlert();
+
+		if (prefs.isSmsEnabled()) alert.registerNotifier(new SmsFeeNotifier());
+		if (prefs.isEmailEnabled()) alert.registerNotifier(new EmailFeeNotifier());
+		if (prefs.isWhatsappEnabled()) alert.registerNotifier(new WhatsAppFeeNotifier());
+
+		alert.notifyAll(studentId, paymentAmount);
+
 		return "Fee payment updated successfully.";
 	}
 
