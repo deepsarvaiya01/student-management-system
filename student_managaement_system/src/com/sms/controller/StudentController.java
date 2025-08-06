@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-import com.sms.main.FeeNotifierMain;
 import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.Gender;
@@ -476,10 +475,6 @@ public class StudentController {
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to restore: ", "Student ID");
 		String result = studentService.restoreStudentById(studentId);
 		System.out.println(result);
-	}
-
-	public void manageFeeNotifierPreferences() {
-	    FeeNotifierMain.managePreferences();
 	}
 
 }

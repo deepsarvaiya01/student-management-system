@@ -66,7 +66,6 @@ public class PaymentValidator {
     public static String getValidUPI(Scanner scanner, String prompt) {
         while (true) {
             try {
-            	scanner.nextLine();
                 System.out.print(prompt);
                 String upi = scanner.nextLine().trim();
                 if (!upi.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+")) {
