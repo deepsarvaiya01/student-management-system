@@ -11,6 +11,7 @@ import java.util.List;
 
 import com.sms.database.DBConnection;
 import com.sms.model.Course;
+import com.sms.model.Gender;
 import com.sms.model.Student;
 import com.sms.model.Subject;
 
@@ -29,7 +30,7 @@ public class StudentDao {
 
 	public List<Student> readAllStudents() {
 		List<Student> students = new ArrayList<>();
-		String sql = "SELECT s.student_id, s.name, s.email, s.gr_number, p.city, p.mobile_no, p.age "
+		String sql = "SELECT s.student_id, s.name, s.email, s.gr_number, s.gender, p.city, p.mobile_no, p.age "
 				+ "FROM students s LEFT JOIN profiles p ON s.student_id = p.student_id " + "WHERE s.is_active = true";
 		try (Statement statement = connection.createStatement(); ResultSet result = statement.executeQuery(sql)) {
 			while (result.next()) {
@@ -38,6 +39,7 @@ public class StudentDao {
 				student.setName(result.getString("name"));
 				student.setEmail(result.getString("email"));
 				student.setGr_number(result.getInt("gr_number"));
+				student.setGender(Gender.fromString(result.getString("gender")));
 				student.setCity(result.getString("city"));
 				student.setMobile_no(result.getString("mobile_no"));
 				student.setAge(result.getInt("age"));
@@ -126,8 +128,8 @@ public class StudentDao {
 		}
 
 		Student student = null;
-		String sql = "SELECT s.student_id, s.name, s.email, s.gr_number, s.is_active, " + "p.city, p.mobile_no, p.age "
-				+ "FROM students s LEFT JOIN profiles p ON s.student_id = p.student_id "
+		String sql = "SELECT s.student_id, s.name, s.email, s.gr_number, s.gender, s.is_active, "
+				+ "p.city, p.mobile_no, p.age " + "FROM students s LEFT JOIN profiles p ON s.student_id = p.student_id "
 				+ "WHERE s.student_id = ? AND s.is_active = true";
 
 		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -139,6 +141,7 @@ public class StudentDao {
 				student.setName(result.getString("name"));
 				student.setEmail(result.getString("email"));
 				student.setGr_number(result.getInt("gr_number"));
+				student.setGender(Gender.fromString(result.getString("gender")));
 				student.setCity(result.getString("city"));
 				student.setMobile_no(result.getString("mobile_no"));
 				student.setAge(result.getInt("age"));
@@ -247,11 +250,11 @@ public class StudentDao {
 
 	public List<Student> getInactiveStudents() {
 		List<Student> list = new ArrayList<>();
-		String sql = "SELECT * FROM students WHERE is_active = FALSE";
+		String sql = "SELECT student_id, name, email, gr_number, gender FROM students WHERE is_active = FALSE";
 		try (Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
 				list.add(new Student(rs.getInt("student_id"), rs.getString("name"), rs.getString("email"),
-						rs.getInt("gr_number")));
+						rs.getInt("gr_number"), Gender.fromString(rs.getString("gender"))));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -355,7 +358,7 @@ public class StudentDao {
 				}
 			}
 
-			String insertStudent = "INSERT INTO students (name, gr_number, email) VALUES (?, ?, ?)";
+			String insertStudent = "INSERT INTO students (name, gr_number, email, gender) VALUES (?, ?, ?, ?)";
 			String insertProfile = "INSERT INTO profiles (student_id, city, mobile_no, age) VALUES (?, ?, ?, ?)";
 			String insertStudentCourse = "INSERT INTO student_courses (student_id, course_id) VALUES (?, ?)";
 			String insertFee = "INSERT INTO fees (student_course_id, paid_amount, pending_amount, total_fee) VALUES (?, 0.0, ?, ?)";
@@ -371,6 +374,8 @@ public class StudentDao {
 					psStudent.setString(1, student.getName());
 					psStudent.setInt(2, student.getGr_number());
 					psStudent.setString(3, student.getEmail());
+					psStudent.setString(4,
+							student.getGender() != null ? student.getGender().name().substring(0, 1) : null);
 					int affectedRows = psStudent.executeUpdate();
 					if (affectedRows == 0) {
 						throw new SQLException("Creating student failed, no rows affected.");

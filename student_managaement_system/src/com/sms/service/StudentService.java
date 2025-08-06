@@ -10,7 +10,6 @@ import com.sms.model.Student;
 import com.sms.model.Subject;
 import com.sms.utils.HelperUtils;
 
-
 public class StudentService {
 	private StudentDao studentDao;
 
@@ -34,7 +33,7 @@ public class StudentService {
 		if (courses.isEmpty()) {
 			return "No courses assigned to student ID: " + studentId;
 		}
-		return "SUCCESS"; 
+		return "SUCCESS";
 	}
 
 	public List<Course> getAllCourses() {
@@ -89,10 +88,9 @@ public class StudentService {
 	}
 
 	public boolean isFeeClearedForStudent(int studentId) {
-	    return studentDao.isFeeClearedForStudent(studentId);
+		return studentDao.isFeeClearedForStudent(studentId);
 	}
 
-	
 	public String deleteStudentById(int studentId) {
 		if (studentId <= 0) {
 			return "Invalid student ID.";
@@ -166,25 +164,25 @@ public class StudentService {
 	}
 
 	public int getLastGrNumber() {
-	    return studentDao.getLastGrNumber();
+		return studentDao.getLastGrNumber();
 	}
 
 	public List<Student> fetchInactiveStudents() {
 		return studentDao.getInactiveStudents();
 	}
-	
+
 	public boolean isEmailExists(String email) {
-	    List<Student> students = studentDao.readAllStudents(); // or your equivalent fetch method
-	    for (Student s : students) {
-	        if (s.getEmail().equalsIgnoreCase(email)) {
-	            return true;
-	        }
-	    }
-	    return false;
+		List<Student> students = studentDao.readAllStudents(); // or your equivalent fetch method
+		for (Student s : students) {
+			if (s.getEmail().equalsIgnoreCase(email)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isNameAndMobileExists(String name, String mobile) {
-	    return studentDao.isNameAndMobileExists(name, mobile);
+		return studentDao.isNameAndMobileExists(name, mobile);
 	}
 
 }
