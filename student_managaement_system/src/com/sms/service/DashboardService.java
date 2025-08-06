@@ -516,19 +516,8 @@ public class DashboardService {
 		boolean isTeacher = title.contains("TEACHER - WISE");
 
 		if (isGeneral) {
-			headerFooterLine = "+------+------+-----------------+-------------+-------------+---------------+--------------------------+---------------------------+";
-			format = "| %-4s | %-4s | %-15s | %-11s | %-11s | %-13s | %-24s | %-24s |%n";
-			System.out.println(headerFooterLine);
-			System.out.printf(format, "SrNo", "ID", "Name", "Courses", "Paid", "Pending", "Subjects", "Teachers");
-			System.out.println(headerFooterLine);
-
-			for (DashboardModel d : dashboard) {
-				String status = d.getPendingFee() == 0 ? "✅" : "⚠";
-				System.out.printf(format, d.getSrNo(), d.getStudentId(), clean(d.getName(), 15),
-						clean(d.getCourse(), 11), String.format("%.2f", d.getPaidFee()),
-						String.format("%.2f %s", d.getPendingFee(), status), clean(d.getSubjects(), 24),
-						clean(d.getTeachers(), 24));
-			}
+			// Enhanced general dashboard with full information display
+			printGeneralDashboardEnhanced(dashboard);
 		} else if (isCourse) {
 			headerFooterLine = "+------+---------------+----------+--------------------------+----------------+----------------+-----------------+--------------------------+--------------------------+";
 			format = "| %-4s | %-13s | %-8s | %-24s | %-14s | %-14s | %-14s | %-24s | %-24s |%n";
@@ -573,8 +562,154 @@ public class DashboardService {
 			return;
 		}
 
-		System.out.println(headerFooterLine);
+		if (!isGeneral) {
+			System.out.println(headerFooterLine);
+		}
 		System.out.println("\n✅ " + title + " displayed successfully!");
+	}
+
+	/**
+	 * Enhanced general dashboard display with full information
+	 */
+	private void printGeneralDashboardEnhanced(List<DashboardModel> dashboard) {
+		System.out.println("+------+------+-----------------+-------------+-------------+---------------+--------------------------+---------------------------+");
+		System.out.printf("| %-4s | %-4s | %-15s | %-11s | %-11s | %-13s | %-24s | %-24s |%n", "SrNo", "ID", "Name", "Courses", "Paid", "Pending", "Subjects", "Teachers");
+		System.out.println("+------+------+-----------------+-------------+-------------+---------------+--------------------------+---------------------------+");
+
+		for (int rowIndex = 0; rowIndex < dashboard.size(); rowIndex++) {
+			DashboardModel d = dashboard.get(rowIndex);
+			String status = d.getPendingFee() == 0 ? "✅" : "⚠";
+			
+			// Get full information
+			String fullName = d.getName() != null ? d.getName() : "--";
+			String fullSubjects = d.getSubjects() != null ? d.getSubjects() : "--";
+			String fullTeachers = d.getTeachers() != null ? d.getTeachers() : "--";
+			
+			// Split long text into multiple lines if needed
+			String[] nameLines = splitTextIntoLines(fullName, 15);
+			String[] subjectLines = splitTextIntoLines(fullSubjects, 24);
+			String[] teacherLines = splitTextIntoLines(fullTeachers, 24);
+			
+			// Calculate how many lines we need
+			int maxLines = Math.max(Math.max(nameLines.length, subjectLines.length), teacherLines.length);
+			
+			for (int i = 0; i < maxLines; i++) {
+				if (i == 0) {
+					// First line - show all basic info
+					System.out.printf("| %-4s | %-4s | %-15s | %-11s | %-11s | %-13s | %-24s | %-24s |%n",
+						d.getSrNo(), 
+						d.getStudentId(), 
+						nameLines.length > 0 ? nameLines[0] : "",
+						clean(d.getCourse(), 11),
+						String.format("%.2f", d.getPaidFee()),
+						String.format("%.2f %s", d.getPendingFee(), status),
+						subjectLines.length > 0 ? subjectLines[0] : "",
+						teacherLines.length > 0 ? teacherLines[0] : "");
+				} else {
+					// Subsequent lines - show only the long text fields
+					System.out.printf("| %-4s | %-4s | %-15s | %-11s | %-11s | %-13s | %-24s | %-24s |%n",
+						"", "", "",
+						"", "", "",
+						subjectLines.length > i ? subjectLines[i] : "",
+						teacherLines.length > i ? teacherLines[i] : "");
+				}
+			}
+			
+			// Add a separator line if there were multiple lines and it's not the last row
+			if (maxLines > 1 && rowIndex < dashboard.size() - 1) {
+				System.out.println("|      |      |                 |             |             |               |                          |                           |");
+			}
+		}
+		System.out.println("+------+------+-----------------+-------------+-------------+---------------+--------------------------+---------------------------+");
+	}
+
+	/**
+	 * Split text into multiple lines based on maximum width
+	 */
+	private String[] splitTextIntoLines(String text, int maxWidth) {
+		if (text == null || text.trim().isEmpty() || text.equals("--")) {
+			return new String[]{text != null ? text : "--"};
+		}
+		
+		// If text fits in one line, return as is
+		if (text.length() <= maxWidth) {
+			return new String[]{text};
+		}
+		
+		// Split by commas first, then by spaces if still too long
+		String[] parts = text.split(",");
+		java.util.List<String> lines = new java.util.ArrayList<>();
+		StringBuilder currentLine = new StringBuilder();
+		
+		for (String part : parts) {
+			part = part.trim();
+			if (part.isEmpty()) continue;
+			
+			// If adding this part would exceed the limit
+			if (currentLine.length() + part.length() + 2 > maxWidth && currentLine.length() > 0) {
+				lines.add(currentLine.toString().trim());
+				currentLine = new StringBuilder(part);
+			} else {
+				if (currentLine.length() > 0) {
+					currentLine.append(", ").append(part);
+				} else {
+					currentLine.append(part);
+				}
+			}
+		}
+		
+		// Add the last line if it has content
+		if (currentLine.length() > 0) {
+			lines.add(currentLine.toString().trim());
+		}
+		
+		// If any line is still too long, split it further
+		java.util.List<String> finalLines = new java.util.ArrayList<>();
+		for (String line : lines) {
+			if (line.length() <= maxWidth) {
+				finalLines.add(line);
+			} else {
+				// Split by spaces
+				String[] words = line.split(" ");
+				StringBuilder currentWordLine = new StringBuilder();
+				
+				for (String word : words) {
+					if (currentWordLine.length() + word.length() + 1 > maxWidth && currentWordLine.length() > 0) {
+						finalLines.add(currentWordLine.toString().trim());
+						currentWordLine = new StringBuilder(word);
+					} else {
+						if (currentWordLine.length() > 0) {
+							currentWordLine.append(" ").append(word);
+						} else {
+							currentWordLine.append(word);
+						}
+					}
+				}
+				
+				if (currentWordLine.length() > 0) {
+					finalLines.add(currentWordLine.toString().trim());
+				}
+			}
+		}
+		
+		// Ensure no line exceeds maxWidth (final safety check)
+		java.util.List<String> finalResult = new java.util.ArrayList<>();
+		for (String line : finalLines) {
+			if (line.length() <= maxWidth) {
+				finalResult.add(line);
+			} else {
+				// Force split if still too long
+				while (line.length() > maxWidth) {
+					finalResult.add(line.substring(0, maxWidth));
+					line = line.substring(maxWidth).trim();
+				}
+				if (!line.isEmpty()) {
+					finalResult.add(line);
+				}
+			}
+		}
+		
+		return finalResult.toArray(new String[0]);
 	}
 
 	private String clean(String value, int maxLength) {
