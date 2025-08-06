@@ -64,23 +64,6 @@ public class PaymentValidator {
 		}
 	}
 
-<<<<<<< HEAD
-    public static String getValidUPI(Scanner scanner, String prompt) {
-        while (true) {
-            try {
-            	scanner.nextLine();
-                System.out.print(prompt);
-                String upi = scanner.nextLine().trim();
-                if (!upi.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+")) {
-                    throw new AppException("❌ Invalid UPI ID! Must be in format user@provider (e.g., user@upi).\nPlease try again:");
-                }
-                return upi;
-            } catch (AppException e) {
-                System.out.println(e.getMessage());
-            }
-        }
-    }
-=======
 	public static String getValidUPI(Scanner scanner, String prompt) {
 		while (true) {
 			try {
@@ -97,7 +80,6 @@ public class PaymentValidator {
 			}
 		}
 	}
->>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 
 	// Reuse InputValidator's mobile validation for consistency
 	public static String getValidMobile(Scanner scanner, String prompt) {

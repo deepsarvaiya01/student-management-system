@@ -3,7 +3,6 @@ package com.sms.controller;
 import java.util.List;
 import java.util.Scanner;
 
-import com.sms.model.Course;
 import com.sms.model.FeeNotifier;
 import com.sms.model.Student;
 import com.sms.service.FeeNotifierService;

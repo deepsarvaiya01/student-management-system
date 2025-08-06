@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.sms.dao.CourseDAO;
 import com.sms.dao.FeeDao;
-import com.sms.dao.FeeNotifierDao;
 import com.sms.model.Course;
 import com.sms.model.Fee;
 import com.sms.model.FeeNotifier;
@@ -18,9 +17,7 @@ import com.sms.payment.notifier.WhatsAppFeeNotifier;
 public class FeeService {
 	private FeeDao feeDao;
 	private CourseDAO courseDao;
-	private FeeNotifierDao feeNotifierDao;
 	private FeeNotifierService feeNotifierService;
-
 
 	public FeeService() throws SQLException {
 		this.feeDao = new FeeDao();
@@ -32,20 +29,19 @@ public class FeeService {
 	public BigDecimal getTotalPaidFees() {
 		return feeDao.getTotalPaidFees();
 	}
-	
+
 	public List<Fee> getPaidFeesByStudents() {
 		return feeDao.getPaidFeesByStudents();
 	}
-
 
 	// View Total Pending Fees
 	public BigDecimal getTotalPendingFees() {
 		return feeDao.getTotalPendingFees();
 	}
+
 	public List<Fee> getPendingFeesByStudents() {
 		return feeDao.getPendingFeesByStudents();
 	}
-
 
 	// View Fees By Student
 	public String getFeesByStudent(int studentId) {
@@ -70,35 +66,33 @@ public class FeeService {
 		}
 		return "SUCCESS";
 	}
-	
-	 public String getCourseFeeSummary(int courseId) {
-	        Course course;
-	        try {
-	            course = courseDao.getCourseById(courseId);
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return "Error retrieving course.";
-	        }
 
-	        if (course == null) {
-	            return "Invalid Course ID.";
-	        }
+	public String getCourseFeeSummary(int courseId) {
+		Course course;
+		try {
+			course = courseDao.getCourseById(courseId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error retrieving course.";
+		}
 
-	        List<Fee> fees = feeDao.getFeesByCourse(courseId);
-	        int studentCount = fees.size();
+		if (course == null) {
+			return "Invalid Course ID.";
+		}
 
-	        BigDecimal courseFee = course.getTotal_fee();  // Assuming getTotal_fee() exists
-	        BigDecimal totalExpectedFees = courseFee.multiply(BigDecimal.valueOf(studentCount));
+		List<Fee> fees = feeDao.getFeesByCourse(courseId);
+		int studentCount = fees.size();
 
-	        StringBuilder summary = new StringBuilder();
-	        summary.append("\n📘 Course: ").append(course.getCourse_name());
-	        summary.append("\n👥 Students Enrolled: ").append(studentCount);
-	        summary.append(String.format("\n💰 Total Expected Fees: ₹%.2f\n", totalExpectedFees));
+		BigDecimal courseFee = course.getTotal_fee(); // Assuming getTotal_fee() exists
+		BigDecimal totalExpectedFees = courseFee.multiply(BigDecimal.valueOf(studentCount));
 
-	        return summary.toString();
-	    }
+		StringBuilder summary = new StringBuilder();
+		summary.append("\n📘 Course: ").append(course.getCourse_name());
+		summary.append("\n👥 Students Enrolled: ").append(studentCount);
+		summary.append(String.format("\n💰 Total Expected Fees: ₹%.2f\n", totalExpectedFees));
 
-
+		return summary.toString();
+	}
 
 	// Update Fees Of A Course
 	public String updateCourseFees(int courseId, BigDecimal newTotalFee) {
@@ -150,7 +144,7 @@ public class FeeService {
 		if (!success) {
 			return "Failed to update fee payment. Please check the Student ID or Course ID.";
 		}
-		
+
 		FeeNotifier prefs = feeNotifierService.getPreferences(studentId);
 		if (prefs == null) {
 			feeNotifierService.createDefaultPreferences(studentId);
@@ -159,9 +153,12 @@ public class FeeService {
 
 		FeeAlert alert = new FeeAlert();
 
-		if (prefs.isSmsEnabled()) alert.registerNotifier(new SmsFeeNotifier());
-		if (prefs.isEmailEnabled()) alert.registerNotifier(new EmailFeeNotifier());
-		if (prefs.isWhatsappEnabled()) alert.registerNotifier(new WhatsAppFeeNotifier());
+		if (prefs.isSmsEnabled())
+			alert.registerNotifier(new SmsFeeNotifier());
+		if (prefs.isEmailEnabled())
+			alert.registerNotifier(new EmailFeeNotifier());
+		if (prefs.isWhatsappEnabled())
+			alert.registerNotifier(new WhatsAppFeeNotifier());
 
 		alert.notifyAll(studentId, paymentAmount);
 
@@ -194,9 +191,9 @@ public class FeeService {
 			return "Failed to create fee record: " + e.getMessage();
 		}
 	}
-	
+
 	public Course getCourseById(int courseId) {
-	    return courseDao.getCourseById(courseId);
+		return courseDao.getCourseById(courseId);
 	}
 
 }

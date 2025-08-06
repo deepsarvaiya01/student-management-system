@@ -223,10 +223,6 @@ public class InputValidator {
 
 	public static Gender getValidGender(Scanner scanner, String prompt) {
 		while (true) {
-<<<<<<< HEAD
-			System.out.print(prompt);
-			String input = scanner.nextLine().trim().toUpperCase();
-=======
 			scanner.nextLine();
 			System.out.print(prompt);
 			String input = scanner.nextLine().trim().toUpperCase();
@@ -236,16 +232,11 @@ public class InputValidator {
 				continue;
 			}
 
->>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 			Gender gender = Gender.fromString(input);
 			if (gender != null) {
 				return gender;
 			} else {
-<<<<<<< HEAD
-				System.out.println("Invalid gender. Please enter M for Male, F for Female, or O for Other.");
-=======
 				System.out.println("❌ Invalid gender. Please enter M for Male, F for Female, or O for Other.");
->>>>>>> a25ea17c9c2574802c7838058077a39716e03a1e
 			}
 		}
 	}
