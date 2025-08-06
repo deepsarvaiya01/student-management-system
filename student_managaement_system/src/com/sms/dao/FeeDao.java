@@ -341,4 +341,22 @@ public class FeeDao {
 			return false;
 		}
 	}
+
+	// In FeeDao.java
+	public String getStudentNameById(int studentId) {
+	    String sql = "SELECT name FROM students WHERE id = ? AND status = 'active'";
+	    try (Connection connection = DBConnection.connect();
+	         PreparedStatement ps = connection.prepareStatement(sql)) {
+
+	        ps.setInt(1, studentId);
+	        ResultSet rs = ps.executeQuery();
+	        if (rs.next()) {
+	            return rs.getString("name");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return null;
+	}
+
 }
