@@ -7,6 +7,7 @@ import com.sms.main.AnalysisMain;
 import com.sms.main.CourseMain;
 import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
+import com.sms.main.HelpdeskMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
 import com.sms.utils.InputValidator;
@@ -26,10 +27,11 @@ public class Main {
 			System.out.println("║ 4. Course Management                     ║");
 			System.out.println("║ 5. Dashboard                             ║");
 			System.out.println("║ 6. Analysis                              ║");
+			System.out.println("║ 7. Helpdesk                              ║");
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 
-			choice = InputValidator.getValidMenuChoice(scanner, " Enter your choice (0-6): ", 6);
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-7): ", 7);
 
 			switch (choice) {
 				case 1 -> {
@@ -56,10 +58,14 @@ public class Main {
 					AnalysisMain a = new AnalysisMain();
 					a.show();
 				}
+				case 7 -> {
+					HelpdeskMain h = new HelpdeskMain();
+					h.show();
+				}
 				case 0 -> {
 					System.out.println("Exiting Student Management System... Thank you!");
 				}
-				default -> System.out.println(" Invalid choice! Please enter a number between 0 and 6.");
+				default -> System.out.println("❌ Invalid choice! Please enter a number between 0 and 7.");
 			}
 		} while (choice != 0);
 
