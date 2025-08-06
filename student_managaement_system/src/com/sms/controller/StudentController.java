@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.sms.model.Course;
 import com.sms.model.Fee;
+import com.sms.model.Gender;
 import com.sms.model.Student;
 import com.sms.model.Subject;
 import com.sms.payment.processor.PaymentProcessor;
@@ -50,6 +51,8 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
+		Gender gender = InputValidator.getValidGender(scanner,
+				"Enter Gender (M for Male, F for Female, O for Other): ");
 
 		System.out.println("\nAvailable Courses:");
 		List<Course> courses = studentService.getAllCourses();
@@ -77,6 +80,7 @@ public class StudentController {
 		student.setCity(city);
 		student.setMobile_no(mobileNo);
 		student.setAge(age);
+		student.setGender(gender);
 
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
 		System.out.println(result);
@@ -280,10 +284,19 @@ public class StudentController {
 		}
 
 		// 🔽 Display unassigned courses
-		System.out.println("Available Courses:");
+		System.out.println("\n📚 Available Courses:");
+		String line = "+------------+---------------------------+";
+		String format = "| %-10s | %-25s |%n";
+
+		System.out.println(line);
+		System.out.printf(format, "Course ID", "Course Name");
+		System.out.println(line);
+
 		for (Course course : unassignedCourses) {
-			System.out.println(course.getCourse_id() + ". " + course.getCourse_name());
+			System.out.printf(format, course.getCourse_id(), course.getCourse_name());
 		}
+
+		System.out.println(line);
 
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
