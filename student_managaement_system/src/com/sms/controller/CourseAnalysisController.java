@@ -18,7 +18,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayMostEnrolledCourses();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying most enrolled courses: " + e.getMessage());
+			System.out.println("Error displaying most enrolled courses: " + e.getMessage());
 		}
 	}
 
@@ -26,7 +26,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayCourseWiseStudentCount();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying course-wise student count: " + e.getMessage());
+			System.out.println("Error displaying course-wise student count: " + e.getMessage());
 		}
 	}
 
@@ -34,7 +34,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displaySubjectDistributionPerCourse();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying subject distribution per course: " + e.getMessage());
+			System.out.println("Error displaying subject distribution per course: " + e.getMessage());
 		}
 	}
 
@@ -42,7 +42,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayCourseCompletionStatus();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying course completion status: " + e.getMessage());
+			System.out.println("Error displaying course completion status: " + e.getMessage());
 		}
 	}
 
@@ -59,7 +59,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayTeachersWithMaxSubjects();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying teachers with max subjects: " + e.getMessage());
+			System.out.println("Error displaying teachers with max subjects: " + e.getMessage());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayAvailableTeachersForAssignment();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying available teachers for assignment: " + e.getMessage());
+			System.out.println("Error displaying available teachers for assignment: " + e.getMessage());
 		}
 	}
 
@@ -75,7 +75,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayTeacherSubjectDistribution();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying teacher-subject distribution: " + e.getMessage());
+			System.out.println("Error displaying teacher-subject distribution: " + e.getMessage());
 		}
 	}
 
@@ -84,7 +84,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayMandatoryVsElectiveSubjects();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying mandatory vs elective subjects: " + e.getMessage());
+			System.out.println("Error displaying mandatory vs elective subjects: " + e.getMessage());
 		}
 	}
 
@@ -92,7 +92,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displaySubjectPopularity();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying subject popularity: " + e.getMessage());
+			System.out.println("Error displaying subject popularity: " + e.getMessage());
 		}
 	}
 
@@ -100,7 +100,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displayCourseFeeAnalysis();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying course fee analysis: " + e.getMessage());
+			System.out.println("Error displaying course fee analysis: " + e.getMessage());
 		}
 	}
 
@@ -108,7 +108,7 @@ public class CourseAnalysisController {
 		try {
 			analysisService.displaySemesterWiseStructure();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying semester-wise structure: " + e.getMessage());
+			System.out.println("Error displaying semester-wise structure: " + e.getMessage());
 		}
 	}
 } 

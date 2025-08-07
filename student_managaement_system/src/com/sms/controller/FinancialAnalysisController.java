@@ -18,7 +18,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayTotalRevenueCollected();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying total revenue collected: " + e.getMessage());
+			System.out.println("Error displaying total revenue collected: " + e.getMessage());
 		}
 	}
 
@@ -26,7 +26,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayRevenueByCourse();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying revenue by course: " + e.getMessage());
+			System.out.println("Error displaying revenue by course: " + e.getMessage());
 		}
 	}
 
@@ -34,7 +34,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayAveragePaymentPerStudent();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying average payment per student: " + e.getMessage());
+			System.out.println("Error displaying average payment per student: " + e.getMessage());
 		}
 	}
 
@@ -43,7 +43,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayPaymentCompletionPercentage();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying payment completion percentage: " + e.getMessage());
+			System.out.println("Error displaying payment completion percentage: " + e.getMessage());
 		}
 	}
 
@@ -51,7 +51,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayCourseWisePaymentStatus();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying course-wise payment status: " + e.getMessage());
+			System.out.println("Error displaying course-wise payment status: " + e.getMessage());
 		}
 	}
 
@@ -59,7 +59,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayRecentPaymentTrends();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying recent payment trends: " + e.getMessage());
+			System.out.println("Error displaying recent payment trends: " + e.getMessage());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayOutstandingAmountByCourse();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying outstanding amount by course: " + e.getMessage());
+			System.out.println("Error displaying outstanding amount by course: " + e.getMessage());
 		}
 	}
 
@@ -76,7 +76,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayCollectionEfficiency();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying collection efficiency: " + e.getMessage());
+			System.out.println("Error displaying collection efficiency: " + e.getMessage());
 		}
 	}
 
@@ -84,7 +84,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayRevenuePerCourse();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying revenue per course: " + e.getMessage());
+			System.out.println("Error displaying revenue per course: " + e.getMessage());
 		}
 	}
 
@@ -92,7 +92,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayAverageFeeStructure();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying average fee structure: " + e.getMessage());
+			System.out.println("Error displaying average fee structure: " + e.getMessage());
 		}
 	}
 
@@ -100,7 +100,7 @@ public class FinancialAnalysisController {
 		try {
 			analysisService.displayPaymentDelayAnalysis();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying payment delay analysis: " + e.getMessage());
+			System.out.println("Error displaying payment delay analysis: " + e.getMessage());
 		}
 	}
 } 

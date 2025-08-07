@@ -105,14 +105,17 @@ public class HelpdeskDao {
      * Update ticket status
      */
     public boolean updateTicketStatus(int ticketId, String status) throws SQLException {
-        String sql = "UPDATE helpdesk_tickets SET status = ?, updated_at = ? WHERE ticket_id = ?";
+        String sql = "UPDATE helpdesk_tickets SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?";
         
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, status);
-            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            ps.setInt(3, ticketId);
+            ps.setInt(2, ticketId);
             
-            return ps.executeUpdate() > 0;
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println(" Database error during status update: " + e.getMessage());
+            throw e;
         }
     }
 
@@ -120,14 +123,17 @@ public class HelpdeskDao {
      * Update ticket priority
      */
     public boolean updateTicketPriority(int ticketId, String priority) throws SQLException {
-        String sql = "UPDATE helpdesk_tickets SET priority = ?, updated_at = ? WHERE ticket_id = ?";
+        String sql = "UPDATE helpdesk_tickets SET priority = ?, updated_at = CURRENT_TIMESTAMP WHERE ticket_id = ?";
         
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, priority);
-            ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            ps.setInt(3, ticketId);
+            ps.setInt(2, ticketId);
             
-            return ps.executeUpdate() > 0;
+            int rowsAffected = ps.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println(" Database error during priority update: " + e.getMessage());
+            throw e;
         }
     }
 

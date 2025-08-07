@@ -18,7 +18,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayTotalStudentsByCourse();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying total students by course: " + e.getMessage());
+			System.out.println("Error displaying total students by course: " + e.getMessage());
 		}
 	}
 
@@ -26,7 +26,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayEnrollmentDateTrends();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying enrollment date trends: " + e.getMessage());
+			System.out.println("Error displaying enrollment date trends: " + e.getMessage());
 		}
 	}
 
@@ -34,7 +34,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayActiveVsInactiveStudents();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying active vs inactive students: " + e.getMessage());
+			System.out.println("Error displaying active vs inactive students: " + e.getMessage());
 		}
 	}
 
@@ -42,7 +42,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayStudentDistributionByCity();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying student distribution by city: " + e.getMessage());
+			System.out.println("Error displaying student distribution by city: " + e.getMessage());
 		}
 	}
 
@@ -51,7 +51,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayStudentsWithCompletePayment();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying students with complete payment: " + e.getMessage());
+			System.out.println("Error displaying students with complete payment: " + e.getMessage());
 		}
 	}
 
@@ -59,7 +59,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayStudentsWithPendingFees();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying students with pending fees: " + e.getMessage());
+			System.out.println("Error displaying students with pending fees: " + e.getMessage());
 		}
 	}
 
@@ -67,7 +67,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayAverageFeePaymentPerStudent();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying average fee payment per student: " + e.getMessage());
+			System.out.println("Error displaying average fee payment per student: " + e.getMessage());
 		}
 	}
 
@@ -75,7 +75,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayPaymentCompletionRate();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying payment completion rate: " + e.getMessage());
+			System.out.println("Error displaying payment completion rate: " + e.getMessage());
 		}
 	}
 
@@ -84,7 +84,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayAgeDistribution();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying age distribution: " + e.getMessage());
+			System.out.println("Error displaying age distribution: " + e.getMessage());
 		}
 	}
 
@@ -92,7 +92,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayCityWiseStudentCount();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying city-wise student count: " + e.getMessage());
+			System.out.println("Error displaying city-wise student count: " + e.getMessage());
 		}
 	}
 
@@ -100,7 +100,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayCoursePreferenceByAge();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying course preference by age: " + e.getMessage());
+			System.out.println("Error displaying course preference by age: " + e.getMessage());
 		}
 	}
 
@@ -108,7 +108,7 @@ public class StudentAnalysisController {
 		try {
 			analysisService.displayGenderAnalysis();
 		} catch (SQLException e) {
-			System.out.println("❌ Error displaying gender analysis: " + e.getMessage());
+			System.out.println("Error displaying gender analysis: " + e.getMessage());
 		}
 	}
 } 

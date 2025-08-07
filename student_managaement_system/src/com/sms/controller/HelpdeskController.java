@@ -18,7 +18,7 @@ public class HelpdeskController {
         try {
             helpdeskService.displayEmergencyContacts();
         } catch (Exception e) {
-            System.out.println("❌ Error displaying emergency contacts: " + e.getMessage());
+            System.out.println(" Error displaying emergency contacts: " + e.getMessage());
         }
     }
 
@@ -29,7 +29,7 @@ public class HelpdeskController {
         try {
             helpdeskService.raiseTicket();
         } catch (Exception e) {
-            System.out.println("❌ Error raising ticket: " + e.getMessage());
+            System.out.println(" Error raising ticket: " + e.getMessage());
         }
     }
 
@@ -40,7 +40,7 @@ public class HelpdeskController {
         try {
             helpdeskService.viewAllTickets();
         } catch (Exception e) {
-            System.out.println("❌ Error viewing tickets: " + e.getMessage());
+            System.out.println(" Error viewing tickets: " + e.getMessage());
         }
     }
 
@@ -51,7 +51,7 @@ public class HelpdeskController {
         try {
             helpdeskService.viewTicketDetails();
         } catch (Exception e) {
-            System.out.println("❌ Error viewing ticket details: " + e.getMessage());
+            System.out.println(" Error viewing ticket details: " + e.getMessage());
         }
     }
 
@@ -62,7 +62,7 @@ public class HelpdeskController {
         try {
             helpdeskService.updateTicketStatus();
         } catch (Exception e) {
-            System.out.println("❌ Error updating ticket status: " + e.getMessage());
+            System.out.println(" Error updating ticket status: " + e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class HelpdeskController {
         try {
             helpdeskService.updateTicketPriority();
         } catch (Exception e) {
-            System.out.println("❌ Error updating ticket priority: " + e.getMessage());
+            System.out.println(" Error updating ticket priority: " + e.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class HelpdeskController {
         try {
             helpdeskService.viewTicketsByStatus();
         } catch (Exception e) {
-            System.out.println("❌ Error viewing tickets by status: " + e.getMessage());
+            System.out.println(" Error viewing tickets by status: " + e.getMessage());
         }
     }
 

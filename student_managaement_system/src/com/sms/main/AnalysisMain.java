@@ -69,7 +69,7 @@ public class AnalysisMain {
 			System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
 
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3): ", 3);
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3) And 0 for back : ", 3);
 
 			switch (choice) {
 			case 1 -> {
@@ -124,7 +124,7 @@ public class AnalysisMain {
 			System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
 		
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3): ", 3);
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3) And 0 for back :", 3);
 
 			switch (choice) {
 			case 1 -> {
@@ -179,7 +179,7 @@ public class AnalysisMain {
 			System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
 			
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3): ", 3);
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3) And 0 for back :", 3);
 
 			switch (choice) {
 			case 1 -> {
@@ -235,7 +235,7 @@ public class AnalysisMain {
 			System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
 		
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3): ", 3);
+			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3) And 0 for back :", 3);
 
 			switch (choice) {
 			case 1 -> {
