@@ -205,9 +205,6 @@ public class DashboardDao {
 		}
 	}
 
-	/**
-	 * Get course-wise student counts for chart visualization
-	 */
 	public List<DashboardModel> getCourseWiseStudentCounts() {
 		List<DashboardModel> courseCounts = new ArrayList<>();
 		String query = """
@@ -237,9 +234,6 @@ public class DashboardDao {
 		return courseCounts;
 	}
 
-	/**
-	 * Get course-wise subject counts for chart visualization
-	 */
 	public List<DashboardModel> getCourseWiseSubjectCounts() {
 		List<DashboardModel> courseSubjectCounts = new ArrayList<>();
 		String query = """
@@ -269,9 +263,6 @@ public class DashboardDao {
 		return courseSubjectCounts;
 	}
 
-	/**
-	 * Get teacher-wise subject counts for chart visualization
-	 */
 	public List<DashboardModel> getTeacherWiseSubjectCounts() {
 		List<DashboardModel> teacherSubjectCounts = new ArrayList<>();
 		String query = """
@@ -300,9 +291,6 @@ public class DashboardDao {
 		return teacherSubjectCounts;
 	}
 
-	/**
-	 * Get subject-wise student counts for chart visualization
-	 */
 	public List<DashboardModel> getSubjectWiseStudentCounts() {
 		List<DashboardModel> subjectStudentCounts = new ArrayList<>();
 		String query = """

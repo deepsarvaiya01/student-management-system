@@ -42,7 +42,6 @@ public class StudentController {
 		HelperUtils.printStudents(students);
 	}
 
-	// Add New Student with Profile and Course Assignment
 	public void addNewStudent() {
 		String name = InputValidator.getValidName(scanner, "Enter Student Name: ");
 		int lastGrNumber = studentService.getLastGrNumber();
@@ -65,7 +64,6 @@ public class StudentController {
 
 		int courseId = InputValidator.getValidIntegerWithNewline(scanner, "Enter Course ID to assign: ", "Course ID");
 
-		// Get available subjects for the selected course
 		List<Subject> availableSubjects = studentService.getSubjectsByCourseId(courseId);
 		if (availableSubjects.isEmpty()) {
 			System.out.println("No subjects available for this course. Please add subjects to the course first.");
@@ -84,7 +82,6 @@ public class StudentController {
 		student.setGender(gender);
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
 
-		// Display beautiful success message if student was added successfully
 		if (result.contains("successfully")) {
 			displayStudentSuccessDetails(student, courseId, selectedSubjectIds, availableSubjects);
 			askForFeePayment(student.getName(), courseId);
@@ -93,17 +90,14 @@ public class StudentController {
 		}
 	}
 
-	// Display beautiful success details when student is added successfully
 	private void displayStudentSuccessDetails(Student student, int courseId, List<Integer> selectedSubjectIds,
 			List<Subject> availableSubjects) {
 		try {
-			// Get course details
 			Course course = courseService.getCourseById(courseId);
 			List<Subject> selectedSubjects = availableSubjects.stream()
 					.filter(subject -> selectedSubjectIds.contains(subject.getSubject_id()))
 					.collect(Collectors.toList());
 
-			// Try to get the actual student ID after creation
 			Student createdStudent = null;
 			List<Student> allStudents = studentService.readAllStudent();
 			for (Student s : allStudents) {
@@ -118,13 +112,12 @@ public class StudentController {
 				studentIdDisplay = String.valueOf(createdStudent.getStudent_id());
 			}
 
-			// Display success header with modern design
 			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
-			System.out.println("║" + " ".repeat(25) + "🎓 STUDENT ADDED SUCCESSFULLY!" + " ".repeat(25) + "║");
+			System.out.println("║" + " ".repeat(25) + "STUDENT ADDED SUCCESSFULLY!" + " ".repeat(25) + "║");
 			System.out.println("╚" + "═".repeat(78) + "╝");
 
 			// Student information card
-			System.out.println("\n👤 STUDENT INFORMATION");
+			System.out.println("\nSTUDENT INFORMATION");
 			System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
 			System.out.printf("│ %-23s │ %-48s │%n", "Student ID", studentIdDisplay);
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
@@ -144,9 +137,8 @@ public class StudentController {
 					student.getGender() != null ? student.getGender().getDisplayName() : "N/A");
 			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
 
-			// Course information
 			if (course != null) {
-				System.out.println("\n📚 ASSIGNED COURSE");
+				System.out.println("\nASSIGNED COURSE");
 				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
 				System.out.printf("│ %-23s │ %-48d │%n", "Course ID", course.getCourse_id());
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
@@ -159,21 +151,19 @@ public class StudentController {
 				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
 			}
 
-			// Selected subjects information
 			if (!selectedSubjects.isEmpty()) {
-				System.out.println("\n📖 ASSIGNED SUBJECTS");
+				System.out.println("\nASSIGNED SUBJECTS");
 				System.out.println("┌" + "─".repeat(10) + "┬" + "─".repeat(40) + "┬" + "─".repeat(25) + "┐");
 				System.out.printf("│ %-8s │ %-38s │ %-23s │%n", "ID", "Subject Name", "Type");
 				System.out.println("├" + "─".repeat(10) + "┼" + "─".repeat(40) + "┼" + "─".repeat(25) + "┤");
 
 				for (Subject subject : selectedSubjects) {
-					// Capitalize first letter for display
+					
 					String displayType = (subject.getSubject_type() != null)
 							? subject.getSubject_type().substring(0, 1).toUpperCase()
 									+ subject.getSubject_type().substring(1).toLowerCase()
 							: "N/A";
 
-					// Truncate long names for better display
 					String truncatedSubjectName = subject.getSubject_name().length() > 38
 							? subject.getSubject_name().substring(0, 35) + "..."
 							: subject.getSubject_name();
@@ -183,13 +173,12 @@ public class StudentController {
 				}
 				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(40) + "┴" + "─".repeat(25) + "┘");
 
-				// Summary statistics
 				long mandatoryCount = selectedSubjects.stream()
 						.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
 				long electiveCount = selectedSubjects.stream()
 						.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
 
-				System.out.println("\n📊 SUBJECT SUMMARY");
+				System.out.println("\nSUBJECT SUMMARY");
 				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(15) + "┐");
 				System.out.printf("│ %-23s │ %-13s │%n", "Metric", "Count");
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
@@ -201,8 +190,7 @@ public class StudentController {
 				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(15) + "┘");
 			}
 
-			// Success message with emojis
-			System.out.println("\n🎉 SUCCESS MESSAGE");
+			System.out.println("\nSUCCESS MESSAGE");
 			System.out.println("┌" + "─".repeat(78) + "┐");
 			String studentName = student.getName();
 			String courseName = course != null ? course.getCourse_name() : "N/A";
@@ -216,11 +204,11 @@ public class StudentController {
 			}
 
 			// Format the success messages to fit within the box
-			String msg1 = String.format("│ ✅ Student '%s' has been successfully registered!", studentName);
-			String msg2 = String.format("│ 🎓 Course '%s' has been assigned.", courseName);
-			String msg3 = String.format("│ 📚 %d subject(s) have been assigned to the student.",
+			String msg1 = String.format("│ Student '%s' has been successfully registered!", studentName);
+			String msg2 = String.format("│ Course '%s' has been assigned.", courseName);
+			String msg3 = String.format("│ %d subject(s) have been assigned to the student.",
 					selectedSubjects.size());
-			String msg4 = "│ 💰 You can now proceed with fee payment or do it later from the menu.";
+			String msg4 = "│ You can now proceed with fee payment or do it later from the menu.";
 
 			// Pad each message to fit the 78-character box
 			System.out.printf("%-78s│%n", msg1);
@@ -230,13 +218,12 @@ public class StudentController {
 			System.out.println("└" + "─".repeat(78) + "┘");
 
 		} catch (Exception e) {
-			System.out.println("❌ Error displaying student details: " + e.getMessage());
+			System.out.println("Error displaying student details: " + e.getMessage());
 		}
 	}
 
-	// Ask student if they want to pay fees immediately after registration
 	private void askForFeePayment(String studentName, int courseId) {
-		System.out.println("\n💰 === IMMEDIATE FEE PAYMENT OPTION ===");
+		System.out.println("\n=== IMMEDIATE FEE PAYMENT OPTION ===");
 		System.out.println("Student: " + studentName);
 		System.out.println("Course ID: " + courseId);
 
@@ -244,7 +231,6 @@ public class StudentController {
 
 		if (wantsToPay) {
 			try {
-				// Get the newly created student ID
 				List<Student> students = studentService.readAllStudent();
 				Student newStudent = students.stream().filter(s -> s.getName().equals(studentName)).findFirst()
 						.orElse(null);
@@ -253,48 +239,42 @@ public class StudentController {
 					processImmediateFeePayment(newStudent.getStudent_id(), courseId);
 				} else {
 					System.out.println(
-							"❌ Could not find the newly created student. Please use the main fee payment option.");
+							"Could not find the newly created student. Please use the main fee payment option.");
 				}
 			} catch (Exception e) {
-				System.out.println("❌ Error processing immediate fee payment: " + e.getMessage());
+				System.out.println("Error processing immediate fee payment: " + e.getMessage());
 				System.out.println("Please use the main fee payment option from the menu.");
 			}
 		} else {
-			System.out.println("✅ Fee payment skipped. You can pay fees later from the main menu.");
+			System.out.println("Fee payment skipped. You can pay fees later from the main menu.");
 		}
 	}
 
-	// Process immediate fee payment for newly created student
 	private void processImmediateFeePayment(int studentId, int courseId) {
-		System.out.println("\n💰 === PROCESSING IMMEDIATE FEE PAYMENT ===");
+		System.out.println("\n=== PROCESSING IMMEDIATE FEE PAYMENT ===");
 
 		try {
-			// Show fee status
 			Fee fee = showFeeStatus(studentId, courseId);
 			if (fee == null) {
 				return;
 			}
 
-			// Check if there are pending fees
 			if (!hasPendingFees(fee)) {
 				return;
 			}
 
-			// Get payment amount
 			BigDecimal paymentAmount = getPaymentAmount(fee);
 			if (paymentAmount == null) {
 				return;
 			}
 
-			// Process payment
 			processPayment(studentId, courseId, paymentAmount);
 
 		} catch (Exception e) {
-			System.out.println("❌ Error during immediate fee payment: " + e.getMessage());
+			System.out.println("Error during immediate fee payment: " + e.getMessage());
 		}
 	}
 
-	// Show fee status for the student and course
 	private Fee showFeeStatus(int studentId, int courseId) {
 		try {
 			FeeService feeService = new FeeService();
@@ -304,11 +284,11 @@ public class StudentController {
 				Fee selectedFee = fees.stream().filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
 
 				if (selectedFee == null) {
-					System.out.println("❌ No fee record found for Course ID " + courseId);
+					System.out.println("No fee record found for Course ID " + courseId);
 					return null;
 				}
 
-				System.out.println("\n📊 Current Fee Status:");
+				System.out.println("\nCurrent Fee Status:");
 				Fee.printHeader();
 				System.out.println(selectedFee);
 				Fee.printFooter();
@@ -318,24 +298,22 @@ public class StudentController {
 				return null;
 			}
 		} catch (SQLException e) {
-			System.out.println("❌ Error retrieving fee status: " + e.getMessage());
+			System.out.println("Error retrieving fee status: " + e.getMessage());
 			return null;
 		}
 	}
 
-	// Check if there are pending fees
 	private boolean hasPendingFees(Fee fee) {
 		if (fee == null) {
 			return false;
 		}
 		boolean pending = fee.getPendingAmount().compareTo(BigDecimal.ZERO) > 0;
 		if (!pending) {
-			System.out.println("\n✅ All fees are already paid for this course!");
+			System.out.println("\nAll fees are already paid for this course!");
 		}
 		return pending;
 	}
 
-	// Get payment amount from user
 	private BigDecimal getPaymentAmount(Fee fee) {
 		if (fee == null) {
 			return null;
@@ -343,17 +321,15 @@ public class StudentController {
 
 		BigDecimal amount = InputValidator.getValidDecimal(scanner, "\nEnter payment amount: ₹", "Payment Amount");
 
-		// Validate payment amount against pending fees
 		BigDecimal totalPending = fee.getPendingAmount();
 		if (amount.compareTo(totalPending) > 0) {
-			System.out.println("❌ Payment amount (₹" + amount + ") exceeds pending amount (₹" + totalPending + ").");
+			System.out.println("Payment amount (₹" + amount + ") exceeds pending amount (₹" + totalPending + ").");
 			return null;
 		}
 
 		return amount;
 	}
 
-	// Process the payment
 	private void processPayment(int studentId, int courseId, BigDecimal paymentAmount) {
 		try {
 			System.out.println("\nChoose payment method:");
@@ -361,7 +337,7 @@ public class StudentController {
 			System.out.println("2. Card");
 			System.out.println("3. UPI");
 			System.out.println("0. Cancel");
-			int choice = InputValidator.getValidIntegerInRange(scanner, "👉 Enter your choice (0-3): ",
+			int choice = InputValidator.getValidIntegerInRange(scanner, "Enter your choice (0-3): ",
 					"Payment Method", 0, 3);
 
 			if (choice == 0) {
@@ -375,7 +351,7 @@ public class StudentController {
 			if (paymentSuccess) {
 				String result = feeService.updateFeePayment(studentId, paymentAmount, courseId);
 				if (result.contains("successfully")) {
-					System.out.println("\n✅ Payment of ₹" + paymentAmount + " processed successfully!");
+					System.out.println("\nPayment of ₹" + paymentAmount + " processed successfully!");
 					System.out.println("Updated fee status:");
 					Fee updatedFee = feeService.getFeesListByStudent(studentId).stream()
 							.filter(fee -> fee.getCourseId() == courseId).findFirst().orElse(null);
@@ -388,10 +364,10 @@ public class StudentController {
 					System.out.println("❌ " + result);
 				}
 			} else {
-				System.out.println("❌ Payment failed. Please try again later.");
+				System.out.println("Payment failed. Please try again later.");
 			}
 		} catch (Exception e) {
-			System.out.println("❌ Error processing payment: " + e.getMessage());
+			System.out.println("Error processing payment: " + e.getMessage());
 		}
 	}
 
@@ -412,24 +388,20 @@ public class StudentController {
 			return;
 		}
 
-		// 🔽 Fetch all courses
 		List<Course> allCourses = courseService.getAllCourses();
 
-		// 🔽 Fetch already assigned courses
 		List<Course> assignedCourses = studentService.getCoursesByStudentId(studentId);
 
-		// 🔁 Filter out assigned courses from all courses
 		List<Course> unassignedCourses = allCourses.stream()
 				.filter(c -> assignedCourses.stream().noneMatch(ac -> ac.getCourse_id() == c.getCourse_id()))
 				.collect(Collectors.toList());
 
 		if (unassignedCourses.isEmpty()) {
-			System.out.println("🎉 All courses are already assigned to this student!");
+			System.out.println("All courses are already assigned to this student!");
 			return;
 		}
 
-		// 🔽 Display unassigned courses
-		System.out.println("\n📚 Available Courses:");
+		System.out.println("\nAvailable Courses:");
 		String line = "+------------+---------------------------+";
 		String format = "| %-10s | %-25s |%n";
 
@@ -444,13 +416,13 @@ public class StudentController {
 		System.out.println(line);
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
-			System.out.println("❌ Invalid Course ID.");
+			System.out.println("Invalid Course ID.");
 			return;
 		}
 
 		List<Subject> availableSubjects = studentService.getSubjectsByCourseId(courseId);
 		if (availableSubjects.isEmpty()) {
-			System.out.println("❌ No subjects available for Course ID " + courseId + ".");
+			System.out.println("No subjects available for Course ID " + courseId + ".");
 			return;
 		}
 
@@ -498,7 +470,7 @@ public class StudentController {
 		String line = "+------------+----------------------+";
 		String format = "| %-10s | %-20s |%n";
 
-		System.out.println("\n📚 List of Students:");
+		System.out.println("\nList of Students:");
 		System.out.println(line);
 		System.out.printf(format, "Student ID", "Name");
 		System.out.println(line);
@@ -548,7 +520,7 @@ public class StudentController {
 			}
 
 			if (!studentService.isFeeClearedForStudent(studentId)) {
-				System.out.println("❌ This student has pending fees. Please clear the dues before deletion.");
+				System.out.println("This student has pending fees. Please clear the dues before deletion.");
 				return;
 			}
 
@@ -562,12 +534,12 @@ public class StudentController {
 	public void payFees() throws SQLException {
 		List<Student> students = studentService.readAllStudent();
 		if (students.isEmpty()) {
-			System.out.println("\n💰 === FEES PAYMENT ===\nNo students available.");
+			System.out.println("\n=== FEES PAYMENT ===\nNo students available.");
 			return;
 		}
 
 		payFeesUtils payFeesUtil = new payFeesUtils();
-		System.out.println("\n💰 === FEES PAYMENT ===");
+		System.out.println("\n=== FEES PAYMENT ===");
 		payFeesUtil.showAndGetAllStudents();
 
 		int studentId = InputValidator.getValidInteger(scanner, "\nEnter Student ID to pay fees: ", "Student ID");
@@ -612,7 +584,7 @@ public class StudentController {
 			return;
 		}
 
-		System.out.println("\n📋 Inactive Students");
+		System.out.println("\nInactive Students");
 		String line = "+-----+----------------------+----------------------+------------+";
 		String format = "| %-3s | %-20s | %-20s | %-10s |%n";
 

@@ -317,7 +317,6 @@ public class StudentDao {
 		return subjects;
 	}
 
-	// Add student with profile, course, and subjects
 	public boolean addStudentWithProfileAndCourseAndSubjects(Student student, int courseId, List<Integer> subjectIds) {
 		try {
 			// Check for duplicate GR number

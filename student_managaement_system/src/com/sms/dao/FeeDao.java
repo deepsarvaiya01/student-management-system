@@ -285,7 +285,7 @@ public class FeeDao {
             if (rs.next()) {
                 return rs.getInt("student_course_id");
             }
-            return -1; // No record found
+            return -1;
         }
     }
 
@@ -342,7 +342,6 @@ public class FeeDao {
 		}
 	}
 
-	// In FeeDao.java
 	public String getStudentNameById(int studentId) {
 	    String sql = "SELECT name FROM students WHERE id = ? AND status = 'active'";
 	    try (Connection connection = DBConnection.connect();
