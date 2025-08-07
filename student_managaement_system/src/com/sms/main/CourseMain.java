@@ -21,7 +21,7 @@ public class CourseMain {
             System.out.println("║ 2. Add New Course                         ║");
             System.out.println("║ 3. Assign Subjects to a Course            ║");
             System.out.println("║ 4. View Subjects of a Course              ║");
-            System.out.println("║ 5. Search a Course                        ║");
+            System.out.println("║ 5. Search a Course With Full Details      ║");
             System.out.println("║ 6. Delete a Course                        ║");
             System.out.println("║ 7. Manage Subjects                        ║");
             System.out.println("║ 0. Back                                   ║");

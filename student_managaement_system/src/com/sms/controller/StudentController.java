@@ -83,7 +83,7 @@ public class StudentController {
 		student.setAge(age);
 		student.setGender(gender);
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
-		
+
 		// Display beautiful success message if student was added successfully
 		if (result.contains("successfully")) {
 			displayStudentSuccessDetails(student, courseId, selectedSubjectIds, availableSubjects);
@@ -94,7 +94,8 @@ public class StudentController {
 	}
 
 	// Display beautiful success details when student is added successfully
-	private void displayStudentSuccessDetails(Student student, int courseId, List<Integer> selectedSubjectIds, List<Subject> availableSubjects) {
+	private void displayStudentSuccessDetails(Student student, int courseId, List<Integer> selectedSubjectIds,
+			List<Subject> availableSubjects) {
 		try {
 			// Get course details
 			Course course = courseService.getCourseById(courseId);
@@ -106,7 +107,8 @@ public class StudentController {
 			Student createdStudent = null;
 			List<Student> allStudents = studentService.readAllStudent();
 			for (Student s : allStudents) {
-				if (s.getName().equals(student.getName()) && s.getEmail().equals(student.getEmail()) && s.getGr_number() == student.getGr_number()) {
+				if (s.getName().equals(student.getName()) && s.getEmail().equals(student.getEmail())
+						&& s.getGr_number() == student.getGr_number()) {
 					createdStudent = s;
 					break;
 				}
@@ -138,7 +140,8 @@ public class StudentController {
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
 			System.out.printf("│ %-23s │ %-48d │%n", "Age", student.getAge());
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
-			System.out.printf("│ %-23s │ %-48s │%n", "Gender", student.getGender() != null ? student.getGender().getDisplayName() : "N/A");
+			System.out.printf("│ %-23s │ %-48s │%n", "Gender",
+					student.getGender() != null ? student.getGender().getDisplayName() : "N/A");
 			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
 
 			// Course information
@@ -151,7 +154,8 @@ public class StudentController {
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
 				System.out.printf("│ %-23s │ %-48d │%n", "Semesters", course.getNo_of_semester());
 				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
-				System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee", course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
+				System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee",
+						course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
 				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
 			}
 
@@ -174,14 +178,16 @@ public class StudentController {
 							? subject.getSubject_name().substring(0, 35) + "..."
 							: subject.getSubject_name();
 
-					System.out.printf("│ %-8d │ %-38s │ %-23s │%n", subject.getSubject_id(),
-							truncatedSubjectName, displayType);
+					System.out.printf("│ %-8d │ %-38s │ %-23s │%n", subject.getSubject_id(), truncatedSubjectName,
+							displayType);
 				}
 				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(40) + "┴" + "─".repeat(25) + "┘");
 
 				// Summary statistics
-				long mandatoryCount = selectedSubjects.stream().filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
-				long electiveCount = selectedSubjects.stream().filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
+				long mandatoryCount = selectedSubjects.stream()
+						.filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
+				long electiveCount = selectedSubjects.stream()
+						.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
 
 				System.out.println("\n📊 SUBJECT SUMMARY");
 				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(15) + "┐");
@@ -200,7 +206,7 @@ public class StudentController {
 			System.out.println("┌" + "─".repeat(78) + "┐");
 			String studentName = student.getName();
 			String courseName = course != null ? course.getCourse_name() : "N/A";
-			
+
 			// Truncate long names for better display
 			if (studentName.length() > 30) {
 				studentName = studentName.substring(0, 27) + "...";
@@ -208,13 +214,14 @@ public class StudentController {
 			if (courseName.length() > 30) {
 				courseName = courseName.substring(0, 27) + "...";
 			}
-			
+
 			// Format the success messages to fit within the box
 			String msg1 = String.format("│ ✅ Student '%s' has been successfully registered!", studentName);
 			String msg2 = String.format("│ 🎓 Course '%s' has been assigned.", courseName);
-			String msg3 = String.format("│ 📚 %d subject(s) have been assigned to the student.", selectedSubjects.size());
+			String msg3 = String.format("│ 📚 %d subject(s) have been assigned to the student.",
+					selectedSubjects.size());
 			String msg4 = "│ 💰 You can now proceed with fee payment or do it later from the menu.";
-			
+
 			// Pad each message to fit the 78-character box
 			System.out.printf("%-78s│%n", msg1);
 			System.out.printf("%-78s│%n", msg2);
@@ -304,6 +311,7 @@ public class StudentController {
 				System.out.println("\n📊 Current Fee Status:");
 				Fee.printHeader();
 				System.out.println(selectedFee);
+				Fee.printFooter();
 				return selectedFee;
 			} else {
 				System.out.println("❌ " + result);
@@ -374,6 +382,7 @@ public class StudentController {
 					if (updatedFee != null) {
 						Fee.printHeader();
 						System.out.println(updatedFee);
+						Fee.printFooter();
 					}
 				} else {
 					System.out.println("❌ " + result);
@@ -486,11 +495,19 @@ public class StudentController {
 			return;
 		}
 
-		System.out.printf("\n%-10s | %-20s\n", "Student ID", "Name");
-		System.out.println("-------------------------");
+		String line = "+------------+----------------------+";
+		String format = "| %-10s | %-20s |%n";
+
+		System.out.println("\n📚 List of Students:");
+		System.out.println(line);
+		System.out.printf(format, "Student ID", "Name");
+		System.out.println(line);
+
 		for (Student s : students) {
-			System.out.printf("%-10d | %-20s\n", s.getStudent_id(), s.getName());
+			System.out.printf(format, s.getStudent_id(), s.getName());
 		}
+
+		System.out.println(line);
 
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to search: ", "Student ID");
 		String result = studentService.searchStudentById(studentId);
@@ -499,6 +516,7 @@ public class StudentController {
 			System.out.println("\nStudent Details:");
 			Student.printHeader();
 			System.out.println(student);
+			Student.printFooter();
 		} else {
 			System.out.println(result);
 		}

@@ -85,7 +85,7 @@ public class CourseController {
 	}
 
 	private Course createCourseFromInput() {
-		String name = InputValidator.getValidName(scanner, "Enter course name: ");
+		String name = InputValidator.getValidCourseName(scanner, "Enter course name: ", courseService);
 		int semesters = InputValidator.getValidIntegerInRange(scanner, "Enter number of semesters: ",
 				"Number of Semesters", 1, 10);
 		scanner.nextLine();
@@ -429,7 +429,18 @@ public class CourseController {
 	}
 
 	public void searchCourse() {
-		try {
+		try {			
+			List<Course> courses = courseService.getAllCourses();
+	        System.out.println("\n📚 Available Courses:");
+	        System.out.println("+------------+---------------------------+");
+	        System.out.printf("| %-10s | %-25s |\n", "Course ID", "Course Name");
+	        System.out.println("+------------+---------------------------+");
+
+	        for (Course course : courses) {
+	            System.out.printf("| %-10d | %-25s |\n", course.getCourse_id(), course.getCourse_name());
+	        }
+
+	        System.out.println("+------------+---------------------------+");
 			System.out.println("\n🔍 Search course by:");
 			System.out.println("+----------------+");
 			System.out.println("| 1. Course ID   |");

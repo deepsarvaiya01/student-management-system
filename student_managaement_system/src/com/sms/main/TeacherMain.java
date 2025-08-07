@@ -16,8 +16,8 @@ public class TeacherMain {
 			System.out.println("\n╔════════════════════════════════════════════════════════╗");
 			System.out.println("║           TEACHER MANAGEMENT MENU                      ║");
 			System.out.println("╠════════════════════════════════════════════════════════╣");
-			System.out.println("║ 1. Add Teacher                                         ║");
-			System.out.println("║ 2. View All Teachers                                   ║");
+			System.out.println("║ 1. View All Teachers                                   ║");
+			System.out.println("║ 2. Add Teacher                                         ║");
 			System.out.println("║ 3. Delete Teacher                                      ║");
 			System.out.println("║ 4. Assign Subject to Teacher                           ║");
 			System.out.println("║ 5. Remove Subject from Teacher                         ║");
@@ -30,8 +30,8 @@ public class TeacherMain {
 			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-8): ", 8);
 
 			switch (choice) {
-			case 1 -> controller.addTeacher();
-			case 2 -> controller.viewTeachers();
+			case 1 -> controller.viewTeachers();
+			case 2 -> controller.addTeacher();
 			case 3 -> controller.deleteTeacher();
 			case 4 -> controller.assignSubject();
 			case 5 -> controller.removeSubject();

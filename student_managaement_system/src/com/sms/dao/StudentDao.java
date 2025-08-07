@@ -83,7 +83,7 @@ public class StudentDao {
 
 	public List<Course> getAllCourses() {
 		List<Course> courses = new ArrayList<>();
-		String sql = "SELECT * FROM courses";
+		String sql = "SELECT * FROM courses WHERE is_active = TRUE";
 		try (Statement stmt = connection.createStatement(); ResultSet result = stmt.executeQuery(sql)) {
 			while (result.next()) {
 				Course course = new Course();

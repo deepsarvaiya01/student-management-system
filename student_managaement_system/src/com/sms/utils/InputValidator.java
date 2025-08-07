@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.sms.exception.AppException;
 import com.sms.model.Gender;
+import com.sms.service.CourseService;
 import com.sms.service.StudentService;
 
 public class InputValidator {
@@ -139,6 +140,37 @@ public class InputValidator {
 				System.out.println(e.getMessage());
 			}
 		}
+	}
+	
+	public static String getValidCourseName(Scanner scanner, String prompt, CourseService courseService) {
+	    while (true) {
+	        try {
+	            System.out.print(prompt);
+	            String name = scanner.nextLine().trim();
+
+	            if (name.isEmpty()) {
+	                throw new AppException("❌ Course name cannot be empty!\nPlease try again:");
+	            }
+
+	            if (name.length() > 50) {
+	                throw new AppException("❌ Course name is too long! Maximum 50 characters allowed.\nPlease try again:");
+	            }
+
+	            if (!name.matches("[a-zA-Z ]+")) {
+	                throw new AppException("❌ Invalid course name! Only letters and spaces are allowed.\nPlease try again:");
+	            }
+
+	            if (courseService.getCourseByName(name) != null) {
+	                throw new AppException("❌ Course name already exists. Please enter a different name.");
+	            }
+
+	            return name;
+	        } catch (AppException e) {
+	            System.out.println(e.getMessage());
+	        } catch (Exception e) {
+	            System.err.println("❗ Unexpected error checking course name: " + e.getMessage());
+	        }
+	    }
 	}
 
 	// Get valid city input
