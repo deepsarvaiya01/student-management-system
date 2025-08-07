@@ -166,6 +166,7 @@ public class FeeController {
 	    BigDecimal totalExpected = courseFee.multiply(BigDecimal.valueOf(studentCount));
 	    BigDecimal totalPaid = BigDecimal.ZERO;
 	    BigDecimal totalPending = BigDecimal.ZERO;
+	    
 
 	    for (Fee fee : fees) {
 	        totalPaid = totalPaid.add(fee.getPaidAmount());
@@ -188,8 +189,8 @@ public class FeeController {
 	    // 📄 Detailed Fee Table
 	    System.out.println("\n📄 Detailed Fee Records:");
 	    System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+");
-	    System.out.printf("| %-6s | %-20s | %-15s | %-15s | %-15s | %-15s | %-15s |%n",
-	            "Fee ID", "Student Name", "Course", "Total Fee", "Paid Amount", "Pending Amount", "Last Payment");
+	    System.out.printf("| %-6s | %-20s | %-15s | %-15s | %-15s | %-15s |%n",
+	            "Fee ID", "Student Name", "Course", "Total Fee", "Paid Amount", "Pending Amount");
 	    System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+");
 
 	    for (Fee fee : fees) {
