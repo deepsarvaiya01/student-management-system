@@ -84,7 +84,7 @@ public class StudentService {
 		if (student == null) {
 			return "No such student exists.";
 		}
-		return "SUCCESS"; // Special return value to indicate success
+		return "SUCCESS";
 	}
 
 	public boolean isFeeClearedForStudent(int studentId) {
@@ -172,7 +172,7 @@ public class StudentService {
 	}
 
 	public boolean isEmailExists(String email) {
-		List<Student> students = studentDao.readAllStudents(); // or your equivalent fetch method
+		List<Student> students = studentDao.readAllStudents();
 		for (Student s : students) {
 			if (s.getEmail().equalsIgnoreCase(email)) {
 				return true;

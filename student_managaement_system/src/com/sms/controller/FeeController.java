@@ -175,12 +175,12 @@ public class FeeController {
 	    System.out.println("╔════════════════════════════════════════════════════════════╗");
 	    System.out.println("║                     COURSE FEE SUMMARY                     ║");
 	    System.out.println("╠════════════════════════════════════════════════════════════╣");
-	    System.out.printf ("║ Course Name         : %-35s ║%n", course.getCourse_name());
-	    System.out.printf ("║ Students Enrolled   : %-35d ║%n", studentCount);
-	    System.out.printf ("║ Fee Per Student     : ₹%-34.2f ║%n", courseFee);
-	    System.out.printf ("║ Total Expected Fees : ₹%-34.2f ║%n", totalExpected);
-	    System.out.printf ("║ Total Paid Amount   : ₹%-34.2f ║%n", totalPaid);
-	    System.out.printf ("║ Total Pending Amount: ₹%-34.2f ║%n", totalPending);
+	    System.out.printf ("║ Course Name         : %-36s ║%n", course.getCourse_name());
+	    System.out.printf ("║ Students Enrolled   : %-36d ║%n", studentCount);
+	    System.out.printf ("║ Fee Per Student     : ₹%-35.2f ║%n", courseFee);
+	    System.out.printf ("║ Total Expected Fees : ₹%-35.2f ║%n", totalExpected);
+	    System.out.printf ("║ Total Paid Amount   : ₹%-35.2f ║%n", totalPaid);
+	    System.out.printf ("║ Total Pending Amount: ₹%-35.2f ║%n", totalPending);
 	    System.out.println("╚════════════════════════════════════════════════════════════╝");
 
 	    System.out.println("\nDetailed Fee Records:");
@@ -233,10 +233,10 @@ public class FeeController {
 	        System.out.println("\n╔════════════════════════════════════════════════════════════════════╗");
 	        System.out.println("║                    COURSE FEE UPDATE CONFIRMATION                  ║");
 	        System.out.println("╠════════════════════════════════════════════════════════════════════╣");
-	        System.out.printf ("║ %-24s : %-42d ║%n", "Course ID", course.getCourse_id());
-	        System.out.printf ("║ %-24s : %-42s ║%n", "Course Name", course.getCourse_name());
-	        System.out.printf ("║ %-24s : ₹%-41.2f ║%n", "Previous Total Fee", previousFee);
-	        System.out.printf ("║ %-24s : ₹%-41.2f ║%n", "Updated Total Fee", newFee);
+	        System.out.printf ("║ %-24s : %-39d ║%n", "Course ID", course.getCourse_id());
+	        System.out.printf ("║ %-24s : %-39s ║%n", "Course Name", course.getCourse_name());
+	        System.out.printf ("║ %-24s : ₹%-38.2f ║%n", "Previous Total Fee", previousFee);
+	        System.out.printf ("║ %-24s : ₹%-38.2f ║%n", "Updated Total Fee", newFee);
 	        System.out.println("╚════════════════════════════════════════════════════════════════════╝");
 	    } else {
 	        System.out.println("Failed to update course fee. Please try again.");
@@ -245,7 +245,7 @@ public class FeeController {
 	
 	public void viewTotalEarning() {
 		BigDecimal totalEarning = feeService.getTotalEarning();
-		printBox("💼Total Earning: ", totalEarning);
+		printBox("Total Earning: ", totalEarning);
 	}
 
 }

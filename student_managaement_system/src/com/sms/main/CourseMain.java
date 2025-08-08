@@ -27,7 +27,7 @@ public class CourseMain {
             System.out.println("║ 0. Back                                   ║");
             System.out.println("╚═══════════════════════════════════════════╝");
             
-            choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-7): ", 7);
+            choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-7): ", 7);
 
             switch (choice) {
                 case 1 -> controller.viewAllCourses();

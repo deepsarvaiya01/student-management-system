@@ -15,7 +15,6 @@ public class DashboardService {
 		List<DashboardModel> list = dashboardDao.getGeneralDashboardData();
 		printTable(list, "GENERAL STUDENT DASHBOARD");
 		
-		// Display the course-wise student count chart
 		displayCourseWiseStudentChart();
 	}
 
@@ -23,7 +22,6 @@ public class DashboardService {
 		List<DashboardModel> list = dashboardDao.getCourseWiseDashboardData();
 		printTable(list, "COURSE - WISE DASHBOARD");
 		
-		// Display the course-wise subject count chart
 		displayCourseWiseSubjectChart();
 	}
 
@@ -44,19 +42,16 @@ public class DashboardService {
 		displayTeacherWiseSubjectChart();
 	}
 
-	/**
-	 * Display a horizontal bar chart showing number of students per course
-	 */
 	private void displayCourseWiseStudentChart() {
 		List<DashboardModel> courseCounts = dashboardDao.getCourseWiseStudentCounts();
 		
 		if (courseCounts.isEmpty()) {
-			System.out.println("\n⚠ No course data available for chart visualization.");
+			System.out.println("\nNo course data available for chart visualization.");
 			return;
 		}
 
 		System.out.println("\n" + "═".repeat(80));
-		System.out.println("📊 CHART: Number of Students per Course");
+		System.out.println("CHART: Number of Students per Course");
 		System.out.println("═".repeat(80));
 		
 		// Find the maximum student count for scaling
@@ -133,7 +128,7 @@ public class DashboardService {
 		
 		// Display color legend
 		System.out.println("\n" + "─".repeat(80));
-		System.out.println("🎨 COLOR LEGEND:");
+		System.out.println("COLOR LEGEND:");
 		for (Integer studentCount : uniqueStudentCounts) {
 			String color = studentCountToColor.get(studentCount);
 			System.out.printf("%s██%s = %d student%s\n", 
@@ -146,29 +141,26 @@ public class DashboardService {
 		// Chart footer with summary
 		System.out.println("\n" + "─".repeat(80));
 		int totalStudents = courseCounts.stream().mapToInt(DashboardModel::getTotalStudents).sum();
-		System.out.println("💡 Chart shows course popularity based on student enrollment");
-		System.out.println("📈 Total students across all courses: " + totalStudents);
+		System.out.println("Chart shows course popularity based on student enrollment");
+		System.out.println("Total students across all courses: " + totalStudents);
 		if (!courseCounts.isEmpty()) {
 			DashboardModel mostPopular = courseCounts.get(0);
-			System.out.println("🎯 Most popular course: " + mostPopular.getCourse() + 
+			System.out.println("Most popular course: " + mostPopular.getCourse() + 
 				" (" + mostPopular.getTotalStudents() + " students)");
 		}
 		System.out.println("═".repeat(80));
 	}
 
-	/**
-	 * Display a horizontal bar chart showing number of subjects per course
-	 */
 	private void displayCourseWiseSubjectChart() {
 		List<DashboardModel> courseSubjectCounts = dashboardDao.getCourseWiseSubjectCounts();
 		
 		if (courseSubjectCounts.isEmpty()) {
-			System.out.println("\n⚠ No course-subject data available for chart visualization.");
+			System.out.println("\nNo course-subject data available for chart visualization.");
 			return;
 		}
 
 		System.out.println("\n" + "═".repeat(80));
-		System.out.println("📊 CHART: Number of Subjects per Course");
+		System.out.println("CHART: Number of Subjects per Course");
 		System.out.println("═".repeat(80));
 		
 		// Find the maximum subject count for scaling
@@ -245,7 +237,7 @@ public class DashboardService {
 		
 		// Display color legend
 		System.out.println("\n" + "─".repeat(80));
-		System.out.println("🎨 COLOR LEGEND:");
+		System.out.println("COLOR LEGEND:");
 		for (Integer subjectCount : uniqueSubjectCounts) {
 			String color = subjectCountToColor.get(subjectCount);
 			System.out.printf("%s██%s = %d subject%s\n", 
@@ -258,11 +250,11 @@ public class DashboardService {
 		// Chart footer with summary
 		System.out.println("\n" + "─".repeat(80));
 		int totalSubjects = courseSubjectCounts.stream().mapToInt(DashboardModel::getTotalSubjects).sum();
-		System.out.println("💡 Chart shows course curriculum load based on subject count");
-		System.out.println("📈 Total subjects across all courses: " + totalSubjects);
+		System.out.println("Chart shows course curriculum load based on subject count");
+		System.out.println("Total subjects across all courses: " + totalSubjects);
 		if (!courseSubjectCounts.isEmpty()) {
 			DashboardModel mostLoaded = courseSubjectCounts.get(0);
-			System.out.println("🎯 Most loaded course: " + mostLoaded.getCourse() + 
+			System.out.println("Most loaded course: " + mostLoaded.getCourse() + 
 				" (" + mostLoaded.getTotalSubjects() + " subjects)");
 		}
 		System.out.println("═".repeat(80));
@@ -275,12 +267,12 @@ public class DashboardService {
 		List<DashboardModel> teacherSubjectCounts = dashboardDao.getTeacherWiseSubjectCounts();
 		
 		if (teacherSubjectCounts.isEmpty()) {
-			System.out.println("\n⚠ No teacher-subject data available for chart visualization.");
+			System.out.println("\nNo teacher-subject data available for chart visualization.");
 			return;
 		}
 
 		System.out.println("\n" + "═".repeat(80));
-		System.out.println("📊 CHART: Number of Subjects per Teacher");
+		System.out.println("CHART: Number of Subjects per Teacher");
 		System.out.println("═".repeat(80));
 		
 		// Find the maximum subject count for scaling
@@ -357,7 +349,7 @@ public class DashboardService {
 		
 		// Display color legend
 		System.out.println("\n" + "─".repeat(80));
-		System.out.println("🎨 COLOR LEGEND:");
+		System.out.println("COLOR LEGEND:");
 		for (Integer subjectCount : uniqueSubjectCounts) {
 			String color = subjectCountToColor.get(subjectCount);
 			System.out.printf("%s██%s = %d subject%s\n", 
@@ -370,29 +362,26 @@ public class DashboardService {
 		// Chart footer with summary
 		System.out.println("\n" + "─".repeat(80));
 		int totalSubjects = teacherSubjectCounts.stream().mapToInt(DashboardModel::getTotalSubjects).sum();
-		System.out.println("💡 Chart shows teacher workload distribution based on subject count");
-		System.out.println("📈 Total subjects across all teachers: " + totalSubjects);
+		System.out.println("Chart shows teacher workload distribution based on subject count");
+		System.out.println("Total subjects across all teachers: " + totalSubjects);
 		if (!teacherSubjectCounts.isEmpty()) {
 			DashboardModel mostLoaded = teacherSubjectCounts.get(0);
-			System.out.println("🎯 Most loaded teacher: " + mostLoaded.getTeacherName() + 
+			System.out.println("Most loaded teacher: " + mostLoaded.getTeacherName() + 
 				" (" + mostLoaded.getTotalSubjects() + " subjects)");
 		}
 		System.out.println("═".repeat(80));
 	}
 
-	/**
-	 * Display a horizontal bar chart showing number of students per subject
-	 */
 	private void displaySubjectWiseStudentChart() {
 		List<DashboardModel> subjectStudentCounts = dashboardDao.getSubjectWiseStudentCounts();
 		
 		if (subjectStudentCounts.isEmpty()) {
-			System.out.println("\n⚠ No subject-student data available for chart visualization.");
+			System.out.println("\nNo subject-student data available for chart visualization.");
 			return;
 		}
 
 		System.out.println("\n" + "═".repeat(80));
-		System.out.println("📊 CHART: Number of Students per Subject");
+		System.out.println("CHART: Number of Students per Subject");
 		System.out.println("═".repeat(80));
 		
 		// Find the maximum student count for scaling
@@ -469,7 +458,7 @@ public class DashboardService {
 		
 		// Display color legend
 		System.out.println("\n" + "─".repeat(80));
-		System.out.println("🎨 COLOR LEGEND:");
+		System.out.println("COLOR LEGEND:");
 		for (Integer studentCount : uniqueStudentCounts) {
 			String color = studentCountToColor.get(studentCount);
 			System.out.printf("%s██%s = %d student%s\n", 
@@ -482,11 +471,11 @@ public class DashboardService {
 		// Chart footer with summary
 		System.out.println("\n" + "─".repeat(80));
 		int totalStudents = subjectStudentCounts.stream().mapToInt(DashboardModel::getTotalStudents).sum();
-		System.out.println("💡 Chart shows subject popularity based on student enrollment");
-		System.out.println("📈 Total students across all subjects: " + totalStudents);
+		System.out.println("Chart shows subject popularity based on student enrollment");
+		System.out.println("Total students across all subjects: " + totalStudents);
 		if (!subjectStudentCounts.isEmpty()) {
 			DashboardModel mostPopular = subjectStudentCounts.get(0);
-			System.out.println("🎯 Most popular subject: " + mostPopular.getSubjects() + 
+			System.out.println("Most popular subject: " + mostPopular.getSubjects() + 
 				" (" + mostPopular.getTotalStudents() + " students)");
 		}
 		System.out.println("═".repeat(80));
@@ -506,7 +495,7 @@ public class DashboardService {
 		System.out.println(bottomLine);
 
 		if (dashboard.isEmpty()) {
-			System.out.println("⚠ No data found for: " + title);
+			System.out.println("No data found for: " + title);
 			return;
 		}
 
@@ -558,19 +547,16 @@ public class DashboardService {
 			}
 		} else {
 			// Fallback case for unexpected title
-			System.out.println("⚠ Error: Invalid dashboard title: " + title);
+			System.out.println("Error: Invalid dashboard title: " + title);
 			return;
 		}
 
 		if (!isGeneral) {
 			System.out.println(headerFooterLine);
 		}
-		System.out.println("\n✅ " + title + " displayed successfully!");
+		System.out.println("\n" + title + " displayed successfully!");
 	}
 
-	/**
-	 * Enhanced general dashboard display with full information
-	 */
 	private void printGeneralDashboardEnhanced(List<DashboardModel> dashboard) {
 		System.out.println("+------+------+-----------------+-------------+-------------+---------------+--------------------------+---------------------------+");
 		System.out.printf("| %-4s | %-4s | %-15s | %-11s | %-11s | %-13s | %-24s | %-24s |%n", "SrNo", "ID", "Name", "Courses", "Paid", "Pending", "Subjects", "Teachers");

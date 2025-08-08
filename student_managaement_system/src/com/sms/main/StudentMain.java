@@ -27,7 +27,7 @@ public class StudentMain {
             System.out.println("║ 0. Back                                                  ║");
             System.out.println("╚══════════════════════════════════════════════════════════╝");
             
-            choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-9): ", 9);
+            choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-9): ", 9);
             
             switch (choice) {
                 case 1 -> controller.viewAllStudents();

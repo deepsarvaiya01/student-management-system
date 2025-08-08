@@ -16,7 +16,7 @@ public class UPIPayment implements PaymentStrategy {
 			System.out.println("Processing UPI payment for Student ID " + studentId + " of ₹" + amount + "...");
 			return true;
 		} catch (Exception e) {
-			System.out.println("❌ UPI payment failed: " + e.getMessage());
+			System.out.println("UPI payment failed: " + e.getMessage());
 			return false;
 		}
 	}

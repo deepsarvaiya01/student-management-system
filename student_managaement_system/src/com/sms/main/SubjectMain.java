@@ -21,7 +21,7 @@ public class SubjectMain {
 			System.out.println("║ 0. Back                                   ║");
 			System.out.println("╚═══════════════════════════════════════════╝");
 
-			input = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-3): ", 3);
+			input = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-3): ", 3);
 
 			switch (input) {
 			case 1 -> subjectController.addSubject();

@@ -22,11 +22,11 @@ public class FeeMain {
             System.out.println("║ 3. View Fees By Student                  ║");
             System.out.println("║ 4. View Fees By Course                   ║");
             System.out.println("║ 5. Update Fees Of A Course               ║");
-            System.out.println("║ 6. Total Earning                         ║");
+            System.out.println("║ 6. Total Earning Including Pending Fees  ║");
             System.out.println("║ 0. Back                                  ║");
             System.out.println("╚══════════════════════════════════════════╝");
             
-            choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-6): ", 6);
+            choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-6): ", 6);
 
             switch (choice) {
                 case 1 -> controller.viewTotalPaidFees();

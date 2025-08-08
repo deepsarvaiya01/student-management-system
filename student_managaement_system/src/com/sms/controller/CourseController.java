@@ -72,7 +72,7 @@ public class CourseController {
 			// Display comprehensive course details
 			displayCourseDetails(courseId);
 			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
-			System.out.println("║" + " ".repeat(30) + "COURSE CREATED SUCCESSFULLY" + " ".repeat(20) + "║");
+			System.out.println("║" + " ".repeat(26) + "COURSE CREATED SUCCESSFULLY" + " ".repeat(25) + "║");
 			System.out.println("╚" + "═".repeat(78) + "╝");
 
 		} catch (Exception e) {
@@ -454,6 +454,7 @@ public class CourseController {
 				int id = InputValidator.getValidInteger(scanner, "Enter Course ID: ", "Course ID");
 				course = courseService.getCourseById(id);
 			} else {
+				scanner.nextLine();
 				String name = InputValidator.getValidName(scanner, "Enter Course Name: ");
 				course = courseService.getCourseByName(name);
 			}
@@ -475,7 +476,6 @@ public class CourseController {
 				return;
 			}
 
-			scanner.nextLine();
 			boolean confirm = InputValidator.getValidConfirmation(scanner,
 					"Are you sure you want to delete course '" + course.getCourse_name() + "'? (y/n): ");
 			if (confirm) {
@@ -524,9 +524,9 @@ public class CourseController {
 
 			List<Subject> subjects = courseService.getSubjectsForCourse(courseId);
 
-			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
-			System.out.println("║" + " ".repeat(25) + "COURSE DETAILS" + " ".repeat(35) + "║");
-			System.out.println("╚" + "═".repeat(78) + "╝");
+			System.out.println("\n" + "╔" + "═".repeat(76) + "╗");
+			System.out.println("║" + " ".repeat(30) + "COURSE DETAILS" + " ".repeat(32) + "║");
+			System.out.println("╚" + "═".repeat(76) + "╝");
 
 			// Course information card
 			System.out.println("\nCOURSE INFORMATION");
@@ -537,7 +537,7 @@ public class CourseController {
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
 			System.out.printf("│ %-23s │ %-48d │%n", "Semesters", course.getNo_of_semester());
 			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
-			System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee",
+			System.out.printf("│ %-23s │ ₹%-47s │%n", "Total Fee",
 					course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
 			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
 

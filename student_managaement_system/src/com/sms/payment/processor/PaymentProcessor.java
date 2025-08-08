@@ -23,7 +23,7 @@ public class PaymentProcessor {
 			strategy = new UPIPayment();
 			break;
 		default:
-			System.out.println("❌ Invalid payment method choice.");
+			System.out.println("Invalid payment method choice.");
 			return false;
 		}
 
