@@ -42,12 +42,6 @@ public class CourseService {
 		return courseDAO.getCourseByName(name);
 	}
 
-	/**
-	 * Get subjects that are NOT assigned to the specified course
-	 * 
-	 * @param courseId The course ID to check against
-	 * @return List of subjects not assigned to the course
-	 */
 	public List<Subject> getUnassignedSubjectsForCourse(int courseId) {
 		return courseDAO.getUnassignedSubjectsForCourse(courseId);
 	}

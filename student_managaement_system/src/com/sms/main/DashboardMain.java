@@ -20,7 +20,7 @@ public class DashboardMain {
 			System.out.println("║ 0. Back                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 
-			choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-4): ", 4);
+			choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-4): ", 4);
 
 			switch (choice) {
 			case 1 -> controller.showGeneralDashboard();

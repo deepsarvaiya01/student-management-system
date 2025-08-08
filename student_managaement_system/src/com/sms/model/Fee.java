@@ -125,7 +125,6 @@ public class Fee {
 				"+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
 	}
 
-	// Tabular Display toString
 	@Override
 	public String toString() {
 		String lastPaymentStr = (lastPaymentDate != null) ? lastPaymentDate.toString() : "N/A";

@@ -27,7 +27,7 @@ public class Main {
 			System.out.println("║ 0. Exit                                  ║");
 			System.out.println("╚══════════════════════════════════════════╝");
 
-			choice = InputValidator.getValidMenuChoice(scanner, " Enter your choice (0-5): ", 5);
+			choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-5): ", 5);
 
 			switch (choice) {
 				case 1 -> {

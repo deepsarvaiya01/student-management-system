@@ -26,7 +26,7 @@ public class FeeMain {
             System.out.println("║ 0. Back                                  ║");
             System.out.println("╚══════════════════════════════════════════╝");
             
-            choice = InputValidator.getValidMenuChoice(scanner, "👉 Enter your choice (0-6): ", 6);
+            choice = InputValidator.getValidMenuChoice(scanner, "Enter your choice (0-6): ", 6);
 
             switch (choice) {
                 case 1 -> controller.viewTotalPaidFees();

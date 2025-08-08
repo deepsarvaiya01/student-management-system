@@ -17,13 +17,13 @@ public class InputValidator {
 				System.out.print(prompt);
 				if (!scanner.hasNextInt()) {
 					String invalidInput = scanner.next();
-					throw new AppException("❌ Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
+					throw new AppException("Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
 							+ "'\nPlease try again:");
 				}
 				int value = scanner.nextInt();
 				if (value <= 0) {
 					throw new AppException(
-							"❌ Invalid " + fieldName + "! Must be a positive number.\nPlease try again:");
+							"Invalid " + fieldName + "! Must be a positive number.\nPlease try again:");
 				}
 				return value;
 			} catch (AppException e) {
@@ -46,12 +46,12 @@ public class InputValidator {
 				System.out.print(prompt);
 				if (!scanner.hasNextInt()) {
 					String invalidInput = scanner.next();
-					throw new AppException("❌ Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
+					throw new AppException("Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
 							+ "'\nPlease try again:");
 				}
 				int value = scanner.nextInt();
 				if (value < 0) {
-					throw new AppException("❌ Invalid " + fieldName + "! Cannot be negative.\nPlease try again:");
+					throw new AppException("Invalid " + fieldName + "! Cannot be negative.\nPlease try again:");
 				}
 				return value; // 0 is allowed now
 			} catch (AppException e) {
@@ -67,7 +67,7 @@ public class InputValidator {
 				int value = (min == 0) ? getValidIntegerAllowZero(scanner, prompt, fieldName)
 						: getValidInteger(scanner, prompt, fieldName);
 				if (value < min || value > max) {
-					throw new AppException("❌ Invalid " + fieldName + "! Must be between " + min + " and " + max
+					throw new AppException("Invalid " + fieldName + "! Must be between " + min + " and " + max
 							+ ".\nPlease try again:");
 				}
 				return value;
@@ -93,15 +93,15 @@ public class InputValidator {
 				String name = scanner.nextLine().trim();
 
 				if (name.isEmpty()) {
-					throw new AppException("❌ Name cannot be empty!\nPlease try again:");
+					throw new AppException("Name cannot be empty!\nPlease try again:");
 				}
 
 				if (name.length() > 50) {
-					throw new AppException("❌ Name is too long! Maximum 50 characters allowed.\nPlease try again:");
+					throw new AppException("Name is too long! Maximum 50 characters allowed.\nPlease try again:");
 				}
 
 				if (!name.matches("[a-zA-Z ]+")) {
-					throw new AppException("❌ Invalid name! Only letters and spaces are allowed.\nPlease try again:");
+					throw new AppException("Invalid name! Only letters and spaces are allowed.\nPlease try again:");
 				}
 
 				return name;
@@ -119,20 +119,20 @@ public class InputValidator {
 				String email = scanner.nextLine().trim();
 
 				if (email.isEmpty()) {
-					throw new AppException("❌ Email cannot be empty!\nPlease try again:");
+					throw new AppException("Email cannot be empty!\nPlease try again:");
 				}
 
 				if (email.length() > 100) {
-					throw new AppException("❌ Email is too long! Maximum 100 characters allowed.\nPlease try again:");
+					throw new AppException("Email is too long! Maximum 100 characters allowed.\nPlease try again:");
 				}
 
 				if (!email.matches("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")) {
 					throw new AppException(
-							"❌ Invalid email format! Please enter a valid email (e.g., user@example.com)\nPlease try again:");
+							"Invalid email format! Please enter a valid email (e.g., user@example.com)\nPlease try again:");
 				}
 
 				if (studentService.isEmailExists(email)) {
-					throw new AppException("❌ Email already exists. Please enter a different email");
+					throw new AppException("Email already exists. Please enter a different email");
 				}
 
 				return email;
@@ -149,19 +149,19 @@ public class InputValidator {
 	            String name = scanner.nextLine().trim();
 
 	            if (name.isEmpty()) {
-	                throw new AppException("❌ Course name cannot be empty!\nPlease try again:");
+	                throw new AppException("Course name cannot be empty!\nPlease try again:");
 	            }
 
 	            if (name.length() > 50) {
-	                throw new AppException("❌ Course name is too long! Maximum 50 characters allowed.\nPlease try again:");
+	                throw new AppException("Course name is too long! Maximum 50 characters allowed.\nPlease try again:");
 	            }
 
 	            if (!name.matches("[a-zA-Z ]+")) {
-	                throw new AppException("❌ Invalid course name! Only letters and spaces are allowed.\nPlease try again:");
+	                throw new AppException("Invalid course name! Only letters and spaces are allowed.\nPlease try again:");
 	            }
 
 	            if (courseService.getCourseByName(name) != null) {
-	                throw new AppException("❌ Course name already exists. Please enter a different name.");
+	                throw new AppException("Course name already exists. Please enter a different name.");
 	            }
 
 	            return name;
@@ -181,17 +181,17 @@ public class InputValidator {
 				String city = scanner.nextLine().trim();
 
 				if (city.isEmpty()) {
-					throw new AppException("❌ City cannot be empty!\nPlease try again:");
+					throw new AppException("City cannot be empty!\nPlease try again:");
 				}
 
 				if (city.length() > 50) {
 					throw new AppException(
-							"❌ City name is too long! Maximum 50 characters allowed.\nPlease try again:");
+							"City name is too long! Maximum 50 characters allowed.\nPlease try again:");
 				}
 
 				if (!city.matches("[a-zA-Z ]+")) {
 					throw new AppException(
-							"❌ Invalid city name! Only letters and spaces are allowed.\nPlease try again:");
+							"Invalid city name! Only letters and spaces are allowed.\nPlease try again:");
 				}
 
 				return city;
@@ -208,17 +208,17 @@ public class InputValidator {
 			mobile = scanner.nextLine().trim();
 
 			if (mobile.isEmpty()) {
-				System.out.println("❌ Mobile number cannot be empty!");
+				System.out.println("Mobile number cannot be empty!");
 				continue;
 			}
 
 			if (!mobile.matches("^[6-9]\\d{9}$")) {
-				System.out.println("❌ Invalid mobile number! It should be 10 digits and start with 6-9.");
+				System.out.println("Invalid mobile number! It should be 10 digits and start with 6-9.");
 				continue;
 			}
 
 			if (studentService.isNameAndMobileExists(name, mobile)) {
-				System.out.println("❌ A student with the same name and mobile number already exists.");
+				System.out.println("A student with the same name and mobile number already exists.");
 				continue;
 			}
 
@@ -234,12 +234,12 @@ public class InputValidator {
 			mobile = scanner.nextLine().trim();
 
 			if (mobile.isEmpty()) {
-				System.out.println("❌ Mobile number cannot be empty!");
+				System.out.println("Mobile number cannot be empty!");
 				continue;
 			}
 
 			if (!mobile.matches("^[6-9]\\d{9}$")) {
-				System.out.println("❌ Invalid mobile number! It should be 10 digits and start with 6-9.");
+				System.out.println("Invalid mobile number! It should be 10 digits and start with 6-9.");
 				continue;
 			}
 
@@ -260,7 +260,7 @@ public class InputValidator {
 			String input = scanner.nextLine().trim().toUpperCase();
 
 			if (input.length() != 1 || !input.matches("[MFO]")) {
-				System.out.println("❌ Invalid gender. Please enter only M, F, or O.");
+				System.out.println("Invalid gender. Please enter only M, F, or O.");
 				continue;
 			}
 
@@ -268,7 +268,7 @@ public class InputValidator {
 			if (gender != null) {
 				return gender;
 			} else {
-				System.out.println("❌ Invalid gender. Please enter M for Male, F for Female, or O for Other.");
+				System.out.println("Invalid gender. Please enter M for Male, F for Female, or O for Other.");
 			}
 		}
 	}
@@ -280,13 +280,13 @@ public class InputValidator {
 				System.out.print(prompt);
 				if (!scanner.hasNextBigDecimal()) {
 					String invalidInput = scanner.next();
-					throw new AppException("❌ Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
+					throw new AppException("Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
 							+ "'\nPlease try again:");
 				}
 				BigDecimal value = scanner.nextBigDecimal();
 				if (value.compareTo(BigDecimal.ZERO) <= 0) {
 					throw new AppException(
-							"❌ Invalid " + fieldName + "! Must be greater than zero.\nPlease try again:");
+							"Invalid " + fieldName + "! Must be greater than zero.\nPlease try again:");
 				}
 				return value;
 			} catch (AppException e) {
@@ -302,7 +302,7 @@ public class InputValidator {
 				int value = getValidIntegerAllowZero(scanner, prompt, "Menu Choice");
 				if (value > maxChoice) {
 					throw new AppException(
-							"❌ Invalid Menu Choice! Must be between 0 and " + maxChoice + ".\nPlease try again:");
+							"Invalid Menu Choice! Must be between 0 and " + maxChoice + ".\nPlease try again:");
 				}
 				return value;
 			} catch (AppException e) {
@@ -324,7 +324,7 @@ public class InputValidator {
 					return false;
 				} else {
 					throw new AppException(
-							"❌ Invalid input! Please enter 'y' for yes or 'n' for no.\nPlease try again:");
+							"Invalid input! Please enter 'y' for yes or 'n' for no.\nPlease try again:");
 				}
 			} catch (AppException e) {
 				System.out.println(e.getMessage());
@@ -343,7 +343,7 @@ public class InputValidator {
 					return method;
 				} else {
 					throw new AppException(
-							"❌ Invalid payment method! Please choose: card, cash, or upi.\nPlease try again:");
+							"Invalid payment method! Please choose: card, cash, or upi.\nPlease try again:");
 				}
 			} catch (AppException e) {
 				System.out.println(e.getMessage());
