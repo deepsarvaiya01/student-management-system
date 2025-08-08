@@ -21,13 +21,13 @@ public class HelpdeskMain {
             System.out.println("\n╔══════════════════════════════════════════════════════════════════════════════╗");
             System.out.println("║                                   HELPDESK SYSTEM                            ║");
             System.out.println("╠══════════════════════════════════════════════════════════════════════════════╣");
-            System.out.println("║  1. Emergency Contacts                                                       ║");
-            System.out.println("║  2. Raise New Ticket                                                         ║");
-            System.out.println("║  3. View All Tickets                                                         ║");
-            System.out.println("║  4. View Ticket Details                                                      ║");
-            System.out.println("║  5. Update Ticket Status                                                     ║");
-            System.out.println("║  6. Update Ticket Priority                                                   ║");
-            System.out.println("║  7. View Tickets by Status                                                   ║");
+            System.out.println("║ 1. Emergency Contacts                                                        ║");
+            System.out.println("║ 2. Raise New Ticket                                                          ║");
+            System.out.println("║ 3. View All Tickets                                                          ║");
+            System.out.println("║ 4. View Ticket Details                                                       ║");
+            System.out.println("║ 5. Update Ticket Status                                                      ║");
+            System.out.println("║ 6. Update Ticket Priority                                                    ║");
+            System.out.println("║ 7. View Tickets by Status                                                    ║");
             System.out.println("║ 0. Back                                                                      ║");
             System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
 
