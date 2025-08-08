@@ -10,6 +10,13 @@ import com.sms.model.Student;
 import com.sms.model.Subject;
 
 public class HelperUtils {
+	
+	// Student Performance Methods
+	public static String truncate(String text, int maxLength) {
+		if (text == null)
+			return "";
+		return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+	}
 
 	public static void printStudents(List<Student> students) {
 		String line = "+------------+----------------------+---------------------------+------------+";

@@ -3,11 +3,9 @@ package com.sms.test;
 import java.sql.SQLException;
 import java.util.Scanner;
 
-import com.sms.main.AnalysisMain;
 import com.sms.main.CourseMain;
 import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
-import com.sms.main.HelpdeskMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
 import com.sms.utils.InputValidator;
@@ -66,6 +64,7 @@ public class Main {
 				System.out.println("Exiting Student Management System... Thank you!");
 			}
 			default -> System.out.println("❌ Invalid choice! Please enter a number between 0 and 7.");
+
 			}
 		} while (choice != 0);
 
