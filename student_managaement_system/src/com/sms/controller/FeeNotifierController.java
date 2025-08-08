@@ -21,10 +21,10 @@ public class FeeNotifierController {
 		FeeNotifier prefs = service.getPreferences(studentId);
 
 		if (prefs == null) {
-			System.out.println("⚠️ Preferences not found. Creating default preferences...");
+			System.out.println("Preferences not found. Creating default preferences...");
 			boolean created = service.createDefaultPreferences(studentId);
 			if (!created) {
-				System.out.println("❌ Student ID may not exist. Aborting.");
+				System.out.println("Student ID may not exist. Aborting.");
 				return null;
 			}
 			prefs = service.getPreferences(studentId);

@@ -119,8 +119,12 @@ public class Fee {
 		System.out.println(
 				"+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
 	}
+	
+	public static void printFooter() {
+		System.out.println(
+				"+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
+	}
 
-	// Tabular Display toString
 	@Override
 	public String toString() {
 		String lastPaymentStr = (lastPaymentDate != null) ? lastPaymentDate.toString() : "N/A";

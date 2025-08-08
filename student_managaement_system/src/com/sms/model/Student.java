@@ -107,15 +107,23 @@ public class Student {
 	}
 
 	public static void printHeader() {
-		System.out.printf("\n%-5s %-20s %-5s %-10s %-25s %-15s %-15s %-10s\n", "ID", "Name", "Age", "GR No", "Email",
-				"City", "Mobile No", "Gender");
 		System.out.println(
-				"---------------------------------------------------------------------------------------------------");
+				"+-----+----------------------+-----+------------+---------------------------+-----------------+-----------------+----------+");
+		System.out.printf("| %-3s | %-20s | %-3s | %-10s | %-25s | %-15s | %-15s | %-8s |\n", "ID", "Name", "Age",
+				"GR No", "Email", "City", "Mobile No", "Gender");
+		System.out.println(
+				"+-----+----------------------+-----+------------+---------------------------+-----------------+-----------------+----------+");
+	}
+	
+	public static void printFooter() {
+		System.out.println(
+				"+-----+----------------------+-----+------------+---------------------------+-----------------+-----------------+----------+");
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%-5d %-20s %-5d %-10d %-25s %-15s %-15s %-10s", student_id, name, age, gr_number, email,
-				city, mobile_no, gender != null ? gender.getDisplayName() : "N/A");
+		return String.format("| %-3d | %-20s | %-3d | %-10d | %-25s | %-15s | %-15s | %-8s |", student_id, name, age,
+				gr_number, email, city, mobile_no, gender != null ? gender.getDisplayName() : "N/A");
 	}
+
 }

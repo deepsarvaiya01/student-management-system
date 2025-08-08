@@ -18,7 +18,7 @@ public class FeeAlert {
 
     public void notifyAll(int studentId, BigDecimal amountPaid) {
         System.out.println("\n╔══════════════════════════════════════════════════════╗");
-        System.out.println("║             🔔 Sending Payment Notifications         ║");
+        System.out.println("║              Sending Payment Notifications           ║");
         System.out.println("╠══════════════════════════════════════════════════════╣");
 
         for (IFeeNotifier notifier : notifiers) {

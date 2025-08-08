@@ -83,13 +83,13 @@ public class FeeService {
 		List<Fee> fees = feeDao.getFeesByCourse(courseId);
 		int studentCount = fees.size();
 
-		BigDecimal courseFee = course.getTotal_fee(); // Assuming getTotal_fee() exists
+		BigDecimal courseFee = course.getTotal_fee();
 		BigDecimal totalExpectedFees = courseFee.multiply(BigDecimal.valueOf(studentCount));
 
 		StringBuilder summary = new StringBuilder();
-		summary.append("\n📘 Course: ").append(course.getCourse_name());
-		summary.append("\n👥 Students Enrolled: ").append(studentCount);
-		summary.append(String.format("\n💰 Total Expected Fees: ₹%.2f\n", totalExpectedFees));
+		summary.append("\nCourse: ").append(course.getCourse_name());
+		summary.append("\nStudents Enrolled: ").append(studentCount);
+		summary.append(String.format("\nTotal Expected Fees: ₹%.2f\n", totalExpectedFees));
 
 		return summary.toString();
 	}

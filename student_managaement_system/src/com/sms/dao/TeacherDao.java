@@ -186,7 +186,7 @@ public class TeacherDao {
 			// Step 2: Remove all subject assignments
 			try (PreparedStatement ps2 = connection.prepareStatement(deleteSubjectsSql)) {
 				ps2.setInt(1, id);
-				ps2.executeUpdate(); // No need to check count, just delete if any
+				ps2.executeUpdate();
 			}
 
 			connection.commit();
@@ -202,18 +202,13 @@ public class TeacherDao {
 			return false;
 		} finally {
 			try {
-				connection.setAutoCommit(true); // Reset to default
+				connection.setAutoCommit(true);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	/**
-	 * Get teacher assigned to a specific subject
-	 * @param subjectId The subject ID
-	 * @return Teacher object or null if no teacher is assigned
-	 */
+	
 	public Teacher getTeacherBySubjectId(int subjectId) {
 		String sql = "SELECT t.teacher_id, t.name, t.qualification, t.experience " +
 					"FROM teachers t " +

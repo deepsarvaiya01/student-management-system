@@ -89,11 +89,6 @@ public class TeacherService {
 		return dao.restoreTeacher(id);
 	}
 	
-	/**
-	 * Get teacher assigned to a specific subject
-	 * @param subjectId The subject ID
-	 * @return Teacher object or null if no teacher is assigned
-	 */
 	public Teacher getTeacherBySubjectId(int subjectId) {
 		return dao.getTeacherBySubjectId(subjectId);
 	}

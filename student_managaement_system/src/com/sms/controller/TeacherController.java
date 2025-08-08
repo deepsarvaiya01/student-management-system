@@ -30,21 +30,21 @@ public class TeacherController {
 			try {
 				exp = Double.parseDouble(scanner.nextLine().trim());
 				if (exp < 0) {
-					System.out.println("❌ Experience cannot be negative. Please try again:");
+					System.out.println("Experience cannot be negative. Please try again:");
 					continue;
 				}
 				break;
 			} catch (NumberFormatException e) {
-				System.out.println("❌ Invalid Experience! Expected a number.");
+				System.out.println("Invalid Experience! Expected a number.");
 			}
 		}
 
 		Teacher t = new Teacher(name, qualification, exp);
 		if (!teacherService.addTeacher(t)) {
-			System.out.println("❌ Failed to add teacher.");
+			System.out.println("Failed to add teacher.");
 			return;
 		}
-		System.out.println("✅ Teacher added successfully.");
+		System.out.println("Teacher added successfully.");
 		int teacherId = t.getTeacherId();
 
 		Map<Integer, String> availableSubjects = teacherService.getAvailableSubjects(teacherId);
@@ -58,9 +58,9 @@ public class TeacherController {
 				"Subject ID");
 		if (subjectId > 0) {
 			if (teacherService.assignSubject(teacherId, subjectId)) {
-				System.out.println("✅ Subject assigned to the teacher.");
+				System.out.println("Subject assigned to the teacher.");
 			} else {
-				System.out.println("❌ Assignment failed. Invalid ID or already assigned.");
+				System.out.println("Assignment failed. Invalid ID or already assigned.");
 			}
 		} else {
 			System.out.println("Skipped subject assignment.");
@@ -86,7 +86,6 @@ public class TeacherController {
 			Map<Integer, String> subjects = teacherService.viewAssignedSubjects(t.getTeacherId());
 			String subjectList = subjects.isEmpty() ? "None" : String.join(", ", subjects.values());
 
-			// Trim subjectList if it’s too long
 			if (subjectList.length() > 50) {
 				subjectList = subjectList.substring(0, 47) + "...";
 			}
@@ -138,12 +137,12 @@ public class TeacherController {
 		int subjectId = InputValidator.getValidInteger(scanner, "Enter Subject ID to assign: ", "Subject ID");
 		if (availableSubjects.containsKey(subjectId)) {
 			if (teacherService.assignSubject(teacherId, subjectId)) {
-				System.out.println("✅ Subject assigned.");
+				System.out.println("Subject assigned.");
 			} else {
-				System.out.println("❌ Assignment failed. Already assigned or invalid ID.");
+				System.out.println("Assignment failed. Already assigned or invalid ID.");
 			}
 		} else {
-			System.out.println("❌ Invalid Subject ID. Choose from the list above.");
+			System.out.println("Invalid Subject ID. Choose from the list above.");
 		}
 	}
 
@@ -165,9 +164,9 @@ public class TeacherController {
 		printSubjectsTable("Assigned Subjects:", subjects);
 		int subjectId = InputValidator.getValidInteger(scanner, "Enter Subject ID to remove: ", "Subject ID");
 		if (teacherService.removeSubject(teacherId, subjectId)) {
-			System.out.println("✅ Subject removed.");
+			System.out.println("Subject removed.");
 		} else {
-			System.out.println("❌ Failed to remove subject.");
+			System.out.println("Failed to remove subject.");
 		}
 	}
 
@@ -193,7 +192,7 @@ public class TeacherController {
 			return;
 		}
 
-		System.out.println("\n📘 Teacher Details");
+		System.out.println("\nTeacher Details");
 		System.out.println("+----------+----------------------+----------------------+-------------+");
 		System.out.printf("| %-8s | %-20s | %-20s | %-11s |%n", "ID", "Name", "Qualification", "Experience");
 		System.out.println("+----------+----------------------+----------------------+-------------+");
@@ -207,9 +206,9 @@ public class TeacherController {
 		// Assigned Subjects
 		Map<Integer, String> subjects = teacherService.viewAssignedSubjects(id);
 		if (subjects.isEmpty()) {
-			System.out.println("\n📌 No subjects assigned to this teacher.");
+			System.out.println("\nNo subjects assigned to this teacher.");
 		} else {
-			System.out.println("\n📚 Assigned Subjects:");
+			System.out.println("\nAssigned Subjects:");
 			String format = "| %-12s | %-30s |%n";
 			String line = "+--------------+--------------------------------+";
 			System.out.println(line);
@@ -228,7 +227,7 @@ public class TeacherController {
 			return;
 		}
 
-		System.out.println("\n📋 Inactive Teachers");
+		System.out.println("\nInactive Teachers");
 		String line = "+-----+----------------------+----------------------+------------+";
 		String format = "| %-3s | %-20s | %-20s | %-10s |%n";
 
@@ -251,7 +250,7 @@ public class TeacherController {
 		}
 
 		if (teacherService.restoreTeacher(id)) {
-			System.out.println("✅ Teacher restored successfully.");
+			System.out.println("Teacher restored successfully.");
 		} else {
 			System.out.println("❗ Failed to restore. Invalid ID?");
 		}

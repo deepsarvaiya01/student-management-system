@@ -16,25 +16,25 @@ public class FeeNotifierMain {
 
         FeeNotifier prefs = controller.getOrCreatePreferences(studentId);
         if (prefs == null) {
-            System.out.println("❌ Could not retrieve preferences.");
+            System.out.println("Could not retrieve preferences.");
             return;
         }
 
         while (true) {
             System.out.println("\n╔══════════════════════════════════════════════════╗");
-            System.out.printf("║  NOTIFIER PREFERENCES FOR STUDENT ID %-10s ║\n", studentId);
+            System.out.printf ("║  NOTIFIER PREFERENCES FOR STUDENT ID %-10s  ║\n", studentId);
             System.out.println("╠══════════════════════════════════════════════════╣");
-            System.out.printf("║ 🔔 SMS Notifier       : %-3s                     ║\n", prefs.isSmsEnabled() ? "ON" : "OFF");
-            System.out.printf("║ 📧 Email Notifier     : %-3s                     ║\n", prefs.isEmailEnabled() ? "ON" : "OFF");
-            System.out.printf("║ 💬 WhatsApp Notifier  : %-3s                     ║\n", prefs.isWhatsappEnabled() ? "ON" : "OFF");
+            System.out.printf ("║ SMS Notifier       : %-4s                        ║\n", prefs.isSmsEnabled() ? "ON" : "OFF");
+            System.out.printf ("║ Email Notifier     : %-4s                        ║\n", prefs.isEmailEnabled() ? "ON" : "OFF");
+            System.out.printf ("║ WhatsApp Notifier  : %-4s                        ║\n", prefs.isWhatsappEnabled() ? "ON" : "OFF");
             System.out.println("╚══════════════════════════════════════════════════╝");
 
             System.out.println("\n╔══════════════════════════════════════════════════╗");
-            System.out.println("║        ⚙️  MANAGE PREFERENCES                   ║");
+            System.out.println("║             MANAGE PREFERENCES                   ║");
             System.out.println("╠══════════════════════════════════════════════════╣");
-            System.out.println("║ 1. Toggle SMS Notifier                          ║");
-            System.out.println("║ 2. Toggle Email Notifier                        ║");
-            System.out.println("║ 3. Toggle WhatsApp Notifier                     ║");
+            System.out.println("║ 1. Toggle SMS Notifier                           ║");
+            System.out.println("║ 2. Toggle Email Notifier                         ║");
+            System.out.println("║ 3. Toggle WhatsApp Notifier                      ║");
             System.out.println("║ 0. Back                                          ║");
             System.out.println("╚══════════════════════════════════════════════════╝");
 
@@ -44,11 +44,11 @@ public class FeeNotifierMain {
                 case 2 -> prefs.setEmailEnabled(!prefs.isEmailEnabled());
                 case 3 -> prefs.setWhatsappEnabled(!prefs.isWhatsappEnabled());
                 case 0 -> { return; }
-                default -> System.out.println("❌ Invalid option.");
+                default -> System.out.println("Invalid option.");
             }
 
             boolean updated = controller.updatePreferences(prefs);
-            System.out.println(updated ? "✅ Preferences updated." : "❌ Update failed.");
+            System.out.println(updated ? "Preferences updated." : "Update failed.");
         }
     }
 }

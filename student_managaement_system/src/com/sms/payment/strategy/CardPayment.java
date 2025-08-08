@@ -20,7 +20,7 @@ public class CardPayment implements PaymentStrategy {
 			System.out.println("Processing card payment for Student ID " + studentId + " of ₹" + amount + "...");
 			return true;
 		} catch (Exception e) {
-			System.out.println("❌ Card payment failed: " + e.getMessage());
+			System.out.println("Card payment failed: " + e.getMessage());
 			return false;
 		}
 	}

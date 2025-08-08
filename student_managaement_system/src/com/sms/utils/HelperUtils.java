@@ -10,23 +10,34 @@ import com.sms.model.Student;
 import com.sms.model.Subject;
 
 public class HelperUtils {
+	
+	// Student Performance Methods
+	public static String truncate(String text, int maxLength) {
+		if (text == null)
+			return "";
+		return text.length() > maxLength ? text.substring(0, maxLength - 3) + "..." : text;
+	}
 
 	public static void printStudents(List<Student> students) {
-		String line = "+------------+----------------------+---------------------------+------------+";
-		String format = "| %-10s | %-20s | %-25s | %-10s |%n";
+	    String line = "+------------+----------------------+------------------------------------------+------------+";
+	    String format = "| %-10s | %-20s | %-40s | %-10s |%n";
 
-		System.out.println("\n📚 List of Students:");
-		System.out.println(line);
-		System.out.printf(format, "Student ID", "Name", "Email", "GR Number");
-		System.out.println(line);
+	    System.out.println("\nList of Students:");
+	    System.out.println(line);
+	    System.out.printf(format, "Student ID", "Name", "Email", "GR Number");
+	    System.out.println(line);
 
-		for (Student s : students) {
-			System.out.printf(format, s.getStudent_id(), s.getName(), s.getEmail(), s.getGr_number());
-		}
+	    for (Student s : students) {
+	        String email = s.getEmail();
+	        if (email.length() > 40) {
+	            email = email.substring(0, 37) + "...";
+	        }
+	        System.out.printf(format, s.getStudent_id(), s.getName(), email, s.getGr_number());
+	    }
 
-		System.out.println(line);
-		
+	    System.out.println(line);
 	}
+
 
 	public static void printCourses(List<Course> courses) {
 		if (courses == null || courses.isEmpty()) {
@@ -38,7 +49,7 @@ public class HelperUtils {
 		String rowFormat = "| %-10d | %-25s | %-18d | %-15s |%n";
 		String separator = "+------------+---------------------------+--------------------+-----------------+";
 
-		System.out.println("\n🎓 List of Courses");
+		System.out.println("\nList of Courses");
 		System.out.println(separator);
 		System.out.printf(headerFormat, "Course ID", "Course Name", "No. of Semesters", "Total Fee");
 		System.out.println(separator);
@@ -52,25 +63,30 @@ public class HelperUtils {
 	}
 
 	public static void viewSubjects(List<Subject> subjects) {
-		if (subjects == null || subjects.isEmpty()) {
-			System.out.println("❗ No subjects found.");
-			return;
-		}
+	    if (subjects == null || subjects.isEmpty()) {
+	        System.out.println("❗ No subjects found.");
+	        return;
+	    }
 
-		String line = "+------+----------------------+";
-		String format = "| %-4s | %-20s |%n";
+	    String line = "+--------+------------------------------------------+";
+	    String format = "| %-6s | %-40s |%n";
 
-		System.out.println("\n📚 List of Subjects");
-		System.out.println(line);
-		System.out.printf(format, "ID", "Subject Name");
-		System.out.println(line);
+	    System.out.println("\nList of Subjects");
+	    System.out.println(line);
+	    System.out.printf(format, "ID", "Subject Name");
+	    System.out.println(line);
 
-		for (Subject subject : subjects) {
-			System.out.printf(format, subject.getSubject_id(), subject.getSubject_name());
-		}
+	    for (Subject subject : subjects) {
+	        String name = subject.getSubject_name();
+	        if (name.length() > 40) {
+	            name = name.substring(0, 37) + "...";
+	        }
+	        System.out.printf(format, subject.getSubject_id(), name);
+	    }
 
-		System.out.println(line);
+	    System.out.println(line);
 	}
+
 
 	public static String validateStudentData(Student student, int courseId) {
 		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {
@@ -110,21 +126,21 @@ public class HelperUtils {
 		List<Subject> electiveSubjects = availableSubjects.stream()
 				.filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).collect(Collectors.toList());
 
-		System.out.println("\n📚 Available Subjects for Course ID " + courseId + ":");
+		System.out.println("\nAvailable Subjects for Course ID " + courseId + ":");
 		System.out.println("=".repeat(80));
 
 		if (!mandatorySubjects.isEmpty()) {
-			System.out.println("🔴 MANDATORY SUBJECTS (Must select all):");
+			System.out.println("MANDATORY SUBJECTS (Must select all):");
 			for (Subject subject : mandatorySubjects) {
-				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+				System.out.printf("ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
 						subject.getSubject_name(), subject.getSubject_type());
 			}
 		}
 
 		if (!electiveSubjects.isEmpty()) {
-			System.out.println("\n🟢 ELECTIVE SUBJECTS (Optional):");
+			System.out.println("\nELECTIVE SUBJECTS (Optional):");
 			for (Subject subject : electiveSubjects) {
-				System.out.printf("   ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
+				System.out.printf("ID: %-3d | %-40s | Type: %s\n", subject.getSubject_id(),
 						subject.getSubject_name(), subject.getSubject_type());
 			}
 		}
@@ -132,12 +148,12 @@ public class HelperUtils {
 		// Auto-select mandatory subjects
 		for (Subject subject : mandatorySubjects) {
 			selectedSubjectIds.add(subject.getSubject_id());
-			System.out.println("   ✓ Auto-selected: " + subject.getSubject_name());
+			System.out.println("✓ Auto-selected: " + subject.getSubject_name());
 		}
 
 		// User selects elective subjects
 		if (!electiveSubjects.isEmpty()) {
-			System.out.print("\n🟢 Enter elective subject IDs (comma-separated, or press Enter to skip): ");
+			System.out.print("\nEnter elective subject IDs (comma-separated, or press Enter to skip): ");
 			String electiveInput = scanner.nextLine().trim();
 
 			if (!electiveInput.isEmpty()) {
@@ -151,17 +167,17 @@ public class HelperUtils {
 							Subject selectedSubject = electiveSubjects.stream()
 									.filter(s -> s.getSubject_id() == electiveId).findFirst().orElse(null);
 							if (selectedSubject != null) {
-								System.out.println("   ✓ Selected: " + selectedSubject.getSubject_name());
+								System.out.println("✓ Selected: " + selectedSubject.getSubject_name());
 							}
 						} else {
-							System.out.println("   ❌ Invalid elective subject ID: " + electiveId);
+							System.out.println("Invalid elective subject ID: " + electiveId);
 						}
 					}
 				} catch (NumberFormatException e) {
-					System.out.println("   ❌ Invalid input format. No elective subjects selected.");
+					System.out.println("Invalid input format. No elective subjects selected.");
 				}
 			} else {
-				System.out.println("   ⏭️ No elective subjects selected.");
+				System.out.println("No elective subjects selected.");
 			}
 		}
 

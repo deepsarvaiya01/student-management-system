@@ -18,7 +18,6 @@ public class FeeNotifierDao {
 		try {
 			this.conn =  DBConnection.connect();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
