@@ -377,6 +377,7 @@ public class SubjectAnalysisService {
 
 		for (Map.Entry<String, Object> entry : subjectCompletionRates.entrySet()) {
 			String subjectName = entry.getKey();
+			@SuppressWarnings("unchecked")
 			Map<String, Object> completionData = (Map<String, Object>) entry.getValue();
 
 			int totalEnrolled = (Integer) completionData.get("total_enrolled");

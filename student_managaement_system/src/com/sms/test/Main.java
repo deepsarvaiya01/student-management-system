@@ -3,9 +3,11 @@ package com.sms.test;
 import java.sql.SQLException;
 import java.util.Scanner;
 
+import com.sms.main.AnalysisMain;
 import com.sms.main.CourseMain;
 import com.sms.main.DashboardMain;
 import com.sms.main.FeeMain;
+import com.sms.main.HelpdeskMain;
 import com.sms.main.StudentMain;
 import com.sms.main.TeacherMain;
 import com.sms.utils.InputValidator;
