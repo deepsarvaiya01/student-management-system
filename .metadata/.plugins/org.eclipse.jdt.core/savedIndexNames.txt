@@ -1,2 +1,0 @@
-INDEX VERSION 1.134+C:\Users\priyank.fichadiya\Desktop\Final Project\student-management-system\.metadata\.plugins\org.eclipse.jdt.core
-2789108261.index
