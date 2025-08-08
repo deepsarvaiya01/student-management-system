@@ -1,7 +1,0 @@
-package com.sms.payment.strategy;
-
-import java.math.BigDecimal;
-
-public interface PaymentStrategy {
-    boolean pay(int studentId, BigDecimal amount);
-}
