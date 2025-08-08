@@ -4,14 +4,25 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.sms.dao.CourseDAO;
 import com.sms.dao.FeeDao;
+import com.sms.model.Course;
 import com.sms.model.Fee;
+import com.sms.model.FeeNotifier;
+import com.sms.payment.notifier.EmailFeeNotifier;
+import com.sms.payment.notifier.FeeAlert;
+import com.sms.payment.notifier.SmsFeeNotifier;
+import com.sms.payment.notifier.WhatsAppFeeNotifier;
 
 public class FeeService {
 	private FeeDao feeDao;
+	private CourseDAO courseDao;
+	private FeeNotifierService feeNotifierService;
 
 	public FeeService() throws SQLException {
 		this.feeDao = new FeeDao();
+		this.courseDao = new CourseDAO();
+		this.feeNotifierService = new FeeNotifierService();
 	}
 
 	// View Total Paid Fees
@@ -19,9 +30,17 @@ public class FeeService {
 		return feeDao.getTotalPaidFees();
 	}
 
+	public List<Fee> getPaidFeesByStudents() {
+		return feeDao.getPaidFeesByStudents();
+	}
+
 	// View Total Pending Fees
 	public BigDecimal getTotalPendingFees() {
 		return feeDao.getTotalPendingFees();
+	}
+
+	public List<Fee> getPendingFeesByStudents() {
+		return feeDao.getPendingFeesByStudents();
 	}
 
 	// View Fees By Student
@@ -46,6 +65,33 @@ public class FeeService {
 			return "No fees found for Course ID: " + courseId;
 		}
 		return "SUCCESS";
+	}
+
+	public String getCourseFeeSummary(int courseId) {
+		Course course;
+		try {
+			course = courseDao.getCourseById(courseId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return "Error retrieving course.";
+		}
+
+		if (course == null) {
+			return "Invalid Course ID.";
+		}
+
+		List<Fee> fees = feeDao.getFeesByCourse(courseId);
+		int studentCount = fees.size();
+
+		BigDecimal courseFee = course.getTotal_fee(); // Assuming getTotal_fee() exists
+		BigDecimal totalExpectedFees = courseFee.multiply(BigDecimal.valueOf(studentCount));
+
+		StringBuilder summary = new StringBuilder();
+		summary.append("\n📘 Course: ").append(course.getCourse_name());
+		summary.append("\n👥 Students Enrolled: ").append(studentCount);
+		summary.append(String.format("\n💰 Total Expected Fees: ₹%.2f\n", totalExpectedFees));
+
+		return summary.toString();
 	}
 
 	// Update Fees Of A Course
@@ -98,6 +144,24 @@ public class FeeService {
 		if (!success) {
 			return "Failed to update fee payment. Please check the Student ID or Course ID.";
 		}
+
+		FeeNotifier prefs = feeNotifierService.getPreferences(studentId);
+		if (prefs == null) {
+			feeNotifierService.createDefaultPreferences(studentId);
+			prefs = feeNotifierService.getPreferences(studentId);
+		}
+
+		FeeAlert alert = new FeeAlert();
+
+		if (prefs.isSmsEnabled())
+			alert.registerNotifier(new SmsFeeNotifier());
+		if (prefs.isEmailEnabled())
+			alert.registerNotifier(new EmailFeeNotifier());
+		if (prefs.isWhatsappEnabled())
+			alert.registerNotifier(new WhatsAppFeeNotifier());
+
+		alert.notifyAll(studentId, paymentAmount);
+
 		return "Fee payment updated successfully.";
 	}
 
@@ -127,4 +191,9 @@ public class FeeService {
 			return "Failed to create fee record: " + e.getMessage();
 		}
 	}
+
+	public Course getCourseById(int courseId) {
+		return courseDao.getCourseById(courseId);
+	}
+
 }

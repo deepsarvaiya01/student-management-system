@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+import com.sms.main.FeeNotifierMain;
 import com.sms.model.Course;
 import com.sms.model.Fee;
+import com.sms.model.Gender;
 import com.sms.model.Student;
 import com.sms.model.Subject;
 import com.sms.payment.processor.PaymentProcessor;
@@ -50,6 +52,8 @@ public class StudentController {
 		String city = InputValidator.getValidCity(scanner, "Enter City: ");
 		String mobileNo = InputValidator.getValidMobile(scanner, "Enter Mobile No: ", name, studentService);
 		int age = InputValidator.getValidAge(scanner, "Enter Age: ");
+		Gender gender = InputValidator.getValidGender(scanner,
+				"Enter Gender (M for Male, F for Female, O for Other): ");
 
 		System.out.println("\nAvailable Courses:");
 		List<Course> courses = studentService.getAllCourses();
@@ -77,13 +81,149 @@ public class StudentController {
 		student.setCity(city);
 		student.setMobile_no(mobileNo);
 		student.setAge(age);
-
+		student.setGender(gender);
 		String result = studentService.addStudentWithProfileAndCourseAndSubjects(student, courseId, selectedSubjectIds);
-		System.out.println(result);
-
-		// Ask if the student wants to pay fees immediately
+		
+		// Display beautiful success message if student was added successfully
 		if (result.contains("successfully")) {
+			displayStudentSuccessDetails(student, courseId, selectedSubjectIds, availableSubjects);
 			askForFeePayment(student.getName(), courseId);
+		} else {
+			System.out.println("eroor");
+		}
+	}
+
+	// Display beautiful success details when student is added successfully
+	private void displayStudentSuccessDetails(Student student, int courseId, List<Integer> selectedSubjectIds, List<Subject> availableSubjects) {
+		try {
+			// Get course details
+			Course course = courseService.getCourseById(courseId);
+			List<Subject> selectedSubjects = availableSubjects.stream()
+					.filter(subject -> selectedSubjectIds.contains(subject.getSubject_id()))
+					.collect(Collectors.toList());
+
+			// Try to get the actual student ID after creation
+			Student createdStudent = null;
+			List<Student> allStudents = studentService.readAllStudent();
+			for (Student s : allStudents) {
+				if (s.getName().equals(student.getName()) && s.getEmail().equals(student.getEmail()) && s.getGr_number() == student.getGr_number()) {
+					createdStudent = s;
+					break;
+				}
+			}
+			String studentIdDisplay = "Auto-generated (will be assigned)";
+			if (createdStudent != null) {
+				studentIdDisplay = String.valueOf(createdStudent.getStudent_id());
+			}
+
+			// Display success header with modern design
+			System.out.println("\n" + "╔" + "═".repeat(78) + "╗");
+			System.out.println("║" + " ".repeat(25) + "🎓 STUDENT ADDED SUCCESSFULLY!" + " ".repeat(25) + "║");
+			System.out.println("╚" + "═".repeat(78) + "╝");
+
+			// Student information card
+			System.out.println("\n👤 STUDENT INFORMATION");
+			System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
+			System.out.printf("│ %-23s │ %-48s │%n", "Student ID", studentIdDisplay);
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "Name", student.getName());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48d │%n", "GR Number", student.getGr_number());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "Email", student.getEmail());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "Mobile No", student.getMobile_no());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "City", student.getCity());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48d │%n", "Age", student.getAge());
+			System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+			System.out.printf("│ %-23s │ %-48s │%n", "Gender", student.getGender() != null ? student.getGender().getDisplayName() : "N/A");
+			System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
+
+			// Course information
+			if (course != null) {
+				System.out.println("\n📚 ASSIGNED COURSE");
+				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(50) + "┐");
+				System.out.printf("│ %-23s │ %-48d │%n", "Course ID", course.getCourse_id());
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+				System.out.printf("│ %-23s │ %-48s │%n", "Course Name", course.getCourse_name());
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+				System.out.printf("│ %-23s │ %-48d │%n", "Semesters", course.getNo_of_semester());
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(50) + "┤");
+				System.out.printf("│ %-23s │ ₹%-46s │%n", "Total Fee", course.getTotal_fee() != null ? course.getTotal_fee().toString() : "N/A");
+				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(50) + "┘");
+			}
+
+			// Selected subjects information
+			if (!selectedSubjects.isEmpty()) {
+				System.out.println("\n📖 ASSIGNED SUBJECTS");
+				System.out.println("┌" + "─".repeat(10) + "┬" + "─".repeat(40) + "┬" + "─".repeat(25) + "┐");
+				System.out.printf("│ %-8s │ %-38s │ %-23s │%n", "ID", "Subject Name", "Type");
+				System.out.println("├" + "─".repeat(10) + "┼" + "─".repeat(40) + "┼" + "─".repeat(25) + "┤");
+
+				for (Subject subject : selectedSubjects) {
+					// Capitalize first letter for display
+					String displayType = (subject.getSubject_type() != null)
+							? subject.getSubject_type().substring(0, 1).toUpperCase()
+									+ subject.getSubject_type().substring(1).toLowerCase()
+							: "N/A";
+
+					// Truncate long names for better display
+					String truncatedSubjectName = subject.getSubject_name().length() > 38
+							? subject.getSubject_name().substring(0, 35) + "..."
+							: subject.getSubject_name();
+
+					System.out.printf("│ %-8d │ %-38s │ %-23s │%n", subject.getSubject_id(),
+							truncatedSubjectName, displayType);
+				}
+				System.out.println("└" + "─".repeat(10) + "┴" + "─".repeat(40) + "┴" + "─".repeat(25) + "┘");
+
+				// Summary statistics
+				long mandatoryCount = selectedSubjects.stream().filter(s -> "mandatory".equalsIgnoreCase(s.getSubject_type())).count();
+				long electiveCount = selectedSubjects.stream().filter(s -> "elective".equalsIgnoreCase(s.getSubject_type())).count();
+
+				System.out.println("\n📊 SUBJECT SUMMARY");
+				System.out.println("┌" + "─".repeat(25) + "┬" + "─".repeat(15) + "┐");
+				System.out.printf("│ %-23s │ %-13s │%n", "Metric", "Count");
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Total Subjects", selectedSubjects.size());
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Mandatory Subjects", mandatoryCount);
+				System.out.println("├" + "─".repeat(25) + "┼" + "─".repeat(15) + "┤");
+				System.out.printf("│ %-23s │ %-13d │%n", "Elective Subjects", electiveCount);
+				System.out.println("└" + "─".repeat(25) + "┴" + "─".repeat(15) + "┘");
+			}
+
+			// Success message with emojis
+			System.out.println("\n🎉 SUCCESS MESSAGE");
+			System.out.println("┌" + "─".repeat(78) + "┐");
+			String studentName = student.getName();
+			String courseName = course != null ? course.getCourse_name() : "N/A";
+			
+			// Truncate long names for better display
+			if (studentName.length() > 30) {
+				studentName = studentName.substring(0, 27) + "...";
+			}
+			if (courseName.length() > 30) {
+				courseName = courseName.substring(0, 27) + "...";
+			}
+			
+			// Format the success messages to fit within the box
+			String msg1 = String.format("│ ✅ Student '%s' has been successfully registered!", studentName);
+			String msg2 = String.format("│ 🎓 Course '%s' has been assigned.", courseName);
+			String msg3 = String.format("│ 📚 %d subject(s) have been assigned to the student.", selectedSubjects.size());
+			String msg4 = "│ 💰 You can now proceed with fee payment or do it later from the menu.";
+			
+			// Pad each message to fit the 78-character box
+			System.out.printf("%-78s│%n", msg1);
+			System.out.printf("%-78s│%n", msg2);
+			System.out.printf("%-78s│%n", msg3);
+			System.out.printf("%-78s│%n", msg4);
+			System.out.println("└" + "─".repeat(78) + "┘");
+
+		} catch (Exception e) {
+			System.out.println("❌ Error displaying student details: " + e.getMessage());
 		}
 	}
 
@@ -280,11 +420,19 @@ public class StudentController {
 		}
 
 		// 🔽 Display unassigned courses
-		System.out.println("Available Courses:");
+		System.out.println("\n📚 Available Courses:");
+		String line = "+------------+---------------------------+";
+		String format = "| %-10s | %-25s |%n";
+
+		System.out.println(line);
+		System.out.printf(format, "Course ID", "Course Name");
+		System.out.println(line);
+
 		for (Course course : unassignedCourses) {
-			System.out.println(course.getCourse_id() + ". " + course.getCourse_name());
+			System.out.printf(format, course.getCourse_id(), course.getCourse_name());
 		}
 
+		System.out.println(line);
 		int courseId = InputValidator.getValidInteger(scanner, "Enter Course ID to assign: ", "Course ID");
 		if (unassignedCourses.stream().noneMatch(c -> c.getCourse_id() == courseId)) {
 			System.out.println("❌ Invalid Course ID.");
@@ -462,6 +610,10 @@ public class StudentController {
 		int studentId = InputValidator.getValidInteger(scanner, "Enter Student ID to restore: ", "Student ID");
 		String result = studentService.restoreStudentById(studentId);
 		System.out.println(result);
+	}
+
+	public void manageFeeNotifierPreferences() {
+		FeeNotifierMain.managePreferences();
 	}
 
 }
