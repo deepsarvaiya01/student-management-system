@@ -19,21 +19,25 @@ public class HelperUtils {
 	}
 
 	public static void printStudents(List<Student> students) {
-		String line = "+------------+----------------------+---------------------------+------------+";
-		String format = "| %-10s | %-20s | %-25s | %-10s |%n";
+	    String line = "+------------+----------------------+------------------------------------------+------------+";
+	    String format = "| %-10s | %-20s | %-40s | %-10s |%n";
 
-		System.out.println("\n📚 List of Students:");
-		System.out.println(line);
-		System.out.printf(format, "Student ID", "Name", "Email", "GR Number");
-		System.out.println(line);
+	    System.out.println("\n📚 List of Students:");
+	    System.out.println(line);
+	    System.out.printf(format, "Student ID", "Name", "Email", "GR Number");
+	    System.out.println(line);
 
-		for (Student s : students) {
-			System.out.printf(format, s.getStudent_id(), s.getName(), s.getEmail(), s.getGr_number());
-		}
+	    for (Student s : students) {
+	        String email = s.getEmail();
+	        if (email.length() > 40) {
+	            email = email.substring(0, 37) + "...";
+	        }
+	        System.out.printf(format, s.getStudent_id(), s.getName(), email, s.getGr_number());
+	    }
 
-		System.out.println(line);
-		
+	    System.out.println(line);
 	}
+
 
 	public static void printCourses(List<Course> courses) {
 		if (courses == null || courses.isEmpty()) {
@@ -59,25 +63,30 @@ public class HelperUtils {
 	}
 
 	public static void viewSubjects(List<Subject> subjects) {
-		if (subjects == null || subjects.isEmpty()) {
-			System.out.println("❗ No subjects found.");
-			return;
-		}
+	    if (subjects == null || subjects.isEmpty()) {
+	        System.out.println("❗ No subjects found.");
+	        return;
+	    }
 
-		String line = "+------+----------------------+";
-		String format = "| %-4s | %-20s |%n";
+	    String line = "+--------+------------------------------------------+";
+	    String format = "| %-6s | %-40s |%n";
 
-		System.out.println("\n📚 List of Subjects");
-		System.out.println(line);
-		System.out.printf(format, "ID", "Subject Name");
-		System.out.println(line);
+	    System.out.println("\n📚 List of Subjects");
+	    System.out.println(line);
+	    System.out.printf(format, "ID", "Subject Name");
+	    System.out.println(line);
 
-		for (Subject subject : subjects) {
-			System.out.printf(format, subject.getSubject_id(), subject.getSubject_name());
-		}
+	    for (Subject subject : subjects) {
+	        String name = subject.getSubject_name();
+	        if (name.length() > 40) {
+	            name = name.substring(0, 37) + "...";
+	        }
+	        System.out.printf(format, subject.getSubject_id(), name);
+	    }
 
-		System.out.println(line);
+	    System.out.println(line);
 	}
+
 
 	public static String validateStudentData(Student student, int courseId) {
 		if (student == null || student.getName() == null || !student.getName().matches("[a-zA-Z ]{1,50}")) {
