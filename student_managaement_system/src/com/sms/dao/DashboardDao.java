@@ -205,13 +205,10 @@ public class DashboardDao {
 		}
 	}
 
-	/**
-	 * Get course-wise student counts for chart visualization
-	 */
 	public List<DashboardModel> getCourseWiseStudentCounts() {
 		List<DashboardModel> courseCounts = new ArrayList<>();
 		String query = """
-				SELECT 
+				SELECT
 				    c.course_name,
 				    COUNT(DISTINCT s.student_id) AS student_count
 				FROM courses c
@@ -237,13 +234,10 @@ public class DashboardDao {
 		return courseCounts;
 	}
 
-	/**
-	 * Get course-wise subject counts for chart visualization
-	 */
 	public List<DashboardModel> getCourseWiseSubjectCounts() {
 		List<DashboardModel> courseSubjectCounts = new ArrayList<>();
 		String query = """
-				SELECT 
+				SELECT
 				    c.course_name,
 				    COUNT(DISTINCT sub.subject_id) AS subject_count
 				FROM courses c
@@ -269,13 +263,10 @@ public class DashboardDao {
 		return courseSubjectCounts;
 	}
 
-	/**
-	 * Get teacher-wise subject counts for chart visualization
-	 */
 	public List<DashboardModel> getTeacherWiseSubjectCounts() {
 		List<DashboardModel> teacherSubjectCounts = new ArrayList<>();
 		String query = """
-				SELECT 
+				SELECT
 				    t.name AS teacher_name,
 				    COUNT(DISTINCT st.subject_id) AS subject_count
 				FROM teachers t
@@ -300,13 +291,10 @@ public class DashboardDao {
 		return teacherSubjectCounts;
 	}
 
-	/**
-	 * Get subject-wise student counts for chart visualization
-	 */
 	public List<DashboardModel> getSubjectWiseStudentCounts() {
 		List<DashboardModel> subjectStudentCounts = new ArrayList<>();
 		String query = """
-				SELECT 
+				SELECT
 				    sub.subject_name,
 				    COUNT(DISTINCT s.student_id) AS student_count
 				FROM subjects sub

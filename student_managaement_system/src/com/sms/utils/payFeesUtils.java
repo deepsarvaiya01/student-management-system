@@ -125,6 +125,7 @@ public class payFeesUtils {
 					"\n📊 Current Fee Status for Student ID " + studentId + " and Course ID " + courseId + ":");
 			Fee.printHeader();
 			System.out.println(selectedFee);
+			Fee.printFooter();
 			return selectedFee;
 		} catch (Exception e) {
 			System.out.println("❌ Error retrieving fee record: " + e.getMessage());
@@ -187,6 +188,7 @@ public class payFeesUtils {
 					if (selectedFee != null) {
 						Fee.printHeader();
 						System.out.println(selectedFee);
+						Fee.printFooter();
 					} else {
 						System.out.println("❌ Failed to retrieve updated fee record.");
 					}

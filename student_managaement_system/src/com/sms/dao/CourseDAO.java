@@ -160,11 +160,6 @@ public class CourseDAO {
 		}
 	}
 
-	/**
-	 * Get subjects that are NOT assigned to the specified course
-	 * @param courseId The course ID to check against
-	 * @return List of subjects not assigned to the course
-	 */
 	public List<Subject> getUnassignedSubjectsForCourse(int courseId) {
 		List<Subject> subjects = new ArrayList<>();
 		String sql = "SELECT s.subject_id, s.subject_name, s.subject_type FROM subjects s "

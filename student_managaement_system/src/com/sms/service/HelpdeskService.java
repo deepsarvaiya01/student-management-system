@@ -160,12 +160,15 @@ public class HelpdeskService {
                 return;
             }
             
-            // Show filter options
-            System.out.println("\n Filter Options:");
-            System.out.println("1. Show ALL tickets (including resolved and closed)");
-            System.out.println("2. Show only ACTIVE tickets (OPEN and IN_PROGRESS)");
-            System.out.println("3. Show only RESOLVED tickets");
-            System.out.println("4. Show only CLOSED tickets");
+            System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+            System.out.println("║                     FILTER OPTIONS                       ║");
+            System.out.println("╠══════════════════════════════════════════════════════════╣");
+            System.out.println("║ 1. Show ALL tickets (including resolved and closed)      ║");
+            System.out.println("║ 2. Show only ACTIVE tickets (OPEN and IN_PROGRESS)       ║");
+            System.out.println("║ 3. Show only RESOLVED tickets                            ║");
+            System.out.println("║ 4. Show only CLOSED tickets                              ║");
+            System.out.println("╚══════════════════════════════════════════════════════════╝");
+
             
             int filterChoice = InputValidator.getValidMenuChoice(scanner, "Enter filter choice (1-4): ", 4);
             
@@ -266,7 +269,7 @@ public class HelpdeskService {
             }
             System.out.println("└──────────────┴──────────────────────────────────────────────────────────────┘");
             
-            System.out.print("\n🎫 Enter ticket ID to view details: ");
+            System.out.print("\n Enter ticket ID to view details: ");
             int ticketId = InputValidator.getValidInteger(scanner, "Enter ticket ID: ", "Ticket ID");
             
             HelpdeskTicket ticket = helpdeskDao.getTicketById(ticketId);
@@ -323,7 +326,7 @@ public class HelpdeskService {
             }
             System.out.println("+----------+----------------------+-----------------+--------------+------------+----------------------+-----------------+");
             
-            System.out.print("\n🎫 Enter ticket ID to update: ");
+            System.out.print("\n Enter ticket ID to update: ");
             int ticketId = InputValidator.getValidInteger(scanner, "Enter ticket ID: ", "Ticket ID");
             
             // Verify ticket exists and is updatable
@@ -344,13 +347,15 @@ public class HelpdeskService {
             System.out.println("\n Current Ticket Details:");
             displayTicketDetails(ticket);
             
-            // Show status options
-            System.out.println("\n Select new status:");
-            System.out.println("1. OPEN - Ticket is open and awaiting response");
-            System.out.println("2. IN_PROGRESS - Ticket is being worked on");
-            System.out.println("3. RESOLVED - Issue has been resolved");
-            System.out.println("4. CLOSED - Ticket has been closed");
-            
+            System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+            System.out.println("║                  SELECT NEW STATUS                       ║");
+            System.out.println("╠══════════════════════════════════════════════════════════╣");
+            System.out.println("║ 1. OPEN        - Ticket is open and awaiting response    ║");
+            System.out.println("║ 2. IN_PROGRESS - Ticket is being worked on               ║");
+            System.out.println("║ 3. RESOLVED    - Issue has been resolved                 ║");
+            System.out.println("║ 4. CLOSED      - Ticket has been closed                  ║");
+            System.out.println("╚══════════════════════════════════════════════════════════╝");
+
             int statusChoice = InputValidator.getValidMenuChoice(scanner, "Enter status choice (1-4): ", 4);
             String newStatus = getStatusFromChoice(statusChoice);
             
@@ -453,11 +458,15 @@ public class HelpdeskService {
             displayTicketDetails(ticket);
             
             // Show priority options
-            System.out.println("\n Select new priority:");
-            System.out.println("1. LOW - General inquiry, non-urgent");
-            System.out.println("2. MEDIUM - Standard issue");
-            System.out.println("3. HIGH - Important issue");
-            System.out.println("4. URGENT - Critical issue");
+            System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+            System.out.println("║                  SELECT NEW PRIORITY                     ║");
+            System.out.println("╠══════════════════════════════════════════════════════════╣");
+            System.out.println("║ 1. LOW     - General inquiry, non-urgent                 ║");
+            System.out.println("║ 2. MEDIUM  - Standard issue                              ║");
+            System.out.println("║ 3. HIGH    - Important issue                             ║");
+            System.out.println("║ 4. URGENT  - Critical issue                              ║");
+            System.out.println("╚══════════════════════════════════════════════════════════╝");
+
             
             int priorityChoice = InputValidator.getValidMenuChoice(scanner, "Enter priority choice (1-4): ", 4);
             String newPriority = getPriorityFromChoice(priorityChoice);
@@ -471,7 +480,7 @@ public class HelpdeskService {
                 // Display updated ticket details
                 HelpdeskTicket updatedTicket = helpdeskDao.getTicketById(ticketId);
                 if (updatedTicket != null) {
-                    System.out.println("\n📋 Updated Ticket Details:");
+                    System.out.println("\nUpdated Ticket Details:");
                     displayTicketDetails(updatedTicket);
                 }
             } else {
@@ -492,11 +501,15 @@ public class HelpdeskService {
         System.out.println("╚══════════════════════════════════════════════════════════════════════════════╝");
         
         try {
-            System.out.println("\n Select status to view:");
-            System.out.println("1. OPEN - All open tickets");
-            System.out.println("2. IN_PROGRESS - All tickets being worked on");
-            System.out.println("3. RESOLVED - All resolved tickets");
-            System.out.println("4. CLOSED - All closed tickets");
+        	System.out.println("\n╔══════════════════════════════════════════════════════════╗");
+        	System.out.println("║                SELECT STATUS TO VIEW                     ║");
+        	System.out.println("╠══════════════════════════════════════════════════════════╣");
+        	System.out.println("║ 1. OPEN        - All open tickets                        ║");
+        	System.out.println("║ 2. IN_PROGRESS - All tickets being worked on             ║");
+        	System.out.println("║ 3. RESOLVED    - All resolved tickets                    ║");
+        	System.out.println("║ 4. CLOSED      - All closed tickets                      ║");
+        	System.out.println("╚══════════════════════════════════════════════════════════╝");
+
             
             int statusChoice = InputValidator.getValidMenuChoice(scanner, "Enter status choice (1-4): ", 4);
             String status = getStatusFromChoice(statusChoice);

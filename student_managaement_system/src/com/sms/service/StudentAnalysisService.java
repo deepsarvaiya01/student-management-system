@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.sms.dao.StudentAnalysisDAO;
+import com.sms.utils.HelperUtils;
 
 public class StudentAnalysisService {
 	private StudentAnalysisDAO analysisDAO;
@@ -20,9 +21,9 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Integer> courseStats = analysisDAO.getTotalStudentsByCourse();
-		
+
 		if (courseStats.isEmpty()) {
-			System.out.println("❌ No data available for analysis.");
+			System.out.println(" No data available for analysis.");
 			return;
 		}
 
@@ -37,8 +38,7 @@ public class StudentAnalysisService {
 			int studentCount = entry.getValue();
 			double percentage = totalStudents > 0 ? (studentCount * 100.0) / totalStudents : 0;
 
-			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", 
-				courseName, studentCount, percentage);
+			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", courseName, studentCount, percentage);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴──────────────────┘");
@@ -51,9 +51,9 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Integer> enrollmentTrends = analysisDAO.getEnrollmentDateTrends();
-		
+
 		if (enrollmentTrends.isEmpty()) {
-			System.out.println("❌ No enrollment data available for analysis.");
+			System.out.println(" No enrollment data available for analysis.");
 			return;
 		}
 
@@ -68,8 +68,7 @@ public class StudentAnalysisService {
 			int enrollments = entry.getValue();
 			String chart = generateBarChart(enrollments, maxEnrollments, 20);
 
-			System.out.printf("│ %-23s │ %-15d │ %-20s %n", 
-				monthYear, enrollments, chart);
+			System.out.printf("│ %-23s │ %-15d │ %-20s %n", monthYear, enrollments, chart);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┘");
@@ -77,13 +76,13 @@ public class StudentAnalysisService {
 
 	public void displayActiveVsInactiveStudents() throws SQLException {
 		System.out.println("\n╔══════════════════════════════════════════════════════════╗");
-		System.out.println("║             ACTIVE VS INACTIVE STUDENTS                ║");
+		System.out.println("║             ACTIVE VS INACTIVE STUDENTS                  ║");
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Integer> statusStats = analysisDAO.getActiveVsInactiveStudents();
-		
+
 		if (statusStats.isEmpty()) {
-			System.out.println("❌ No student status data available.");
+			System.out.println(" No student status data available.");
 			return;
 		}
 
@@ -98,8 +97,7 @@ public class StudentAnalysisService {
 			int count = entry.getValue();
 			double percentage = totalStudents > 0 ? (count * 100.0) / totalStudents : 0;
 
-			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", 
-				status, count, percentage);
+			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", status, count, percentage);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴──────────────────┘");
@@ -112,9 +110,9 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Integer> cityStats = analysisDAO.getStudentDistributionByCity();
-		
+
 		if (cityStats.isEmpty()) {
-			System.out.println("❌ No city distribution data available.");
+			System.out.println(" No city distribution data available.");
 			return;
 		}
 
@@ -129,24 +127,24 @@ public class StudentAnalysisService {
 			int count = entry.getValue();
 			double percentage = totalStudents > 0 ? (count * 100.0) / totalStudents : 0;
 
-			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", 
-				city, count, percentage);
+			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", city, count, percentage);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴──────────────────┘");
 		System.out.printf("\n🌍 Total Cities: %d%n", cityStats.size());
 	}
 
-	// Student Performance Methods
+
+
 	public void displayStudentsWithCompletePayment() throws SQLException {
 		System.out.println("\n╔══════════════════════════════════════════════════════════╗");
 		System.out.println("║              STUDENTS WITH COMPLETE PAYMENT              ║");
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		List<Map<String, Object>> completePayments = analysisDAO.getStudentsWithCompletePayment();
-		
+
 		if (completePayments.isEmpty()) {
-			System.out.println("❌ No students with complete payment found.");
+			System.out.println(" No students with complete payment found.");
 			return;
 		}
 
@@ -155,13 +153,12 @@ public class StudentAnalysisService {
 		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
 
 		for (Map<String, Object> student : completePayments) {
-			String name = (String) student.get("name");
-			String course = (String) student.get("course_name");
+			String name = HelperUtils.truncate((String) student.get("name"), 23);
+			String course = HelperUtils.truncate((String) student.get("course_name"), 15);
 			String paidAmount = student.get("paid_amount").toString();
 			String paymentDate = student.get("last_payment_date").toString();
 
-			System.out.printf("│ %-23s │ %-15s │ %-15s │ %-15s │%n", 
-				name, course, "₹" + paidAmount, paymentDate);
+			System.out.printf("│ %-23s │ %-15s │ %-15s │ %-15s │%n", name, course, "₹" + paidAmount, paymentDate);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴─────────────────┘");
@@ -174,7 +171,7 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		List<Map<String, Object>> pendingFees = analysisDAO.getStudentsWithPendingFees();
-		
+
 		if (pendingFees.isEmpty()) {
 			System.out.println("✅ All students have completed their payments!");
 			return;
@@ -185,13 +182,13 @@ public class StudentAnalysisService {
 		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
 
 		for (Map<String, Object> student : pendingFees) {
-			String name = (String) student.get("name");
-			String course = (String) student.get("course_name");
+			String name = HelperUtils.truncate((String) student.get("name"), 23);
+			String course = HelperUtils.truncate((String) student.get("course_name"), 15);
 			String pendingAmount = student.get("pending_amount").toString();
 			double completionPercentage = (Double) student.get("completion_percentage");
 
-			System.out.printf("│ %-23s │ %-15s │ %-15s │ %-15.1f%% │%n", 
-				name, course, "₹" + pendingAmount, completionPercentage);
+			System.out.printf("│ %-23s │ %-15s │ %-15s │ %-14.1f%% │%n", name, course, "₹" + pendingAmount,
+					completionPercentage);
 		}
 
 		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴─────────────────┘");
@@ -204,25 +201,24 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Double> averagePayments = analysisDAO.getAverageFeePaymentPerStudent();
-		
+
 		if (averagePayments.isEmpty()) {
-			System.out.println("❌ No payment data available for analysis.");
+			System.out.println(" No payment data available for analysis.");
 			return;
 		}
 
-		System.out.println("\n┌─────────────────────────┬─────────────────┬─────────────────┐");
-		System.out.println("│ Course                  │ Avg. Payment    │ Student Count   │");
-		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┤");
+		System.out.println("\n┌─────────────────────────┬─────────────────┐");
+		System.out.println("│ Course                  │ Avg. Payment    │");
+		System.out.println("├─────────────────────────┼─────────────────│");
 
 		for (Map.Entry<String, Double> entry : averagePayments.entrySet()) {
 			String course = entry.getKey();
 			double avgPayment = entry.getValue();
 
-			System.out.printf("│ %-23s │ ₹%-14.2f │ %-15s │%n", 
-				course, avgPayment, "N/A");
+			System.out.printf("│ %-23s │ ₹%-14.2f │%n", course, avgPayment);
 		}
 
-		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┘");
+		System.out.println("└─────────────────────────┴─────────────────┘");
 	}
 
 	public void displayPaymentCompletionRate() throws SQLException {
@@ -231,9 +227,9 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Object> completionStats = analysisDAO.getPaymentCompletionRate();
-		
+
 		if (completionStats.isEmpty()) {
-			System.out.println("❌ No payment data available for analysis.");
+			System.out.println(" No payment data available for analysis.");
 			return;
 		}
 
@@ -254,7 +250,7 @@ public class StudentAnalysisService {
 		System.out.print("│");
 		int barLength = 50;
 		int filledLength = (int) (completionRate * barLength / 100);
-		
+
 		for (int i = 0; i < barLength; i++) {
 			if (i < filledLength) {
 				System.out.print("█");
@@ -272,15 +268,15 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Integer> ageStats = analysisDAO.getAgeDistribution();
-		
+
 		if (ageStats.isEmpty()) {
-			System.out.println("❌ No age data available for analysis.");
+			System.out.println(" No age data available for analysis.");
 			return;
 		}
 
-		System.out.println("\n┌─────────────────────────┬─────────────────┬─────────────────┐");
-		System.out.println("│ Age Group               │ Student Count   │ Percentage      │");
-		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┤");
+		System.out.println("\n┌─────────────────────────┬─────────────────┬──────────────────┐");
+		System.out.println("│ Age Group               │ Student Count   │ Percentage       │");
+		System.out.println("├─────────────────────────┼─────────────────┼──────────────────┤");
 
 		int totalStudents = ageStats.values().stream().mapToInt(Integer::intValue).sum();
 
@@ -289,11 +285,10 @@ public class StudentAnalysisService {
 			int count = entry.getValue();
 			double percentage = totalStudents > 0 ? (count * 100.0) / totalStudents : 0;
 
-			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", 
-				ageGroup, count, percentage);
+			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", ageGroup, count, percentage);
 		}
 
-		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┘");
+		System.out.println("└─────────────────────────┴─────────────────┴──────────────────┘");
 	}
 
 	public void displayCityWiseStudentCount() throws SQLException {
@@ -307,9 +302,9 @@ public class StudentAnalysisService {
 		System.out.println("╚══════════════════════════════════════════════════════════╝");
 
 		Map<String, Map<String, Integer>> ageCourseStats = analysisDAO.getCoursePreferenceByAge();
-		
+
 		if (ageCourseStats.isEmpty()) {
-			System.out.println("❌ No age-course preference data available.");
+			System.out.println(" No age-course preference data available.");
 			return;
 		}
 
@@ -318,18 +313,17 @@ public class StudentAnalysisService {
 		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
 
 		for (Map.Entry<String, Map<String, Integer>> ageEntry : ageCourseStats.entrySet()) {
-			String ageGroup = ageEntry.getKey();
+			String ageGroup = HelperUtils.truncate(ageEntry.getKey(), 23);
 			Map<String, Integer> courseStats = ageEntry.getValue();
-			
+
 			int totalInAgeGroup = courseStats.values().stream().mapToInt(Integer::intValue).sum();
-			
+
 			for (Map.Entry<String, Integer> courseEntry : courseStats.entrySet()) {
-				String course = courseEntry.getKey();
+				String course = HelperUtils.truncate(courseEntry.getKey(), 15);
 				int count = courseEntry.getValue();
 				double percentage = totalInAgeGroup > 0 ? (count * 100.0) / totalInAgeGroup : 0;
 
-				System.out.printf("│ %-23s │ %-15s │ %-15d │ %-15.1f%% │%n", 
-					ageGroup, course, count, percentage);
+				System.out.printf("│ %-23s │ %-15s │ %-15d │ %-14.1f%% │%n", ageGroup, course, count, percentage);
 			}
 		}
 
@@ -343,16 +337,16 @@ public class StudentAnalysisService {
 
 		// Display overall gender distribution
 		Map<String, Integer> genderStats = analysisDAO.getGenderDistribution();
-		
+
 		if (genderStats.isEmpty()) {
-			System.out.println("❌ No gender data available for analysis.");
+			System.out.println(" No gender data available for analysis.");
 			return;
 		}
 
 		System.out.println("\n📊 Overall Gender Distribution:");
-		System.out.println("┌─────────────────────────┬─────────────────┬─────────────────┐");
-		System.out.println("│ Gender                  │ Student Count   │ Percentage      │");
-		System.out.println("├─────────────────────────┼─────────────────┼─────────────────┤");
+		System.out.println("┌─────────────────────────┬─────────────────┬──────────────────┐");
+		System.out.println("│ Gender                  │ Student Count   │ Percentage       │");
+		System.out.println("├─────────────────────────┼─────────────────┼──────────────────┤");
 
 		int totalStudents = genderStats.values().stream().mapToInt(Integer::intValue).sum();
 
@@ -361,81 +355,80 @@ public class StudentAnalysisService {
 			int count = entry.getValue();
 			double percentage = totalStudents > 0 ? (count * 100.0) / totalStudents : 0;
 
-			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", 
-				gender, count, percentage);
+			System.out.printf("│ %-23s │ %-15d │ %-15.1f%% │%n", gender, count, percentage);
 		}
 
-		System.out.println("└─────────────────────────┴─────────────────┴─────────────────┘");
+		System.out.println("└─────────────────────────┴─────────────────┴──────────────────┘");
 		System.out.printf("👥 Total Students: %d%n", totalStudents);
 
 		// Display gender distribution by course
 		System.out.println("\n📚 Gender Distribution by Course:");
 		Map<String, Map<String, Integer>> genderCourseStats = analysisDAO.getGenderDistributionByCourse();
-		
+
 		if (!genderCourseStats.isEmpty()) {
-			System.out.println("┌─────────────────────────┬─────────────────┬─────────────────┬─────────────────┐");
-			System.out.println("│ Gender                  │ Course          │ Student Count   │ Percentage      │");
-			System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
+		    System.out.println("┌─────────────────────────┬─────────────────┬─────────────────┬─────────────────┐");
+		    System.out.println("│ Gender                  │ Course          │ Student Count   │ Percentage      │");
+		    System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
 
-			for (Map.Entry<String, Map<String, Integer>> genderEntry : genderCourseStats.entrySet()) {
-				String gender = genderEntry.getKey();
-				Map<String, Integer> courseStats = genderEntry.getValue();
-				
-				int totalInGender = courseStats.values().stream().mapToInt(Integer::intValue).sum();
-				
-				for (Map.Entry<String, Integer> courseEntry : courseStats.entrySet()) {
-					String course = courseEntry.getKey();
-					int count = courseEntry.getValue();
-					double percentage = totalInGender > 0 ? (count * 100.0) / totalInGender : 0;
+		    for (Map.Entry<String, Map<String, Integer>> genderEntry : genderCourseStats.entrySet()) {
+		        String gender = HelperUtils.truncate(genderEntry.getKey(), 23);
+		        Map<String, Integer> courseStats = genderEntry.getValue();
 
-					System.out.printf("│ %-23s │ %-15s │ %-15d │ %-15.1f%% │%n", 
-						gender, course, count, percentage);
-				}
-			}
+		        int totalInGender = courseStats.values().stream().mapToInt(Integer::intValue).sum();
 
-			System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴─────────────────┘");
+		        for (Map.Entry<String, Integer> courseEntry : courseStats.entrySet()) {
+		            String course = HelperUtils.truncate(courseEntry.getKey(), 15);
+		            int count = courseEntry.getValue();
+		            double percentage = totalInGender > 0 ? (count * 100.0) / totalInGender : 0;
+
+		            System.out.printf("│ %-23s │ %-15s │ %-15d │ %-14.1f%% │%n", 
+		                gender, course, count, percentage);
+		        }
+		    }
+
+		    System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴─────────────────┘");
 		}
 
 		// Display gender distribution by city
 		System.out.println("\n🏙️ Gender Distribution by City:");
 		Map<String, Map<String, Integer>> genderCityStats = analysisDAO.getGenderDistributionByCity();
-		
+
 		if (!genderCityStats.isEmpty()) {
-			System.out.println("┌─────────────────────────┬─────────────────┬─────────────────┬─────────────────┐");
-			System.out.println("│ Gender                  │ City            │ Student Count   │ Percentage      │");
-			System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼─────────────────┤");
+			System.out.println("┌─────────────────────────┬─────────────────┬─────────────────┬──────────────────┐");
+			System.out.println("│ Gender                  │ City            │ Student Count   │ Percentage       │");
+			System.out.println("├─────────────────────────┼─────────────────┼─────────────────┼──────────────────┤");
 
 			for (Map.Entry<String, Map<String, Integer>> genderEntry : genderCityStats.entrySet()) {
 				String gender = genderEntry.getKey();
 				Map<String, Integer> cityStats = genderEntry.getValue();
-				
+
 				int totalInGender = cityStats.values().stream().mapToInt(Integer::intValue).sum();
-				
+
 				for (Map.Entry<String, Integer> cityEntry : cityStats.entrySet()) {
 					String city = cityEntry.getKey();
 					int count = cityEntry.getValue();
 					double percentage = totalInGender > 0 ? (count * 100.0) / totalInGender : 0;
 
-					System.out.printf("│ %-23s │ %-15s │ %-15d │ %-15.1f%% │%n", 
-						gender, city, count, percentage);
+					System.out.printf("│ %-23s │ %-15s │ %-15d │ %-15.1f%% │%n", gender, city, count, percentage);
 				}
 			}
 
-			System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴─────────────────┘");
+			System.out.println("└─────────────────────────┴─────────────────┴─────────────────┴──────────────────┘");
 		}
 	}
 
 	// Helper method to generate bar charts
 	private String generateBarChart(int value, int maxValue, int maxLength) {
-		if (maxValue == 0) return "";
-		
+		if (maxValue == 0)
+			return "";
+
 		int barLength = (int) ((value * maxLength) / maxValue);
 		StringBuilder bar = new StringBuilder();
-		
+
 		for (int i = 0; i < barLength; i++) {
 			bar.append("█");
 		}
-		
+
 		return bar.toString();
 	}
-} 
+}

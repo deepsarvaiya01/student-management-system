@@ -121,10 +121,8 @@ public class FeeController {
 			totalPending = totalPending.add(fee.getPendingAmount());
 		}
 
-		// ✅ Bottom line to close the table
 		System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+-----------------+");
 
-		// ✅ Show total pending fees
 		System.out.println("Total Pending Fees: ₹" + totalPending);
 	}
 
@@ -136,7 +134,7 @@ public class FeeController {
 	        return;
 	    }
 
-	    System.out.println("\n📘 Available Courses:");
+	    System.out.println("\nAvailable Courses:");
 	    System.out.println("+--------+--------------------------+");
 	    System.out.printf("| %-6s | %-24s |\n", "ID", "Course Name");
 	    System.out.println("+--------+--------------------------+");
@@ -146,7 +144,7 @@ public class FeeController {
 	    System.out.println("+--------+--------------------------+");
 
 
-	    int courseId = InputValidator.getValidInteger(scanner, "\n👉 Enter Course ID to view fees: ", "Course ID");
+	    int courseId = InputValidator.getValidInteger(scanner, "\nEnter Course ID to view fees: ", "Course ID");
 
 	    String result = feeService.getFeesByCourse(courseId);
 	    if (!result.equals("SUCCESS")) {
@@ -166,16 +164,16 @@ public class FeeController {
 	    BigDecimal totalExpected = courseFee.multiply(BigDecimal.valueOf(studentCount));
 	    BigDecimal totalPaid = BigDecimal.ZERO;
 	    BigDecimal totalPending = BigDecimal.ZERO;
+	    
 
 	    for (Fee fee : fees) {
 	        totalPaid = totalPaid.add(fee.getPaidAmount());
 	        totalPending = totalPending.add(fee.getPendingAmount());
 	    }
 
-	    // 📘 Course Summary Box
 	    System.out.println();
 	    System.out.println("╔════════════════════════════════════════════════════════════╗");
-	    System.out.println("║                    📘 COURSE FEE SUMMARY                    ║");
+	    System.out.println("║                     COURSE FEE SUMMARY                     ║");
 	    System.out.println("╠════════════════════════════════════════════════════════════╣");
 	    System.out.printf ("║ Course Name         : %-35s ║%n", course.getCourse_name());
 	    System.out.printf ("║ Students Enrolled   : %-35d ║%n", studentCount);
@@ -185,11 +183,10 @@ public class FeeController {
 	    System.out.printf ("║ Total Pending Amount: ₹%-34.2f ║%n", totalPending);
 	    System.out.println("╚════════════════════════════════════════════════════════════╝");
 
-	    // 📄 Detailed Fee Table
-	    System.out.println("\n📄 Detailed Fee Records:");
+	    System.out.println("\nDetailed Fee Records:");
 	    System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+");
-	    System.out.printf("| %-6s | %-20s | %-15s | %-15s | %-15s | %-15s | %-15s |%n",
-	            "Fee ID", "Student Name", "Course", "Total Fee", "Paid Amount", "Pending Amount", "Last Payment");
+	    System.out.printf("| %-6s | %-20s | %-15s | %-15s | %-15s | %-15s |%n",
+	            "Fee ID", "Student Name", "Course", "Total Fee", "Paid Amount", "Pending Amount");
 	    System.out.println("+--------+----------------------+-----------------+-----------------+-----------------+-----------------+");
 
 	    for (Fee fee : fees) {
@@ -215,28 +212,26 @@ public class FeeController {
 	        return;
 	    }
 
-	    System.out.println("\n📘 Available Courses:");
+	    System.out.println("\nAvailable Courses:");
 	    HelperUtils.printCourses(courses);
 
-	    int courseId = InputValidator.getValidInteger(scanner, "\n👉 Enter Course ID to update fees: ", "Course ID");
+	    int courseId = InputValidator.getValidInteger(scanner, "\nEnter Course ID to update fees: ", "Course ID");
 
 	    Course course = courseService.getCourseById(courseId);
 	    if (course == null) {
-	        System.out.println("❌ Invalid Course ID.");
+	        System.out.println("Invalid Course ID.");
 	        return;
 	    }
 
 	    BigDecimal previousFee = course.getTotal_fee();
-	    BigDecimal newFee = InputValidator.getValidDecimal(scanner, "💰 Enter new total fee amount: ₹", "Fee");
+	    BigDecimal newFee = InputValidator.getValidDecimal(scanner, "Enter new total fee amount: ₹", "Fee");
 
-	    // Update the course fee
 	    course.setTotal_fee(newFee);
-	    boolean updated = courseService.updateCourseFees(course); // returns true if update successful
+	    boolean updated = courseService.updateCourseFees(course);
 
 	    if (updated) {
-	        // ✅ Formatted Confirmation Table
 	        System.out.println("\n╔════════════════════════════════════════════════════════════════════╗");
-	        System.out.println("║                 ✅ COURSE FEE UPDATE CONFIRMATION                 ║");
+	        System.out.println("║                    COURSE FEE UPDATE CONFIRMATION                  ║");
 	        System.out.println("╠════════════════════════════════════════════════════════════════════╣");
 	        System.out.printf ("║ %-24s : %-42d ║%n", "Course ID", course.getCourse_id());
 	        System.out.printf ("║ %-24s : %-42s ║%n", "Course Name", course.getCourse_name());
@@ -244,7 +239,7 @@ public class FeeController {
 	        System.out.printf ("║ %-24s : ₹%-41.2f ║%n", "Updated Total Fee", newFee);
 	        System.out.println("╚════════════════════════════════════════════════════════════════════╝");
 	    } else {
-	        System.out.println("❌ Failed to update course fee. Please try again.");
+	        System.out.println("Failed to update course fee. Please try again.");
 	    }
 	}
 	

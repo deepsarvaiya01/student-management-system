@@ -38,7 +38,7 @@ public class SubjectController {
 			return;
 		}
 
-		System.out.println("\n👨‍🏫 Please assign a teacher to the subject:");
+		System.out.println("\nPlease assign a teacher to the subject:");
 		teacherController.viewTeachers();
 
 		int attempts = 0;
@@ -51,19 +51,19 @@ public class SubjectController {
 				teacherId = scanner.nextInt();
 				assigned = teacherService.assignSubject(teacherId, subjectId);
 				if (!assigned) {
-					System.out.println("❌ Invalid or unavailable teacher. Try again.");
+					System.out.println("Invalid or unavailable teacher. Try again.");
 				}
 			} catch (Exception e) {
-				System.out.println("⚠️ Invalid input. Please enter a numeric Teacher ID.");
-				scanner.nextLine(); // Clear buffer in case of input mismatch
+				System.out.println("Invalid input. Please enter a numeric Teacher ID.");
+				scanner.nextLine();
 			}
 			attempts++;
 		}
 
 		if (assigned) {
-			System.out.println("✅ Subject added and assigned to Teacher ID: " + teacherId);
+			System.out.println("Subject added and assigned to Teacher ID: " + teacherId);
 		} else {
-			subjectService.deleteSubject(subjectId); // rollback
+			subjectService.deleteSubject(subjectId);
 			System.out.println("❗ Failed to assign teacher after 3 attempts. Subject creation rolled back.");
 		}
 	}
@@ -72,7 +72,7 @@ public class SubjectController {
 		try {
 			List<Subject> subjects = subjectService.getAllSubjects();
 			if (subjects.isEmpty()) {
-				System.out.println("⚠️ No subjects found.");
+				System.out.println("No subjects found.");
 				return;
 			}
 
@@ -90,7 +90,7 @@ public class SubjectController {
 			}
 
 			System.out.println("+--------+---------+-------------------------------------+---------------------+");
-			System.out.println("✅ Subjects listed successfully!");
+			System.out.println("Subjects listed successfully!");
 		} catch (SQLException e) {
 			System.out.println("❗ Error retrieving subjects: " + e.getMessage());
 		}
@@ -112,7 +112,7 @@ public class SubjectController {
 		}
 
 		if (subjectService.updateSubject(id, name, type)) {
-			System.out.println("✅ Subject updated.");
+			System.out.println("Subject updated.");
 		} else {
 			System.out.println("❗ Failed to update subject.");
 		}

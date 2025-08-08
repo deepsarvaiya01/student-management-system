@@ -222,7 +222,7 @@ public class CourseAnalysisDAO {
 
 	public Map<String, Integer> getSubjectPopularity() throws SQLException {
 		Map<String, Integer> subjectPopularity = new LinkedHashMap<>();
-		String sql = "SELECT s.subject_name, COUNT(sc.id) as enrollment_count " +
+		String sql = "SELECT s.subject_name, COUNT(sc.student_id) as enrollment_count " +
 					"FROM subjects s " +
 					"LEFT JOIN subject_course sc_sub ON s.subject_id = sc_sub.subject_id " +
 					"LEFT JOIN student_courses sc ON sc_sub.course_id = sc.course_id AND sc.is_active = 1 " +
