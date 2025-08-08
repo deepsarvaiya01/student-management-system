@@ -27,7 +27,7 @@ public class DashboardMain {
 			case 2 -> controller.showCourseDashboard();
 			case 3 -> controller.showSubjectDashboard();
 			case 4 -> controller.showTeacherDashboard();
-			case 0 -> System.out.println("\nGoing back to Student Main Menu...");
+			case 0 -> System.out.println("Going back to Student Main Menu...");
 			default -> System.out.println("Invalid choice. Please try again.");
 			}
 		} while (choice != 0);

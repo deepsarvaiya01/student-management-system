@@ -23,7 +23,6 @@ public class SubjectController {
 	}
 
 	public void addSubject() {
-		scanner.nextLine();
 		String name = InputValidator.getValidName(scanner, "Enter subject name: ");
 		String type = getSubjectTypeFromUser();
 
