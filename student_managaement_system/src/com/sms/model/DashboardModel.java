@@ -11,7 +11,7 @@ public class DashboardModel {
 	private double paidFee;
 	private double pendingFee;
 	private String subjects;
-	private String subjectType; // Added for subject type
+	private String subjectType;
 	private String teachers;
 	private int totalStudents;
 	private int totalSubjects;
