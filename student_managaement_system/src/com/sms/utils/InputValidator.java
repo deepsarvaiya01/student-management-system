@@ -22,8 +22,7 @@ public class InputValidator {
 				}
 				int value = scanner.nextInt();
 				if (value <= 0) {
-					throw new AppException(
-							"Invalid " + fieldName + "! Must be a positive number.\nPlease try again:");
+					throw new AppException("Invalid " + fieldName + "! Must be a positive number.\nPlease try again:");
 				}
 				return value;
 			} catch (AppException e) {
@@ -44,16 +43,20 @@ public class InputValidator {
 		while (true) {
 			try {
 				System.out.print(prompt);
-				if (!scanner.hasNextInt()) {
-					String invalidInput = scanner.next();
-					throw new AppException("Invalid " + fieldName + "! Expected a number, but got: '" + invalidInput
+				String input = scanner.nextLine().trim(); // Read the entire line and trim whitespace
+				if (input.isEmpty()) {
+					throw new AppException("Invalid " + fieldName + "! Cannot be empty.\nPlease try again:");
+				}
+				try {
+					int value = Integer.parseInt(input);
+					if (value < 0) {
+						throw new AppException("Invalid " + fieldName + "! Cannot be negative.\nPlease try again:");
+					}
+					return value; // 0 is allowed
+				} catch (NumberFormatException e) {
+					throw new AppException("Invalid " + fieldName + "! Expected a number, but got: '" + input
 							+ "'\nPlease try again:");
 				}
-				int value = scanner.nextInt();
-				if (value < 0) {
-					throw new AppException("Invalid " + fieldName + "! Cannot be negative.\nPlease try again:");
-				}
-				return value; // 0 is allowed now
 			} catch (AppException e) {
 				System.out.println(e.getMessage());
 			}
@@ -141,36 +144,38 @@ public class InputValidator {
 			}
 		}
 	}
-	
+
 	public static String getValidCourseName(Scanner scanner, String prompt, CourseService courseService) {
-	    while (true) {
-	        try {
-	            System.out.print(prompt);
-	            String name = scanner.nextLine().trim();
+		while (true) {
+			try {
+				System.out.print(prompt);
+				String name = scanner.nextLine().trim();
 
-	            if (name.isEmpty()) {
-	                throw new AppException("Course name cannot be empty!\nPlease try again:");
-	            }
+				if (name.isEmpty()) {
+					throw new AppException("Course name cannot be empty!\nPlease try again:");
+				}
 
-	            if (name.length() > 50) {
-	                throw new AppException("Course name is too long! Maximum 50 characters allowed.\nPlease try again:");
-	            }
+				if (name.length() > 50) {
+					throw new AppException(
+							"Course name is too long! Maximum 50 characters allowed.\nPlease try again:");
+				}
 
-	            if (!name.matches("[a-zA-Z ]+")) {
-	                throw new AppException("Invalid course name! Only letters and spaces are allowed.\nPlease try again:");
-	            }
+				if (!name.matches("[a-zA-Z ]+")) {
+					throw new AppException(
+							"Invalid course name! Only letters and spaces are allowed.\nPlease try again:");
+				}
 
-	            if (courseService.getCourseByName(name) != null) {
-	                throw new AppException("Course name already exists. Please enter a different name.");
-	            }
+				if (courseService.getCourseByName(name) != null) {
+					throw new AppException("Course name already exists. Please enter a different name.");
+				}
 
-	            return name;
-	        } catch (AppException e) {
-	            System.out.println(e.getMessage());
-	        } catch (Exception e) {
-	            System.err.println("❗ Unexpected error checking course name: " + e.getMessage());
-	        }
-	    }
+				return name;
+			} catch (AppException e) {
+				System.out.println(e.getMessage());
+			} catch (Exception e) {
+				System.err.println("❗ Unexpected error checking course name: " + e.getMessage());
+			}
+		}
 	}
 
 	// Get valid city input
@@ -185,8 +190,7 @@ public class InputValidator {
 				}
 
 				if (city.length() > 50) {
-					throw new AppException(
-							"City name is too long! Maximum 50 characters allowed.\nPlease try again:");
+					throw new AppException("City name is too long! Maximum 50 characters allowed.\nPlease try again:");
 				}
 
 				if (!city.matches("[a-zA-Z ]+")) {
@@ -285,8 +289,7 @@ public class InputValidator {
 				}
 				BigDecimal value = scanner.nextBigDecimal();
 				if (value.compareTo(BigDecimal.ZERO) <= 0) {
-					throw new AppException(
-							"Invalid " + fieldName + "! Must be greater than zero.\nPlease try again:");
+					throw new AppException("Invalid " + fieldName + "! Must be greater than zero.\nPlease try again:");
 				}
 				return value;
 			} catch (AppException e) {
@@ -323,8 +326,7 @@ public class InputValidator {
 				} else if (input.equals("n") || input.equals("no")) {
 					return false;
 				} else {
-					throw new AppException(
-							"Invalid input! Please enter 'y' for yes or 'n' for no.\nPlease try again:");
+					throw new AppException("Invalid input! Please enter 'y' for yes or 'n' for no.\nPlease try again:");
 				}
 			} catch (AppException e) {
 				System.out.println(e.getMessage());
